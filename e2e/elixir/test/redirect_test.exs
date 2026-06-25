@@ -9,9 +9,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_301_permanent" do
     test "redirect_301_permanent" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_301_PERMANENT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_301_permanent"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/target")
       assert result.redirect_count == 1
     end
@@ -20,9 +20,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_302_found" do
     test "redirect_302_found" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_302_FOUND") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_302_found"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/found-target")
       assert result.redirect_count == 1
     end
@@ -31,9 +31,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_303_see_other" do
     test "redirect_303_see_other" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_303_SEE_OTHER") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_303_see_other"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/see-other")
       assert result.redirect_count == 1
     end
@@ -42,9 +42,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_307_temporary" do
     test "redirect_307_temporary" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_307_TEMPORARY") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_307_temporary"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/temp-target")
       assert result.redirect_count == 1
     end
@@ -53,9 +53,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_308_permanent" do
     test "redirect_308_permanent" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_308_PERMANENT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_308_permanent"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/perm-target")
       assert result.redirect_count == 1
     end
@@ -64,9 +64,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_chain" do
     test "redirect_chain" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_CHAIN") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_chain"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/step2")
       assert result.redirect_count == 2
     end
@@ -75,9 +75,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_cross_domain" do
     test "redirect_cross_domain" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_CROSS_DOMAIN") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_cross_domain"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/external-redirect")
       assert result.redirect_count == 1
     end
@@ -86,9 +86,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_loop" do
     test "redirect_loop" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_LOOP") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_loop"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'is_error' not available on result type
     end
   end
@@ -96,9 +96,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_max_exceeded" do
     test "redirect_max_exceeded" do
       engine_config = "{\"max_redirects\":2,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_MAX_EXCEEDED") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_max_exceeded"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'is_error' not available on result type
     end
   end
@@ -106,9 +106,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_meta_refresh" do
     test "redirect_meta_refresh" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_meta_refresh"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/target")
       assert result.redirect_count == 1
     end
@@ -117,9 +117,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_refresh_header" do
     test "redirect_refresh_header" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_REFRESH_HEADER") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_refresh_header"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/refreshed")
       assert result.redirect_count == 1
     end
@@ -128,9 +128,9 @@ defmodule E2e.RedirectTest do
   describe "redirect_to_404" do
     test "redirect_to_404" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_REDIRECT_TO_404") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/redirect_to_404"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert String.contains?(to_string(result.final_url), "/gone")
       assert result.redirect_count == 1
       # skipped: field 'is_error' not available on result type

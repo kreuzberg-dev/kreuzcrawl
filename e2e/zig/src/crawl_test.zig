@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "content_binary_skip" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_BINARY_SKIP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_binary_skip", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -45,7 +45,7 @@ test "content_pdf_link_skip" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_PDF_LINK_SKIP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_pdf_link_skip", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -62,7 +62,7 @@ test "crawl_concurrent_depth" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_CONCURRENT_DEPTH")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_concurrent_depth", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":3,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":3,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -80,7 +80,7 @@ test "crawl_concurrent_limit" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_CONCURRENT_LIMIT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_concurrent_limit", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":2,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":2,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -97,7 +97,7 @@ test "crawl_concurrent_max_pages" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_concurrent_max_pages", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":4,\"max_depth\":1,\"max_pages\":3,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":4,\"max_depth\":1,\"max_pages\":3,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -114,7 +114,7 @@ test "crawl_custom_headers" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_CUSTOM_HEADERS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_custom_headers", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"custom_headers\":{\"Accept-Language\":\"en-US\",\"X-Custom-Header\":\"test-value\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"custom_headers\":{\"Accept-Language\":\"en-US\",\"X-Custom-Header\":\"test-value\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -131,7 +131,7 @@ test "crawl_depth_one" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_DEPTH_ONE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_depth_one", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -149,7 +149,7 @@ test "crawl_depth_priority" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_DEPTH_PRIORITY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_depth_priority", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":2,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":2,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -166,7 +166,7 @@ test "crawl_depth_two" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_DEPTH_TWO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_depth_two", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":2,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":2,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -184,7 +184,7 @@ test "crawl_depth_two_chain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_depth_two_chain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -201,7 +201,7 @@ test "crawl_double_slash_normalization" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_double_slash_normalization", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -218,7 +218,7 @@ test "crawl_empty_page_no_links" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_empty_page_no_links", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -235,7 +235,7 @@ test "crawl_exclude_path_pattern" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_exclude_path_pattern", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"exclude_paths\":[\"/admin/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"exclude_paths\":[\"/admin/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -252,7 +252,7 @@ test "crawl_external_links_ignored" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_external_links_ignored", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1,\"stay_on_domain\":true}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1,\"stay_on_domain\":true}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -270,7 +270,7 @@ test "crawl_fragment_stripping" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_fragment_stripping", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -287,7 +287,7 @@ test "crawl_include_path_pattern" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_include_path_pattern", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"include_paths\":[\"/blog/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"include_paths\":[\"/blog/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -304,7 +304,7 @@ test "crawl_max_depth_zero" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_max_depth_zero", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":0}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":0}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -322,7 +322,7 @@ test "crawl_max_pages" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_MAX_PAGES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_max_pages", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_pages\":3,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_pages\":3,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -339,7 +339,7 @@ test "crawl_mixed_content_types" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_mixed_content_types", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -356,7 +356,7 @@ test "crawl_multiple_redirects_in_traversal" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_multiple_redirects_in_traversal", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -373,7 +373,7 @@ test "crawl_query_param_dedup" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_query_param_dedup", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -390,7 +390,7 @@ test "crawl_redirect_in_traversal" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_redirect_in_traversal", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -407,7 +407,7 @@ test "crawl_self_link_no_loop" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_self_link_no_loop", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -424,7 +424,7 @@ test "crawl_single_page_no_links" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_SINGLE_PAGE_NO_LINKS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_single_page_no_links", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -441,7 +441,7 @@ test "crawl_stay_on_domain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_STAY_ON_DOMAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_stay_on_domain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -459,7 +459,7 @@ test "crawl_subdomain_exclusion" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_subdomain_exclusion", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"allow_subdomains\":false,\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", url);
+    const _result_json = try crawlberg.crawl("{\"allow_subdomains\":false,\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -477,7 +477,7 @@ test "crawl_subdomain_inclusion" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_subdomain_inclusion", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"allow_subdomains\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"allow_subdomains\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -494,7 +494,7 @@ test "crawl_trailing_slash_dedup" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_trailing_slash_dedup", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -511,7 +511,7 @@ test "crawl_url_deduplication" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CRAWL_URL_DEDUPLICATION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/crawl_url_deduplication", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

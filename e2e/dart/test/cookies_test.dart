@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,9 +166,9 @@ void main() {
 
   test('Isolates cookies per domain during crawl', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("cookies_per_domain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.cookies.length, equals(1));
     expect(result.cookies.where((item) {
             final texts = <String>[];
@@ -184,9 +184,9 @@ void main() {
 
   test('Maintains cookies across multiple crawl requests', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("cookies_persistence");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.cookies.where((item) {
             final texts = <String>[];
             texts.add(item.name.toString());
@@ -201,9 +201,9 @@ void main() {
 
   test('Respects Set-Cookie header from server responses', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("cookies_set_cookie_response");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.cookies.where((item) {
             final texts = <String>[];
             texts.add(item.name.toString());

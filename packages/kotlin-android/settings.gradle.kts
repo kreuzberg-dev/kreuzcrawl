@@ -21,4 +21,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "kreuzcrawl-android"
+rootProject.name = "crawlberg-android"

@@ -8,9 +8,9 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_double_encoded" do
     test "encoding_double_encoded" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_ENCODING_DOUBLE_ENCODED") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/encoding_double_encoded"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
       assert length(result.links) >= 1
     end
@@ -18,18 +18,18 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_mixed_charset_page" do
     test "encoding_mixed_charset_page" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/encoding_mixed_charset_page"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
     end
   end
 
   describe "encoding_percent_encoded_path" do
     test "encoding_percent_encoded_path" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/encoding_percent_encoded_path"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
       assert length(result.links) >= 2
     end
@@ -37,9 +37,9 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_unicode_url" do
     test "encoding_unicode_url" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/encoding_unicode_url"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
     end
   end

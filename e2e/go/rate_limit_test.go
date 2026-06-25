@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/crawlberg/packages/go"
 )
 
 func Test_RateLimitAdaptiveBackoff(t *testing.T) {

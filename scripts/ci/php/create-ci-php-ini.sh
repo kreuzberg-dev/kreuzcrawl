@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
-INI_FILE="$OUTPUT_DIR/php-kreuzcrawl.ini"
+INI_FILE="$OUTPUT_DIR/php-crawlberg.ini"
 
 echo "=== Creating CI PHP ini file ==="
 echo "Repo root: $REPO_ROOT"
@@ -18,14 +18,14 @@ echo ""
 
 # Determine the extension file based on OS
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  EXT_FILE="libkreuzcrawl_php.so"
+  EXT_FILE="libcrawlberg_php.so"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  EXT_FILE="libkreuzcrawl_php.dylib"
+  EXT_FILE="libcrawlberg_php.dylib"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-  EXT_FILE="kreuzcrawl_php.dll"
+  EXT_FILE="crawlberg_php.dll"
 else
   echo "Warning: Unknown OS type: $OSTYPE - assuming Linux"
-  EXT_FILE="libkreuzcrawl_php.so"
+  EXT_FILE="libcrawlberg_php.so"
 fi
 
 # Prefer release build, fall back to debug. task php:build:dev produces
@@ -46,7 +46,7 @@ if [ -z "$BUILT_EXT" ]; then
   for candidate_dir in "$REPO_ROOT/target/release" "$REPO_ROOT/target/debug"; do
     echo ""
     echo "Available files in $candidate_dir:"
-    find "$candidate_dir" -maxdepth 1 -iname "*kreuzcrawl*" -type f 2>/dev/null || echo "  (directory missing or empty)"
+    find "$candidate_dir" -maxdepth 1 -iname "*crawlberg*" -type f 2>/dev/null || echo "  (directory missing or empty)"
   done
   exit 1
 fi
@@ -81,14 +81,14 @@ fi
 echo "Detected PHP extension_dir: $DEFAULT_EXT_DIR"
 
 # Create the ini file with absolute path
-# We load the Kreuzcrawl extension with its full path and set extension_dir to
+# We load the Crawlberg extension with its full path and set extension_dir to
 # the active PHP's own dir so PHPUnit's required extensions resolve.
 if cat >"$INI_FILE" <<EOF; then
-; Kreuzcrawl PHP Extension Configuration for CI Testing
+; Crawlberg PHP Extension Configuration for CI Testing
 ; This file is generated automatically by create-ci-php-ini.sh
 ; It allows loading the locally-built extension without system-wide installation
 
-; Load the Kreuzcrawl PHP extension using full path
+; Load the Crawlberg PHP extension using full path
 extension="$DISPLAY_DIR/$EXT_FILE"
 
 ; Mirror the active PHP's extension_dir so PHPUnit-required extensions resolve

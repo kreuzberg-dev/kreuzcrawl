@@ -8,18 +8,18 @@ defmodule E2e.LinksTest do
 
   describe "links_anchor_fragment" do
     test "links_anchor_fragment" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_LINKS_ANCHOR_FRAGMENT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_anchor_fragment"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.contains?(to_string(Enum.at(result.links, 0).link_type), "anchor")
     end
   end
 
   describe "links_base_tag" do
     test "links_base_tag" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_base_tag"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 2
       assert String.contains?(to_string(Enum.at(result.links, 0).url), "example.com")
     end
@@ -27,18 +27,18 @@ defmodule E2e.LinksTest do
 
   describe "links_document_types" do
     test "links_document_types" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_LINKS_DOCUMENT_TYPES") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_document_types"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.contains?(to_string(Enum.at(result.links, 0).link_type), "document")
     end
   end
 
   describe "links_empty_href" do
     test "links_empty_href" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_empty_href"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 0
       assert String.contains?(to_string(Enum.at(result.links, 0).url), "/valid")
     end
@@ -46,9 +46,9 @@ defmodule E2e.LinksTest do
 
   describe "links_internal_external_classification" do
     test "links_internal_external_classification" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_internal_external_classification"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 4
       assert Enum.at(result.links, 0).url != ""
     end
@@ -56,9 +56,9 @@ defmodule E2e.LinksTest do
 
   describe "links_mailto_javascript_skip" do
     test "links_mailto_javascript_skip" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_mailto_javascript_skip"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 0
       refute String.contains?(to_string(Enum.at(result.links, 0).url), "mailto:")
     end
@@ -66,9 +66,9 @@ defmodule E2e.LinksTest do
 
   describe "links_protocol_relative" do
     test "links_protocol_relative" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_protocol_relative"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 1
       assert String.contains?(to_string(Enum.at(result.links, 0).url), "//")
     end
@@ -76,18 +76,18 @@ defmodule E2e.LinksTest do
 
   describe "links_rel_attributes" do
     test "links_rel_attributes" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_rel_attributes"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 0
     end
   end
 
   describe "links_relative_parent" do
     test "links_relative_parent" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/links_relative_parent"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert length(result.links) > 3
     end
   end

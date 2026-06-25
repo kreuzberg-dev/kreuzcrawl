@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.kreuzberg.kreuzcrawl</groupId>
-    <artifactId>kreuzcrawl-e2e-java</artifactId>
+    <groupId>dev.kreuzberg.crawlberg</groupId>
+    <artifactId>crawlberg-e2e-java</artifactId>
     <version>0.1.0</version>
 
     <properties>
@@ -29,8 +29,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>dev.kreuzberg.kreuzcrawl</groupId>
-            <artifactId>kreuzcrawl</artifactId>
+            <groupId>dev.kreuzberg.crawlberg</groupId>
+            <artifactId>crawlberg</artifactId>
             <version>0.3.0</version>
         </dependency>
 
@@ -119,13 +119,13 @@
                                 </condition>
                                 <!-- Build natives RID and library filename -->
                                 <property name="natives.rid" value="${os.name.detected}-${arch.detected}" />
-                                <condition property="native.lib.name" value="libkreuzcrawl_ffi.dylib">
+                                <condition property="native.lib.name" value="libcrawlberg_ffi.dylib">
                                     <matches string="${os.name.detected}" pattern="(?i)macos" />
                                 </condition>
-                                <condition property="native.lib.name" value="libkreuzcrawl_ffi.so">
+                                <condition property="native.lib.name" value="libcrawlberg_ffi.so">
                                     <matches string="${os.name.detected}" pattern="(?i)linux" />
                                 </condition>
-                                <condition property="native.lib.name" value="kreuzcrawl_ffi.dll">
+                                <condition property="native.lib.name" value="crawlberg_ffi.dll">
                                     <matches string="${os.name.detected}" pattern="(?i)windows" />
                                 </condition>
                                 <!-- Define source and destination paths -->
@@ -186,7 +186,7 @@
                     <argLine>--enable-preview --enable-native-access=ALL-UNNAMED -Djava.library.path=${project.basedir}/../../target/release</argLine>
                     <workingDirectory>${project.basedir}/../../test_documents</workingDirectory>
                     <environmentVariables>
-                        <KREUZCRAWL_ALLOW_PRIVATE_NETWORK>true</KREUZCRAWL_ALLOW_PRIVATE_NETWORK>
+                        <CRAWLBERG_ALLOW_PRIVATE_NETWORK>true</CRAWLBERG_ALLOW_PRIVATE_NETWORK>
                     </environmentVariables>
                 </configuration>
             </plugin>

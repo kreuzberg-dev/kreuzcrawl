@@ -21,4 +21,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "kreuzcrawl-e2e"
+rootProject.name = "crawlberg-e2e"

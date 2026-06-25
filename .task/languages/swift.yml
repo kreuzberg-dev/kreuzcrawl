@@ -17,7 +17,7 @@ tasks:
         desc: Build Swift package
         precondition: "command -v swift >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-swift
+            - cargo build --release -p crawlberg-swift
             - bash scripts/setup-swift-bridge.sh release
             - cd packages/swift && swift build
 
@@ -25,7 +25,7 @@ tasks:
         desc: Build Swift package (dev mode)
         precondition: "command -v swift >/dev/null 2>&1"
         cmds:
-            - cargo build -p kreuzcrawl-swift
+            - cargo build -p crawlberg-swift
             - bash scripts/setup-swift-bridge.sh debug
             - cd packages/swift && swift build
 
@@ -33,7 +33,7 @@ tasks:
         desc: Build Swift package (release mode)
         precondition: "command -v swift >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-swift
+            - cargo build --release -p crawlberg-swift
             - bash scripts/setup-swift-bridge.sh release
             - cd packages/swift && swift build -c release
 
@@ -41,7 +41,7 @@ tasks:
         desc: Build Swift package (CI mode)
         precondition: "command -v swift >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-swift
+            - cargo build --release -p crawlberg-swift
             - bash scripts/setup-swift-bridge.sh release
             - cd packages/swift && swift build
 

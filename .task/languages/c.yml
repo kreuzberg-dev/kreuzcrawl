@@ -9,8 +9,8 @@ includes:
         internal: true
 
 vars:
-    FFI_CRATE_DIR: "crates/kreuzcrawl-ffi"
-    FFI_TEST_DIR: "crates/kreuzcrawl-ffi/tests/c"
+    FFI_CRATE_DIR: "crates/crawlberg-ffi"
+    FFI_TEST_DIR: "crates/crawlberg-ffi/tests/c"
     C_E2E_DIR: "e2e/c"
     LIB_DIR: "target/debug"
     LIB_DIR_RELEASE: "target/release"
@@ -34,29 +34,29 @@ tasks:
             - task: c:install
 
     build:
-        desc: Build kreuzcrawl-ffi C library (debug)
+        desc: Build crawlberg-ffi C library (debug)
         cmds:
-            - cargo build -p kreuzcrawl-ffi
+            - cargo build -p crawlberg-ffi
 
     build:dev:
-        desc: Build kreuzcrawl-ffi C library in debug mode
+        desc: Build crawlberg-ffi C library in debug mode
         cmds:
-            - cargo build -p kreuzcrawl-ffi
+            - cargo build -p crawlberg-ffi
 
     build:release:
-        desc: Build kreuzcrawl-ffi C library in release mode
+        desc: Build crawlberg-ffi C library in release mode
         cmds:
-            - cargo build -p kreuzcrawl-ffi --release
+            - cargo build -p crawlberg-ffi --release
 
     build:ci:
-        desc: Build kreuzcrawl-ffi C library in CI mode
+        desc: Build crawlberg-ffi C library in CI mode
         cmds:
-            - cargo build -p kreuzcrawl-ffi
+            - cargo build -p crawlberg-ffi
 
     build:bindings:
         desc: Build C FFI bindings for benchmarking
         cmds:
-            - cargo build -p kreuzcrawl-ffi --release
+            - cargo build -p crawlberg-ffi --release
 
     test:
         desc: Run C FFI unit tests
@@ -138,7 +138,7 @@ tasks:
     update:
         desc: Update C dependencies (no-op, C deps are managed via Rust FFI crate)
         cmds:
-            - echo "C dependencies managed via Rust FFI crate (cargo update -p kreuzcrawl-ffi)"
+            - echo "C dependencies managed via Rust FFI crate (cargo update -p crawlberg-ffi)"
 
     e2e:generate:
         desc: Generate C E2E tests from fixtures

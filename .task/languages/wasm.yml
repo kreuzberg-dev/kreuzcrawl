@@ -9,7 +9,7 @@ includes:
         internal: true
 
 vars:
-    WASM_DIR: "{{.ROOT}}/crates/kreuzcrawl-wasm"
+    WASM_DIR: "{{.ROOT}}/crates/crawlberg-wasm"
     WASI_SDK:
         sh: echo "${WASI_SDK_PATH:-$HOME/wasi-sdk}"
     WASI_CC:
@@ -20,19 +20,19 @@ vars:
 tasks:
     install:
         desc: Install WASM dependencies (pnpm)
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm install
 
     setup:
         desc: Setup WASM environment (alias for install)
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm install
 
     build:
         desc: Build WASM bindings for Node.js target (uses {{.BUILD_PROFILE}})
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -42,7 +42,7 @@ tasks:
 
     build:dev:
         desc: Build WASM bindings in debug mode
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -52,7 +52,7 @@ tasks:
 
     build:release:
         desc: Build WASM bindings in release mode (optimized)
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             NODE_ENV: production
             RUSTFLAGS:
@@ -63,7 +63,7 @@ tasks:
 
     build:ci:
         desc: Build WASM bindings in CI mode
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             NODE_ENV: production
             RUSTFLAGS:
@@ -74,7 +74,7 @@ tasks:
 
     build:web:
         desc: Build WASM for web browsers
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -84,7 +84,7 @@ tasks:
 
     build:bundler:
         desc: Build WASM for bundlers (webpack, rollup, etc)
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -94,7 +94,7 @@ tasks:
 
     build:nodejs:
         desc: Build WASM for Node.js
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -104,7 +104,7 @@ tasks:
 
     build:deno:
         desc: Build WASM for Deno
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -114,7 +114,7 @@ tasks:
 
     build:all:
         desc: Build WASM for all targets (web, bundler, nodejs, deno)
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         env:
             RUSTFLAGS:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
@@ -131,36 +131,36 @@ tasks:
 
     test:
         desc: Run WASM unit tests with Vitest
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm test
 
     test:ci:
         desc: Run WASM unit tests in CI mode
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm run build:ci
             - pnpm test
 
     test:watch:
         desc: Run WASM tests in watch mode
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm test:watch
 
     test:coverage:
         desc: Run WASM tests with coverage report
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm test:coverage
 
     clippy:
-        desc: Run clippy on kreuzcrawl-wasm crate
+        desc: Run clippy on crawlberg-wasm crate
         env:
             CC_wasm32_unknown_unknown: "{{.WASI_CC}}"
             AR_wasm32_unknown_unknown: "{{.WASI_AR}}"
         cmds:
-            - cargo clippy -p kreuzcrawl-wasm --target wasm32-unknown-unknown -- -D warnings
+            - cargo clippy -p crawlberg-wasm --target wasm32-unknown-unknown -- -D warnings
 
     lint:
         desc: Lint WASM TypeScript code with auto-fix (oxlint)
@@ -184,18 +184,18 @@ tasks:
 
     typecheck:
         desc: Type-check WASM TypeScript code
-        dir: crates/kreuzcrawl-wasm
+        dir: crates/crawlberg-wasm
         cmds:
             - pnpm run typecheck
 
     clean:
         desc: Clean WASM build artifacts
         cmds:
-            - cmd: bash -c "rm -rf crates/kreuzcrawl-wasm/dist crates/kreuzcrawl-wasm/pkg crates/kreuzcrawl-wasm/node_modules crates/kreuzcrawl-wasm/.wasm-pack"
+            - cmd: bash -c "rm -rf crates/crawlberg-wasm/dist crates/crawlberg-wasm/pkg crates/crawlberg-wasm/node_modules crates/crawlberg-wasm/.wasm-pack"
               platforms: [linux, darwin]
-            - cmd: powershell -Command "Remove-Item -Path @('crates/kreuzcrawl-wasm/dist', 'crates/kreuzcrawl-wasm/pkg', 'crates/kreuzcrawl-wasm/node_modules', 'crates/kreuzcrawl-wasm/.wasm-pack') -Recurse -ErrorAction SilentlyContinue; exit 0"
+            - cmd: powershell -Command "Remove-Item -Path @('crates/crawlberg-wasm/dist', 'crates/crawlberg-wasm/pkg', 'crates/crawlberg-wasm/node_modules', 'crates/crawlberg-wasm/.wasm-pack') -Recurse -ErrorAction SilentlyContinue; exit 0"
               platforms: [windows]
-            - cmd: cd crates/kreuzcrawl-wasm && pnpm run clean
+            - cmd: cd crates/crawlberg-wasm && pnpm run clean
               ignore_error: true
 
     update:

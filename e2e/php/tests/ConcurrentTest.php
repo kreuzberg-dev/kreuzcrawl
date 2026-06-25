@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: concurrent. */
 final class ConcurrentTest extends TestCase
@@ -21,9 +21,9 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_basic(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 3, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CONCURRENT_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_basic';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(6, count($result->getPages()));
             $this->assertGreaterThanOrEqual(6, count($result->getPages()));
@@ -36,9 +36,9 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_depth_two_fan_out(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 3, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_depth_two_fan_out';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(4, count($result->getPages()));
 
@@ -50,9 +50,9 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_max_pages_exact(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 5, "maxDepth" => 1, "maxPages" => 3]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_max_pages_exact';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertLessThanOrEqual(3, count($result->getPages()));
 
@@ -64,9 +64,9 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_partial_errors(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 3, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_partial_errors';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
 
@@ -78,9 +78,9 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_respects_max_pages(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 2, "maxDepth" => 1, "maxPages" => 3]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_respects_max_pages';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertLessThanOrEqual(3, count($result->getPages()));
 

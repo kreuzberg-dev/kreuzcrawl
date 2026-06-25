@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,10 +166,10 @@ void main() {
 
   test('Batch crawl of 2 seed URLs with links to discover', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_crawl_basic");
     final urls = <String>['/seed1', '/seed2'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchCrawl(engine, urls);
+    final result = await CrawlbergBridge.batchCrawl(engine, urls);
     expect(result.completedCount, equals(2));
     expect(result.failedCount, equals(0));
     expect(result.totalCount, equals(2));
@@ -177,10 +177,10 @@ void main() {
 
   test('Batch crawl where one seed URL returns 404 error', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_crawl_partial_failure");
     final urls = <String>['/good_seed', '/bad_seed'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchCrawl(engine, urls);
+    final result = await CrawlbergBridge.batchCrawl(engine, urls);
     expect(result.completedCount, equals(1));
     expect(result.failedCount, equals(1));
     expect(result.totalCount, equals(2));
@@ -188,59 +188,59 @@ void main() {
 
   test('Batch crawl with max_depth=1 config verifying pages are discovered', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_crawl_with_config");
     final urls = <String>['/seed1', '/seed2'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchCrawl(engine, urls);
+    final result = await CrawlbergBridge.batchCrawl(engine, urls);
     expect(result.completedCount, equals(2));
     expect(result.failedCount, equals(0));
   });
 
   test('Batch scrape with empty batch_urls array returns error', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final urlsBase = _fixtureUrl("batch_scrape_empty_urls_error");
       final urls = <String>[].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-      return KreuzcrawlBridge.batchScrape(engine, urls);
+      return CrawlbergBridge.batchScrape(engine, urls);
     }(), throwsA(anything));
   });
 
   test('Batch scrape with aggressive preprocessing configuration', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"content":{"preprocessing_preset":"aggressive"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_scrape_with_config");
     final urls = <String>['/article1', '/article2'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchScrape(engine, urls);
+    final result = await CrawlbergBridge.batchScrape(engine, urls);
     expect(result.completedCount, equals(2));
     expect(result.failedCount, equals(0));
     expect(result.totalCount, equals(2));
   });
 
   test('Batch scrape of multiple URLs all succeeding', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final urlsBase = _fixtureUrl("scrape_batch_basic");
     final urls = <String>['/page1', '/page2', '/page3'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchScrape(engine, urls);
+    final result = await CrawlbergBridge.batchScrape(engine, urls);
     expect(result.completedCount, equals(3));
     expect(result.failedCount, equals(0));
     expect(result.totalCount, equals(3));
   });
 
   test('Batch scrape with one URL failing returns partial results', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final urlsBase = _fixtureUrl("scrape_batch_partial_failure");
     final urls = <String>['/good1', '/bad', '/good2'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchScrape(engine, urls);
+    final result = await CrawlbergBridge.batchScrape(engine, urls);
     expect(result.completedCount, equals(2));
     expect(result.failedCount, equals(1));
     expect(result.totalCount, equals(3));
   });
 
   test('Batch scrape of 2 URLs completes with 2 results', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final urlsBase = _fixtureUrl("scrape_batch_progress");
     final urls = <String>['/target', '/other'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
-    final result = await KreuzcrawlBridge.batchScrape(engine, urls);
+    final result = await CrawlbergBridge.batchScrape(engine, urls);
     expect(result.totalCount, equals(2));
     expect(result.completedCount, equals(2));
   });

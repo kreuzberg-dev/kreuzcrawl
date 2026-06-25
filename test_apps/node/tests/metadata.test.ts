@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 
 import { describe, expect, it } from "vitest";
-import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
+import { scrape, createEngine } from "@kreuzberg/crawlberg";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {
@@ -130,7 +130,7 @@ describe("metadata", () => {
             expect(_v).not.toBeNull();
         }
     }
-    expect((result.metadata.generator ?? "").trim()).toBe("kreuzcrawl/1.0");
+    expect((result.metadata.generator ?? "").trim()).toBe("crawlberg/1.0");
     expect((result.metadata.themeColor ?? "").trim()).toBe("#ff6600");
     expect((result.metadata.robots ?? "").trim()).toBe("index, follow");
     expect((result.metadata.htmlLang ?? "").trim()).toBe("en");

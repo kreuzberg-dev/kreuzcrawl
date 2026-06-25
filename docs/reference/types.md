@@ -267,7 +267,7 @@ Browser fallback configuration.
 | `proxy` | `Option<ProxyConfig>` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
 | `block_url_patterns` | `Vec<String>` | `vec!\[\]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend::Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `Option<String>` | `None` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
-| `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or crawlberg's default) if unset. Native only. |
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
@@ -685,7 +685,7 @@ Browser backend used for JavaScript rendering.
 | Variant | Wire value | Description |
 |---------|------------|-------------|
 | `Chromiumoxide` | `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
-| `Native` | `native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
+| `Native` | `native` | Crawlberg-owned native browser backend derived from Obscura. |
 
 ---
 

@@ -7,4 +7,4 @@
 # `force = false` preserves any value already set by the parent shell,
 # matching the setdefault semantics required by the [e2e.env] contract.
 [env]
-KREUZCRAWL_ALLOW_PRIVATE_NETWORK = { value = "true", force = false }
+CRAWLBERG_ALLOW_PRIVATE_NETWORK = { value = "true", force = false }

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: download. */
 final class DownloadTest extends TestCase
@@ -21,9 +21,9 @@ final class DownloadTest extends TestCase
     public function test_download_basic_pdf(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadDocuments" => true, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/download_basic_pdf';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("application/pdf", trim($result->getDownloadedDocument()->mimeType));
 
@@ -35,9 +35,9 @@ final class DownloadTest extends TestCase
     public function test_download_filename_extraction(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadDocuments" => true, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/download_filename_extraction';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("application/pdf", trim($result->getDownloadedDocument()->mimeType));
             $this->assertEquals(200, $result->statusCode);
@@ -50,9 +50,9 @@ final class DownloadTest extends TestCase
     public function test_download_mime_filter(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["documentMimeTypes" => ["application/pdf"], "downloadDocuments" => true, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/download_mime_filter';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("application/pdf", trim($result->getDownloadedDocument()->mimeType));
 
@@ -64,9 +64,9 @@ final class DownloadTest extends TestCase
     public function test_download_no_document(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadDocuments" => true, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/download_no_document';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 
@@ -78,9 +78,9 @@ final class DownloadTest extends TestCase
     public function test_download_size_limit(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["documentMaxSize" => 100, "downloadDocuments" => true, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/download_size_limit';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 

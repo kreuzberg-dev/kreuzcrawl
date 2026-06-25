@@ -2,12 +2,12 @@
 <?php
 declare(strict_types=1);
 
-use Kreuzcrawl\CrawlConfig;
-use Kreuzcrawl\Kreuzcrawl;
+use Crawlberg\CrawlConfig;
+use Crawlberg\Crawlberg;
 
 // Simplest case: scrape a single page with default settings.
-$engine = Kreuzcrawl::createEngine(null);
-$result = Kreuzcrawl::scrape($engine, "https://example.com/");
+$engine = Crawlberg::createEngine(null);
+$result = Crawlberg::scrape($engine, "https://example.com/");
 echo "Title: " . ($result->metadata->title ?? "") . "\n";
 echo "Status: " . $result->statusCode . "\n";
 echo "Links found: " . count($result->links) . "\n";
@@ -16,7 +16,7 @@ echo "Links found: " . count($result->links) . "\n";
 $config = CrawlConfig::default();
 $config->maxDepth = 1;
 $config->maxPages = 5;
-$crawlEngine = Kreuzcrawl::createEngine($config);
-$crawlResult = Kreuzcrawl::crawl($crawlEngine, "https://en.wikipedia.org/wiki/Web_scraping");
+$crawlEngine = Crawlberg::createEngine($config);
+$crawlResult = Crawlberg::crawl($crawlEngine, "https://en.wikipedia.org/wiki/Web_scraping");
 echo "Pages crawled: " . count($crawlResult->pages) . "\n";
 ```

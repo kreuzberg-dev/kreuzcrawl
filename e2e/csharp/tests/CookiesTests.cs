@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: cookies.</summary>
     public class CookiesTests
@@ -27,10 +27,10 @@ namespace Kreuzcrawl
         {
             // Isolates cookies per domain during crawl
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_COOKIES_PER_DOMAIN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_per_domain";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Cookies.Count == 1);
     Assert.Contains("domain_cookie", JsonSerializer.Serialize(result.Cookies).ToLower());
 
@@ -41,10 +41,10 @@ namespace Kreuzcrawl
         {
             // Maintains cookies across multiple crawl requests
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_COOKIES_PERSISTENCE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_persistence";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.Contains("session", JsonSerializer.Serialize(result.Cookies).ToLower());
 
         }
@@ -54,10 +54,10 @@ namespace Kreuzcrawl
         {
             // Respects Set-Cookie header from server responses
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_set_cookie_response";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.Contains("tracking", JsonSerializer.Serialize(result.Cookies).ToLower());
 
         }

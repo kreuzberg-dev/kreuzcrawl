@@ -4,7 +4,7 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
-ENV["KREUZCRAWL_ALLOW_PRIVATE_NETWORK"] ||= "true"
+ENV["CRAWLBERG_ALLOW_PRIVATE_NETWORK"] ||= "true"
 
 require 'json'
 require 'open3'

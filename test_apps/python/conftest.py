@@ -16,13 +16,13 @@ import pytest
 import os as _os
 
 _SUITE_ENV = {
-    "KREUZCRAWL_ALLOW_PRIVATE_NETWORK": "true",
+    "CRAWLBERG_ALLOW_PRIVATE_NETWORK": "true",
 }
 for _k, _v in _SUITE_ENV.items():
     _os.environ.setdefault(_k, _v)
 
 # Ensure the package is importable.
-# The kreuzcrawl package is expected to be installed in the current environment.
+# The crawlberg package is expected to be installed in the current environment.
 
 _HERE = Path(__file__).parent
 _E2E_DIR = _HERE.parent

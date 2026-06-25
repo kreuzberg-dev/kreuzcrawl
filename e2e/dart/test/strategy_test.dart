@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,43 +166,43 @@ void main() {
 
   test('Adaptive strategy stops early when encountering saturation (duplicate content)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("strategy_adaptive_saturation");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 
   test('Adaptive strategy crawls more pages when content is diverse', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("strategy_adaptive_window");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 
   test('BestFirst strategy always processes the seed URL first', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("strategy_best_first_seed");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
     // skipped: field 'strategy.first_page_url_contains' not available on dart result type
   });
 
   test('BFS strategy visits pages in breadth-first order', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("strategy_bfs_default_order");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
     // skipped: field 'strategy.crawl_order' not available on dart result type
   });
 
   test('DFS strategy visits pages in depth-first order', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("strategy_dfs_depth_first");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
     // skipped: field 'strategy.crawl_order' not available on dart result type
   });

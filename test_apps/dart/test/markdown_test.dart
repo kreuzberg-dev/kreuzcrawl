@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,27 +165,27 @@ void main() {
   });
 
   test('Citations correctly handle links inside parentheses with balanced rendering', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("citations_balanced_parens");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.markdown?.content, isNotNull);
     expect(result.markdown?.content, contains('('));
   });
 
   test('Citations deduplicates multiple links to the same URL', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("citations_duplicate_urls");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.markdown?.content, isNotNull);
     expect(result.markdown?.citations, isTrue);
   });
 
   test('HTML is always converted to markdown alongside raw HTML', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("markdown_basic_conversion");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.title.toString().trim(), equals('Test'.toString().trim()));
     expect(result.html, isNotNull);
@@ -195,32 +195,32 @@ void main() {
 
   test('All crawled pages have markdown field populated', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("markdown_crawl_all_pages");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 
   test('Fit markdown removes navigation and boilerplate content', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("markdown_fit_content");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.markdown?.content, isNotNull);
   });
 
   test('Markdown conversion preserves heading hierarchy and paragraph text', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("markdown_headings_and_paragraphs");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.markdown?.content, isNotNull);
     expect(result.markdown?.content, contains('Main Title'));
   });
 
   test('HTML links are converted to markdown link syntax', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("markdown_links_converted");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.html, isNotNull);
     expect(result.markdown?.content, isNotNull);
@@ -228,9 +228,9 @@ void main() {
   });
 
   test('Markdown includes citation conversion with numbered references', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("markdown_with_citations");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.markdown?.content, isNotNull);
   });

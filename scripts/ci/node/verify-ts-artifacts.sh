@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd crates/kreuzcrawl-node
+cd crates/crawlberg-node
 
 echo "Checking dist directory:"
 ls -la dist/ || echo "ERROR: dist directory not found"

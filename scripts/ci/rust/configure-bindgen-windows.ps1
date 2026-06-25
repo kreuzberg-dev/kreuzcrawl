@@ -7,7 +7,7 @@ $ErrorActionPreference = 'Stop'
 
 Write-Host "=== Configuring bindgen compatibility headers for Windows ==="
 
-$includeRoot = "$env:GITHUB_WORKSPACE\packages\ruby\ext\kreuzcrawl_rb\native\include"
+$includeRoot = "$env:GITHUB_WORKSPACE\packages\ruby\ext\crawlberg_rb\native\include"
 $compat = "$includeRoot\msvc_compat"
 $includeRoot = $includeRoot -replace '\\','/'
 $compatForward = $compat -replace '\\','/'

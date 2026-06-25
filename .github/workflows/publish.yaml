@@ -1,6 +1,6 @@
 name: Publish Release
 
-# Action-first kreuzcrawl release pipeline.
+# Action-first crawlberg release pipeline.
 #
 # Orchestrates 14 alef language targets:
 #   crates · python · node · wasm · ruby · php · cli · homebrew · go · c-ffi
@@ -164,7 +164,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: pypi
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     check-npm:
@@ -179,7 +179,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/kreuzcrawl"
+                  package: "@kreuzberg/crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-wasm:
@@ -194,7 +194,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/kreuzcrawl-wasm"
+                  package: "@kreuzberg/crawlberg-wasm"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-rubygems:
@@ -209,7 +209,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: rubygems
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     check-maven:
@@ -224,7 +224,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
-                  package: "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
+                  package: "dev.kreuzberg.crawlberg:crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-nuget:
@@ -239,7 +239,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: nuget
-                  package: Kreuzcrawl
+                  package: Crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     check-packagist:
@@ -254,7 +254,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: packagist
-                  package: xberg-io/kreuzcrawl
+                  package: xberg-io/crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     check-cratesio:
@@ -264,7 +264,7 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             bindings_common_exists: ${{ steps.check.outputs.exists }}
-            kreuzcrawl_exists: ${{ steps.check.outputs.kreuzcrawl_exists }}
+            crawlberg_exists: ${{ steps.check.outputs.crawlberg_exists }}
             cli_exists: ${{ steps.check.outputs.cli_exists }}
             bypass_exists: ${{ steps.check.outputs.bypass_exists }}
             all_exist: ${{ steps.derive.outputs.all_exist }}
@@ -273,19 +273,19 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: cratesio
-                  package: kreuzcrawl-bindings-common
+                  package: crawlberg-bindings-common
                   version: ${{ needs.prepare.outputs.version }}
                   extra-packages: |
-                      kreuzcrawl_exists=kreuzcrawl
-                      cli_exists=kreuzcrawl-cli
-                      bypass_exists=kreuzcrawl-bypass
+                      crawlberg_exists=crawlberg
+                      cli_exists=crawlberg-cli
+                      bypass_exists=crawlberg-bypass
 
             - id: derive
               # Inline: aggregate four check-registry outputs into a single boolean
               # the publish-crates job can guard on. No shared action equivalent.
               run: |
                   if [[ "${{ steps.check.outputs.exists }}" == "true" \
-                    && "${{ steps.check.outputs.kreuzcrawl_exists }}" == "true" \
+                    && "${{ steps.check.outputs.crawlberg_exists }}" == "true" \
                     && "${{ steps.check.outputs.cli_exists }}" == "true" \
                     && "${{ steps.check.outputs.bypass_exists }}" == "true" ]]; then
                     echo "all_exist=true" >> "$GITHUB_OUTPUT"
@@ -305,7 +305,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: hex
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     check-zig:
@@ -324,10 +324,10 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
-                  package: kreuzcrawl-zig-v${{ needs.prepare.outputs.version }}.tar.gz
+                  package: crawlberg-zig-v${{ needs.prepare.outputs.version }}.tar.gz
                   version: ${{ needs.prepare.outputs.version }}
                   repo: ${{ github.repository }}
-                  assets: kreuzcrawl-zig-v${{ needs.prepare.outputs.version }}.tar.gz
+                  assets: crawlberg-zig-v${{ needs.prepare.outputs.version }}.tar.gz
 
     check-maven-kotlin-android:
         name: Check Maven Central for kotlin-android package
@@ -341,10 +341,10 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
-                  package: dev.kreuzberg:kreuzcrawl
+                  package: dev.kreuzberg:crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   extra-packages: |
-                      kotlin_android_exists=dev.kreuzberg:kreuzcrawl-android
+                      kotlin_android_exists=dev.kreuzberg:crawlberg-android
 
     check-homebrew:
         name: Check Homebrew tap for formula
@@ -358,7 +358,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: homebrew
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   tap-repo: xberg-io/homebrew-tap
 
@@ -374,13 +374,13 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
-                  asset-prefix: kreuzcrawl-cli-
+                  asset-prefix: crawlberg-cli-
                   assets: |
-                      kreuzcrawl-cli-aarch64-apple-darwin.tar.gz,kreuzcrawl-cli-aarch64-unknown-linux-gnu.tar.gz,kreuzcrawl-cli-aarch64-unknown-linux-musl.tar.gz,kreuzcrawl-cli-x86_64-unknown-linux-gnu.tar.gz,kreuzcrawl-cli-x86_64-unknown-linux-musl.tar.gz,kreuzcrawl-cli-x86_64-pc-windows-msvc.zip
+                      crawlberg-cli-aarch64-apple-darwin.tar.gz,crawlberg-cli-aarch64-unknown-linux-gnu.tar.gz,crawlberg-cli-aarch64-unknown-linux-musl.tar.gz,crawlberg-cli-x86_64-unknown-linux-gnu.tar.gz,crawlberg-cli-x86_64-unknown-linux-musl.tar.gz,crawlberg-cli-x86_64-pc-windows-msvc.zip
 
     check-go:
         name: Check GitHub Release for Go FFI assets
@@ -394,11 +394,11 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
-                  asset-prefix: kreuzcrawl-go-
+                  asset-prefix: crawlberg-go-
 
     check-c-ffi:
         name: Check GitHub Release for C FFI assets
@@ -412,11 +412,11 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
-                  asset-prefix: kreuzcrawl-ffi-
+                  asset-prefix: crawlberg-ffi-
 
     check-elixir-release:
         name: Check GitHub Release for Elixir NIF assets
@@ -430,11 +430,11 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
-                  asset-prefix: libkreuzcrawl_nif-
+                  asset-prefix: libcrawlberg_nif-
 
     # ─── Build matrix jobs ────────────────────────────────────────────────
 
@@ -572,7 +572,7 @@ jobs:
             - name: Build native module
               uses: xberg-io/actions/build-node-napi@v1
               with:
-                  crate-dir: crates/kreuzcrawl-node
+                  crate-dir: crates/crawlberg-node
                   target: ${{ matrix.target }}
                   use-napi-cross: ${{ matrix.use_napi_cross }}
                   pack-target-tarball: node-bindings-${{ matrix.target }}.tar.gz
@@ -615,18 +615,18 @@ jobs:
 
             - uses: xberg-io/actions/build-wasm-package@v1
               with:
-                  crate-dir: crates/kreuzcrawl-wasm
+                  crate-dir: crates/crawlberg-wasm
                   pack-tarball: "true"
 
             - uses: actions/upload-artifact@v7
               with:
                   name: wasm-bundle
                   path: |
-                      crates/kreuzcrawl-wasm/dist/**
-                      crates/kreuzcrawl-wasm/dist-node/**
-                      crates/kreuzcrawl-wasm/dist-web/**
-                      crates/kreuzcrawl-wasm/pkg/**
-                      crates/kreuzcrawl-wasm/package.json
+                      crates/crawlberg-wasm/dist/**
+                      crates/crawlberg-wasm/dist-node/**
+                      crates/crawlberg-wasm/dist-web/**
+                      crates/crawlberg-wasm/pkg/**
+                      crates/crawlberg-wasm/package.json
                   retention-days: 14
 
     ruby-gem:
@@ -715,7 +715,7 @@ jobs:
 
             - name: Install Ruby dependencies
               # Inline: bundle config + install in the package dir; trivially small
-              # and identical across kreuzcrawl/kreuzberg/html-to-markdown.
+              # and identical across crawlberg/kreuzberg/html-to-markdown.
               shell: bash
               working-directory: packages/ruby
               run: |
@@ -732,7 +732,7 @@ jobs:
               # Inline: each matrix runner builds the gem for its own native platform
               # via `rake compile && rake build`. rake-compiler's compile step sets
               # the gem's native platform tag from rb_config, so the produced gem is
-              # already platform-tagged (e.g. kreuzcrawl-X.Y.Z-x86_64-linux.gem). This
+              # already platform-tagged (e.g. crawlberg-X.Y.Z-x86_64-linux.gem). This
               # mirrors the html-to-markdown sibling's proven Ruby publish path. For
               # Windows we cross-compile inside rb-sys-dock so the GNU toolchain
               # produces a x64-mingw-ucrt gem.
@@ -752,7 +752,7 @@ jobs:
                     #
                     # Run rb-sys-dock from the WORKSPACE ROOT so the container mounts
                     # the whole repo — the gem's Cargo.toml has a path-dep
-                    # `kreuzcrawl = { path = "../../../../../crates/kreuzcrawl" }` which
+                    # `crawlberg = { path = "../../../../../crates/crawlberg" }` which
                     # resolves outside `packages/ruby/` and would not exist in a
                     # container mounted at the gem dir. `--directory packages/ruby`
                     # sets the container WORKDIR to packages/ruby while preserving
@@ -833,8 +833,8 @@ jobs:
 
             - uses: xberg-io/actions/build-php-extension@v1
               with:
-                  crate-name: kreuzcrawl-php
-                  lib-name: kreuzcrawl_php
+                  crate-name: crawlberg-php
+                  lib-name: crawlberg_php
                   php-version: ${{ matrix.php }}
                   php-ts: nts
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -883,13 +883,13 @@ jobs:
         # the custom Docker musl job (cli-musl-binaries) supplies the musl archives, picked up
         # from the shared run artifact namespace (this job `needs:` it). The reusable upload
         # un-drafts the release (`publish-github-release@v1 draft:false`) so CLI binaries are
-        # never stranded in a draft, and emits a `kreuzcrawl-cli-SHA256SUMS` checksums file.
+        # never stranded in a draft, and emits a `crawlberg-cli-SHA256SUMS` checksums file.
         uses: xberg-io/actions/.github/workflows/reusable-cli-release.yml@v1
         with:
-            package-name: kreuzcrawl-cli
-            binary-name: kreuzcrawl
+            package-name: crawlberg-cli
+            binary-name: crawlberg
             tag: ${{ needs.prepare.outputs.tag }}
-            asset-prefix: kreuzcrawl-cli-
+            asset-prefix: crawlberg-cli-
             checkout-ref: ${{ needs.prepare.outputs.checkout_ref }}
             dry-run: ${{ needs.prepare.outputs.dry_run }}
             build-musl: false
@@ -924,13 +924,13 @@ jobs:
             - uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Build musl CLI via Docker
-              # Inline: kreuzcrawl ships a musl CLI built via a custom Dockerfile that
+              # Inline: crawlberg ships a musl CLI built via a custom Dockerfile that
               # bundles libonnxruntime and tesseract for $ORIGIN/lib runtime loading.
               # The shared build-rust-cli action targets host toolchains only.
               shell: bash
               run: |
                   docker build -f docker/Dockerfile.musl-build --output type=local,dest=./dist .
-                  file dist/kreuzcrawl
+                  file dist/crawlberg
 
             - name: Package musl CLI archive
               # Inline: musl artifacts include a sibling lib/ directory the binary
@@ -939,20 +939,20 @@ jobs:
                   TARGET: ${{ matrix.target }}
               shell: bash
               run: |
-                  STAGE="kreuzcrawl-cli-${TARGET}"
+                  STAGE="crawlberg-cli-${TARGET}"
                   mkdir -p "$STAGE/lib"
-                  cp dist/kreuzcrawl "$STAGE/"
+                  cp dist/crawlberg "$STAGE/"
                   cp dist/lib/* "$STAGE/lib/" 2>/dev/null || true
                   cp LICENSE "$STAGE/" 2>/dev/null || true
                   cp README.md "$STAGE/" 2>/dev/null || true
-                  tar -czf "kreuzcrawl-cli-${TARGET}.tar.gz" "$STAGE"
+                  tar -czf "crawlberg-cli-${TARGET}.tar.gz" "$STAGE"
 
             - uses: actions/upload-artifact@v7
               with:
-                  # Name matches the reusable-cli-release `asset-prefix: kreuzcrawl-cli-` so the
-                  # reusable upload's `download-artifact pattern: kreuzcrawl-cli-*` picks it up.
-                  name: kreuzcrawl-cli-${{ matrix.target }}
-                  path: kreuzcrawl-cli-${{ matrix.target }}.tar.gz
+                  # Name matches the reusable-cli-release `asset-prefix: crawlberg-cli-` so the
+                  # reusable upload's `download-artifact pattern: crawlberg-cli-*` picks it up.
+                  name: crawlberg-cli-${{ matrix.target }}
+                  path: crawlberg-cli-${{ matrix.target }}.tar.gz
                   retention-days: 14
 
     go-ffi-libraries:
@@ -989,10 +989,10 @@ jobs:
             - uses: xberg-io/actions/build-go-ffi@v1
               with:
                   target: ${{ matrix.target }}
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
-                  header-path: crates/kreuzcrawl-ffi/include/kreuzcrawl.h
-                  archive-name: kreuzcrawl-go-${{ matrix.platform }}.tar.gz
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
+                  header-path: crates/crawlberg-ffi/include/crawlberg.h
+                  archive-name: crawlberg-go-${{ matrix.platform }}.tar.gz
                   output-dir: dist/go-ffi
 
             - uses: actions/upload-artifact@v7
@@ -1035,7 +1035,7 @@ jobs:
 
             - uses: xberg-io/actions/build-rust-ffi@v1
               with:
-                  crate-name: kreuzcrawl-ffi
+                  crate-name: crawlberg-ffi
                   target: ${{ matrix.target }}
 
             - name: Stage C FFI distribution
@@ -1051,12 +1051,12 @@ jobs:
                   # ASSET_STEM="${FFI_PKG_NAME}-v${VERSION}-${TRIPLE}"
                   # where TRIPLE is the Rust target triple (e.g. aarch64-apple-darwin),
                   # NOT the publish-yaml "platform" label (e.g. macos-arm64).
-                  STAGE="kreuzcrawl-ffi-v${VERSION}-${TARGET}"
+                  STAGE="crawlberg-ffi-v${VERSION}-${TARGET}"
                   mkdir -p "$STAGE/lib" "$STAGE/include"
                   find "target/${TARGET}/release" -maxdepth 1 -type f \
-                    \( -name 'libkreuzcrawl_ffi.*' -o -name 'kreuzcrawl_ffi.dll' \) \
+                    \( -name 'libcrawlberg_ffi.*' -o -name 'crawlberg_ffi.dll' \) \
                     -exec cp {} "$STAGE/lib/" \;
-                  cp crates/kreuzcrawl-ffi/include/kreuzcrawl.h "$STAGE/include/"
+                  cp crates/crawlberg-ffi/include/crawlberg.h "$STAGE/include/"
                   cp LICENSE "$STAGE/" 2>/dev/null || true
                   mkdir -p dist/c-ffi
                   tar -czf "dist/c-ffi/${STAGE}.tar.gz" "$STAGE"
@@ -1102,8 +1102,8 @@ jobs:
             - uses: xberg-io/actions/build-java-natives@v1
               with:
                   target: ${{ matrix.target }}
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
                   classifier: ${{ matrix.classifier }}
 
             - uses: actions/upload-artifact@v7
@@ -1146,21 +1146,21 @@ jobs:
 
             - name: Build musl FFI via Docker
               # Inline: building cdylib for musl on the host runner fails to link
-              # libgcc_s.so.1; kreuzcrawl's Dockerfile.musl-ffi runs on Alpine
-              # (native musl) and produces a self-contained libkreuzcrawl_ffi.so.
+              # libgcc_s.so.1; crawlberg's Dockerfile.musl-ffi runs on Alpine
+              # (native musl) and produces a self-contained libcrawlberg_ffi.so.
               shell: bash
               run: |
                   docker build -f docker/Dockerfile.musl-ffi --output type=local,dest=./dist .
-                  file dist/libkreuzcrawl_ffi.so
+                  file dist/libcrawlberg_ffi.so
 
-            - name: Stage musl libkreuzcrawl_ffi.so under Java natives layout
+            - name: Stage musl libcrawlberg_ffi.so under Java natives layout
               shell: bash
               env:
                   CLASSIFIER: ${{ matrix.classifier }}
               run: |
                   STAGE="dist/java-natives/native/${CLASSIFIER}"
                   mkdir -p "$STAGE"
-                  cp dist/libkreuzcrawl_ffi.so "$STAGE/libkreuzcrawl_ffi.so"
+                  cp dist/libcrawlberg_ffi.so "$STAGE/libcrawlberg_ffi.so"
                   ls -la "$STAGE"
 
             - uses: actions/upload-artifact@v7
@@ -1204,8 +1204,8 @@ jobs:
             - uses: xberg-io/actions/build-csharp-natives@v1
               with:
                   target: ${{ matrix.target }}
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
                   rid: ${{ matrix.rid }}
 
             - uses: actions/upload-artifact@v7
@@ -1244,8 +1244,8 @@ jobs:
             - uses: xberg-io/actions/build-csharp-natives@v1
               with:
                   target: ${{ matrix.target }}
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
                   rid: ${{ matrix.rid }}
 
             - uses: actions/upload-artifact@v7
@@ -1317,8 +1317,8 @@ jobs:
             - uses: xberg-io/actions/build-elixir-natives@v1
               with:
                   target: ${{ matrix.target }}
-                  nif-crate-name: kreuzcrawl_nif
-                  nif-crate-path: packages/elixir/native/kreuzcrawl_nif
+                  nif-crate-name: crawlberg_nif
+                  nif-crate-path: packages/elixir/native/crawlberg_nif
                   package-dir: packages/elixir
                   nif-version: ${{ needs.prepare.outputs.version }}
                   nif-api-version: ${{ matrix.nif }}
@@ -1371,8 +1371,8 @@ jobs:
             - uses: xberg-io/actions/build-elixir-natives@v1
               with:
                   target: ${{ matrix.target }}
-                  nif-crate-name: kreuzcrawl_nif
-                  nif-crate-path: packages/elixir/native/kreuzcrawl_nif
+                  nif-crate-name: crawlberg_nif
+                  nif-crate-path: packages/elixir/native/crawlberg_nif
                   package-dir: packages/elixir
                   nif-version: ${{ needs.prepare.outputs.version }}
                   nif-api-version: ${{ matrix.nif }}
@@ -1398,8 +1398,8 @@ jobs:
             - uses: xberg-io/actions/build-swift-artifactbundle@v1
               id: bundle
               with:
-                  crate-name: kreuzcrawl-swift
-                  artifact-name: Kreuzcrawl-rs
+                  crate-name: crawlberg-swift
+                  artifact-name: Crawlberg-rs
                   package-manifest-path: Package.swift
                   package-version: ${{ needs.prepare.outputs.version }}
             - uses: actions/upload-artifact@v7
@@ -1425,7 +1425,7 @@ jobs:
             - uses: xberg-io/actions/build-swift-package@v1
               with:
                   package-dir: packages/swift
-                  crate-name: kreuzcrawl-swift
+                  crate-name: crawlberg-swift
 
             - uses: actions/upload-artifact@v7
               with:
@@ -1448,7 +1448,7 @@ jobs:
 
             - uses: xberg-io/actions/build-zig-package@v1
               with:
-                  ffi-crate: kreuzcrawl-ffi
+                  ffi-crate: crawlberg-ffi
                   package-dir: packages/zig
 
     # ─── GitHub Release asset uploads ─────────────────────────────────────
@@ -1477,7 +1477,7 @@ jobs:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/go-ffi
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
-                  assets: kreuzcrawl-go-*.tar.gz
+                  assets: crawlberg-go-*.tar.gz
                   token: ${{ steps.app-token.outputs.token }}
 
     push-go-subdir-tag:
@@ -1533,7 +1533,7 @@ jobs:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/c-ffi
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
-                  assets: kreuzcrawl-ffi-*.tar.gz
+                  assets: crawlberg-ffi-*.tar.gz
                   token: ${{ steps.app-token.outputs.token }}
 
     upload-swift-release:
@@ -1594,8 +1594,8 @@ jobs:
                   TAG: ${{ needs.prepare.outputs.tag }}
               run: |
                   set -euo pipefail
-                  gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "Kreuzcrawl-rs.artifactbundle.zip" -D dist-swift
-                  CHECKSUM=$(swift package compute-checksum dist-swift/Kreuzcrawl-rs.artifactbundle.zip)
+                  gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "Crawlberg-rs.artifactbundle.zip" -D dist-swift
+                  CHECKSUM=$(swift package compute-checksum dist-swift/Crawlberg-rs.artifactbundle.zip)
                   echo "Computed Swift checksum: $CHECKSUM"
                   if ! grep -q "__ALEF_SWIFT_CHECKSUM__" Package.swift; then
                     echo "Package.swift has no placeholder — nothing to inject"
@@ -1652,7 +1652,7 @@ jobs:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/elixir
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
-                  assets: libkreuzcrawl_nif-*.tar.gz
+                  assets: libcrawlberg_nif-*.tar.gz
                   token: ${{ steps.app-token.outputs.token }}
 
     upload-php-pie-release:
@@ -1722,14 +1722,14 @@ jobs:
                   token: ${{ steps.app-token.outputs.token }}
                   expected-assets: |
                       # CLI
-                      kreuzcrawl-cli-*.tar.gz
-                      kreuzcrawl-cli-*.zip
+                      crawlberg-cli-*.tar.gz
+                      crawlberg-cli-*.zip
                       # Go FFI
-                      kreuzcrawl-go-*.tar.gz
+                      crawlberg-go-*.tar.gz
                       # C FFI
-                      kreuzcrawl-ffi-*.tar.gz
+                      crawlberg-ffi-*.tar.gz
                       # Elixir NIF
-                      libkreuzcrawl_nif-*.tar.gz
+                      libcrawlberg_nif-*.tar.gz
 
     # ─── Publish jobs ─────────────────────────────────────────────────────
 
@@ -1753,12 +1753,12 @@ jobs:
 
             - uses: xberg-io/actions/publish-crates@v1
               with:
-                  # Order matters: kreuzcrawl-browser is a hard dep of kreuzcrawl
-                  # (path-only deps are rejected by cargo publish), kreuzcrawl is
-                  # depended on by kreuzcrawl-bypass, kreuzcrawl-bindings-common,
-                  # and kreuzcrawl-cli, so each must land on the index before its
+                  # Order matters: crawlberg-browser is a hard dep of crawlberg
+                  # (path-only deps are rejected by cargo publish), crawlberg is
+                  # depended on by crawlberg-bypass, crawlberg-bindings-common,
+                  # and crawlberg-cli, so each must land on the index before its
                   # dependents try to resolve.
-                  crates: kreuzcrawl-browser kreuzcrawl kreuzcrawl-bypass kreuzcrawl-bindings-common kreuzcrawl-cli
+                  crates: crawlberg-browser crawlberg crawlberg-bypass crawlberg-bindings-common crawlberg-cli
                   version: ${{ needs.prepare.outputs.version }}
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 
@@ -1851,21 +1851,21 @@ jobs:
                   registry-url: "https://registry.npmjs.org/"
 
             - name: Stage platform packages and main package
-              # Inline: kreuzcrawl's per-platform Node artifact layout is bespoke
+              # Inline: crawlberg's per-platform Node artifact layout is bespoke
               # (one tarball per target containing pre-staged npm/<platform>/) and the
               # main package needs an injected optionalDependencies map listing every
               # platform sub-package. Tightly coupled to napi-rs + repo conventions;
               # the generic publish-npm action operates on a single package dir.
               shell: bash
               run: |
-                  rm -rf crates/kreuzcrawl-node/npm
-                  mkdir -p crates/kreuzcrawl-node/npm
+                  rm -rf crates/crawlberg-node/npm
+                  mkdir -p crates/crawlberg-node/npm
                   for pkg in node-artifacts/*.tar.gz; do
-                    tar -xzf "${pkg}" -C crates/kreuzcrawl-node
+                    tar -xzf "${pkg}" -C crates/crawlberg-node
                   done
 
                   # Pack each platform sub-package as a tarball
-                  cd crates/kreuzcrawl-node/npm
+                  cd crates/crawlberg-node/npm
                   for dir in */; do
                     if [ -f "$dir/package.json" ]; then
                       (cd "$dir" && npm pack && mv ./*.tgz ..)
@@ -1876,28 +1876,28 @@ jobs:
                   # Stamp main package's optionalDependencies with all platform packages
                   tmp_pkg_json="$(mktemp)"
                   optional_deps_json='{}'
-                  for platform_pkg_json in crates/kreuzcrawl-node/npm/*/package.json; do
+                  for platform_pkg_json in crates/crawlberg-node/npm/*/package.json; do
                     name="$(jq -r '.name // empty' "$platform_pkg_json")"
                     version="$(jq -r '.version // empty' "$platform_pkg_json")"
                     [[ -z "$name" || -z "$version" ]] && { echo "Invalid: $platform_pkg_json" >&2; exit 1; }
                     optional_deps_json="$(jq -c --arg n "$name" --arg v "$version" '. + {($n): $v}' <<<"$optional_deps_json")"
                   done
                   jq --argjson deps "$optional_deps_json" '.optionalDependencies = $deps' \
-                    crates/kreuzcrawl-node/package.json > "$tmp_pkg_json"
-                  mv "$tmp_pkg_json" crates/kreuzcrawl-node/package.json
+                    crates/crawlberg-node/package.json > "$tmp_pkg_json"
+                  mv "$tmp_pkg_json" crates/crawlberg-node/package.json
 
             - name: Publish platform sub-packages
               # Tolerate per-platform publish failures so the main package and
               # other platforms still ship. RC.45–RC.48 each hit ENEEDAUTH on
-              # `@kreuzberg/kreuzcrawl-linux-x64-musl` (npm Trusted Publisher
+              # `@kreuzberg/crawlberg-linux-x64-musl` (npm Trusted Publisher
               # not configured for that specific sub-package — see task #93);
               # without continue-on-error the failure aborted the whole job and
-              # blocked the main `@kreuzberg/kreuzcrawl` publish too, leaving
+              # blocked the main `@kreuzberg/crawlberg` publish too, leaving
               # consumers unable to install on any platform.
               continue-on-error: true
               uses: xberg-io/actions/publish-npm@v1
               with:
-                  packages-dir: crates/kreuzcrawl-node/npm
+                  packages-dir: crates/crawlberg-node/npm
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 
@@ -1906,7 +1906,7 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/kreuzcrawl-linux-x64-gnu"
+                  package: "@kreuzberg/crawlberg-linux-x64-gnu"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "60"
 
@@ -1915,14 +1915,14 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/kreuzcrawl-linux-arm64-gnu"
+                  package: "@kreuzberg/crawlberg-linux-arm64-gnu"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "60"
 
-            - name: Publish main @kreuzberg/kreuzcrawl package
+            - name: Publish main @kreuzberg/crawlberg package
               uses: xberg-io/actions/publish-npm@v1
               with:
-                  package-dir: crates/kreuzcrawl-node
+                  package-dir: crates/crawlberg-node
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 
@@ -1931,7 +1931,7 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/kreuzcrawl"
+                  package: "@kreuzberg/crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "25"
 
@@ -1985,7 +1985,7 @@ jobs:
             - uses: actions/download-artifact@v8
               with:
                   name: wasm-bundle
-                  path: crates/kreuzcrawl-wasm
+                  path: crates/crawlberg-wasm
 
             - uses: xberg-io/actions/setup-node-workspace@v1
               with:
@@ -1994,7 +1994,7 @@ jobs:
 
             - uses: xberg-io/actions/publish-npm@v1
               with:
-                  package-dir: crates/kreuzcrawl-wasm
+                  package-dir: crates/crawlberg-wasm
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
                   provenance: "true"
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -2008,9 +2008,9 @@ jobs:
             - uses: xberg-io/actions/publish-packagist@v1
               with:
                   packagist-username: kreuzberg-dev
-                  package-name: xberg-io/kreuzcrawl
+                  package-name: xberg-io/crawlberg
                   version: ${{ needs.prepare.outputs.version }}
-                  repository-url: https://github.com/xberg-io/kreuzcrawl
+                  repository-url: https://github.com/xberg-io/crawlberg
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
               env:
                   PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
@@ -2113,7 +2113,7 @@ jobs:
               # Inline: dotnet pack with the version override against the .slnx; one-liner.
               shell: bash
               run: |
-                  dotnet pack packages/csharp/Kreuzcrawl.slnx \
+                  dotnet pack packages/csharp/Crawlberg.slnx \
                     -c Release \
                     -p:Version=${{ needs.prepare.outputs.version }} \
                     -o dist/nuget
@@ -2168,10 +2168,10 @@ jobs:
                   github-repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
                   version: ${{ needs.prepare.outputs.version }}
-                  lib-name: kreuzcrawl_nif
+                  lib-name: crawlberg_nif
                   nif-versions: "2.16,2.17"
                   targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu,x86_64-unknown-linux-musl,aarch64-unknown-linux-musl,aarch64-apple-darwin,x86_64-apple-darwin,x86_64-pc-windows-msvc
-                  output-path: packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
+                  output-path: packages/elixir/checksum-Elixir.Crawlberg.Native.exs
                   token: ${{ steps.app-token.outputs.token }}
 
             - name: Commit updated checksum file to main
@@ -2179,13 +2179,13 @@ jobs:
               run: |
                   git config user.name "kreuzberg-dev-publisher[bot]"
                   git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
-                  git add packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
+                  git add packages/elixir/checksum-Elixir.Crawlberg.Native.exs
                   if git diff --cached --quiet; then
                     echo "No checksum changes to commit — skipping"
                     exit 0
                   fi
                   CHECKSUM_SNAPSHOT="$(mktemp)"
-                  cp packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs "$CHECKSUM_SNAPSHOT"
+                  cp packages/elixir/checksum-Elixir.Crawlberg.Native.exs "$CHECKSUM_SNAPSHOT"
                   git commit -m "chore: update Elixir NIF checksums for v${{ needs.prepare.outputs.version }}"
                   for i in 1 2 3 4 5; do
                     if git push origin HEAD:refs/heads/main; then
@@ -2199,8 +2199,8 @@ jobs:
                     fi
                     git fetch origin main
                     git reset --hard origin/main
-                    cp "$CHECKSUM_SNAPSHOT" packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
-                    git add packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
+                    cp "$CHECKSUM_SNAPSHOT" packages/elixir/checksum-Elixir.Crawlberg.Native.exs
+                    git add packages/elixir/checksum-Elixir.Crawlberg.Native.exs
                     if git diff --cached --quiet; then
                       echo "Remote already has these checksums — done"
                       exit 0
@@ -2260,8 +2260,8 @@ jobs:
 
             - uses: xberg-io/actions/build-android-natives@v1
               with:
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
                   abis: ${{ matrix.abi }}
 
             - uses: actions/upload-artifact@v7
@@ -2292,7 +2292,7 @@ jobs:
                     src="kotlin-android-natives/kotlin-android-${abi}"
                     [ -d "$src" ] || continue
                     mkdir -p "packages/kotlin-android/src/main/jniLibs/${abi}"
-                    cp -v "${src}/libkreuzcrawl_ffi.so" \
+                    cp -v "${src}/libcrawlberg_ffi.so" \
                           "packages/kotlin-android/src/main/jniLibs/${abi}/"
                   done
               shell: bash
@@ -2354,10 +2354,10 @@ jobs:
                   )
                   out="ffi-artifacts"
                   mkdir -p "$out/include"
-                  for art in dist/c-ffi-downloaded/*/kreuzcrawl-ffi-v"${VERSION}"-*.tar.gz; do
+                  for art in dist/c-ffi-downloaded/*/crawlberg-ffi-v"${VERSION}"-*.tar.gz; do
                     [ -f "$art" ] || continue
                     target=$(basename "$art" .tar.gz)
-                    target="${target#kreuzcrawl-ffi-v"${VERSION}"-}"
+                    target="${target#crawlberg-ffi-v"${VERSION}"-}"
                     rid="${RID_FOR[$target]:-}"
                     if [ -z "$rid" ]; then
                       echo "::warning::Unknown target $target — skipping"
@@ -2378,19 +2378,19 @@ jobs:
               with:
                   working-directory: packages/zig
                   tag: ${{ needs.prepare.outputs.tag }}
-                  # Override the auto-detected package-name (`kreuzcrawl` from
+                  # Override the auto-detected package-name (`crawlberg` from
                   # build.zig.zon) to match the alef-emitted test_app URL pattern
                   # `{crate-name}-zig-v{version}.tar.gz`. Without this, the asset
-                  # uploads as `kreuzcrawl-v{version}.tar.gz` while test_apps/zig
-                  # fetches `kreuzcrawl-zig-v{version}.tar.gz` → 404 + consumer
+                  # uploads as `crawlberg-v{version}.tar.gz` while test_apps/zig
+                  # fetches `crawlberg-zig-v{version}.tar.gz` → 404 + consumer
                   # build.zig.zon TODO hash.
-                  package-name: kreuzcrawl-zig
+                  package-name: crawlberg-zig
                   # Bundle per-target FFI libraries + header into the published
                   # tarball so consumers can `zig fetch --save` and link without
                   # downloading anything else.
                   multi-platform-ffi-dir: ffi-artifacts
-                  module-name: kreuzcrawl
-                  ffi-lib-name: kreuzcrawl_ffi
+                  module-name: crawlberg
+                  ffi-lib-name: crawlberg_ffi
                   update-release-notes: "true"
                   update-existing: "true"
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -2464,8 +2464,8 @@ jobs:
                     echo "No formula changes; skipping commit."
                     exit 0
                   fi
-                  git add Formula/kreuzcrawl.rb
-                  git commit -m "kreuzcrawl ${{ needs.prepare.outputs.version }}"
+                  git add Formula/crawlberg.rb
+                  git commit -m "crawlberg ${{ needs.prepare.outputs.version }}"
                   git push origin HEAD
 
     homebrew-bottles:
@@ -2516,7 +2516,7 @@ jobs:
                   version: ${{ needs.prepare.outputs.version }}
                   tap: xberg-io/homebrew-tap
                   formulas: |
-                      kreuzcrawl
+                      crawlberg
                   out-dir: ${{ github.workspace }}/bottle-json
                   github-repo: ${{ github.repository }}
                   token: ${{ steps.app-token.outputs.token }}
@@ -2576,7 +2576,7 @@ jobs:
                   tap-dir: ${{ github.workspace }}/homebrew-tap
                   json-dir: ${{ github.workspace }}/bottle-json
                   formulas: |
-                      kreuzcrawl
+                      crawlberg
                   github-repo: ${{ github.repository }}
 
             - name: Commit and push bottle DSL
@@ -2591,8 +2591,8 @@ jobs:
                     echo "No bottle DSL changes; skipping commit."
                     exit 0
                   fi
-                  git add Formula/kreuzcrawl.rb
-                  git commit -m "kreuzcrawl ${{ needs.prepare.outputs.version }} bottles"
+                  git add Formula/crawlberg.rb
+                  git commit -m "crawlberg ${{ needs.prepare.outputs.version }} bottles"
                   git push origin HEAD
 
     # ─── Finalization ─────────────────────────────────────────────────────
@@ -2690,7 +2690,7 @@ jobs:
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  project-name: kreuzcrawl
+                  project-name: crawlberg
                   token: ${{ steps.app-token.outputs.token }}
 
     cli-proxy:

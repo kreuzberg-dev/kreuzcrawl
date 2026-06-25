@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_rate_limit_adaptive_backoff(void) {
     /* Exponential backoff retry succeeds after 429 Too Many Requests */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_RATE_LIMIT_ADAPTIVE_BACKOFF");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,20 +30,20 @@ void test_rate_limit_adaptive_backoff(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/rate_limit_adaptive_backoff", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_rate_limit_basic_delay(void) {
     /* Rate limiter adds delay between requests to the same domain */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_RATE_LIMIT_BASIC_DELAY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -54,17 +54,17 @@ void test_rate_limit_basic_delay(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/rate_limit_basic_delay", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_rate_limit_per_domain(void) {
     /* Per-domain rate limiting applies delay between requests to same domain */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_RATE_LIMIT_PER_DOMAIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -75,9 +75,9 @@ void test_rate_limit_per_domain(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/rate_limit_per_domain", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     char* pages_0_json = alef_json_array_get_index(pages_json, 0);
     char* pages_0_status_code = alef_json_get_string(pages_0_json, "status_code");
@@ -85,17 +85,17 @@ void test_rate_limit_per_domain(void) {
     assert(pages_0_status_code != NULL && atoll(pages_0_status_code) == 200 && "equals assertion failed");
     free(pages_0_status_code);
     free(pages_0_json);
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_rate_limit_robots_crawl_delay(void) {
     /* Respects Crawl-delay directive in robots.txt */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":true,\"user_agent\":\"TestBot\"}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":true,\"user_agent\":\"TestBot\"}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_RATE_LIMIT_ROBOTS_CRAWL_DELAY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -106,9 +106,9 @@ void test_rate_limit_robots_crawl_delay(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/rate_limit_robots_crawl_delay", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     char* pages_0_json = alef_json_array_get_index(pages_json, 0);
     char* pages_0_status_code = alef_json_get_string(pages_0_json, "status_code");
@@ -116,17 +116,17 @@ void test_rate_limit_robots_crawl_delay(void) {
     assert(pages_0_status_code != NULL && atoll(pages_0_status_code) == 200 && "equals assertion failed");
     free(pages_0_status_code);
     free(pages_0_json);
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_rate_limit_zero_no_delay(void) {
     /* Rate limiter with zero delay does not slow crawling */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_RATE_LIMIT_ZERO_NO_DELAY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -137,7 +137,7 @@ void test_rate_limit_zero_no_delay(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/rate_limit_zero_no_delay", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

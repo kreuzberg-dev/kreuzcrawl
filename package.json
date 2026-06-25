@@ -1,9 +1,9 @@
 {
-	"name": "kreuzcrawl-root",
+	"name": "crawlberg-root",
 	"version": "0.3.0",
 	"private": true,
 	"devDependencies": {
-		"@kreuzberg/kreuzcrawl": "workspace:*",
+		"@kreuzberg/crawlberg": "workspace:*",
 		"@napi-rs/cli": "^3.7.1",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.8"

@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: rate_limit.</summary>
     public class RateLimitTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // Exponential backoff retry succeeds after 429 Too Many Requests
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/rate_limit_adaptive_backoff";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }
@@ -39,10 +39,10 @@ namespace Kreuzcrawl
         {
             // Rate limiter adds delay between requests to the same domain
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_RATE_LIMIT_BASIC_DELAY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/rate_limit_basic_delay";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'rate_limit.min_duration_ms' not available on result type
         }
 
@@ -51,10 +51,10 @@ namespace Kreuzcrawl
         {
             // Per-domain rate limiting applies delay between requests to same domain
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_RATE_LIMIT_PER_DOMAIN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/rate_limit_per_domain";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
     Assert.True(result.Pages[0].StatusCode == 200);
 
@@ -65,10 +65,10 @@ namespace Kreuzcrawl
         {
             // Respects Crawl-delay directive in robots.txt
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":true,\"user_agent\":\"TestBot\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_RATE_LIMIT_ROBOTS_CRAWL_DELAY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/rate_limit_robots_crawl_delay";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 1, "expected >= 1");
     Assert.True(result.Pages[0].StatusCode == 200);
 
@@ -79,10 +79,10 @@ namespace Kreuzcrawl
         {
             // Rate limiter with zero delay does not slow crawling
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_RATE_LIMIT_ZERO_NO_DELAY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/rate_limit_zero_no_delay";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type
         }
 

@@ -8,9 +8,9 @@ defmodule E2e.ContentTest do
 
   describe "content_204_no_content" do
     test "content_204_no_content" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_204_no_content"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 204
       assert is_nil(result.html) or String.trim(result.html) == ""
     end
@@ -19,9 +19,9 @@ defmodule E2e.ContentTest do
   describe "content_charset_iso8859" do
     test "content_charset_iso8859" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_charset_iso8859"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.detected_charset) == "iso-8859-1"
     end
   end
@@ -29,9 +29,9 @@ defmodule E2e.ContentTest do
   describe "content_empty_body" do
     test "content_empty_body" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_empty_body"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
     end
   end
@@ -39,9 +39,9 @@ defmodule E2e.ContentTest do
   describe "content_gzip_compressed" do
     test "content_gzip_compressed" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_gzip_compressed"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
       assert result.status_code == 200
     end
@@ -50,9 +50,9 @@ defmodule E2e.ContentTest do
   describe "content_large_page_limit" do
     test "content_large_page_limit" do
       engine_config = "{\"max_body_size\":1024,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_large_page_limit"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.body_size < 1025
     end
   end
@@ -60,18 +60,18 @@ defmodule E2e.ContentTest do
   describe "content_main_only" do
     test "content_main_only" do
       engine_config = "{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_main_only"
-      {:ok, _result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, _result} = Crawlberg.scrape_async(engine, url)
     end
   end
 
   describe "content_pdf_no_extension" do
     test "content_pdf_no_extension" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_pdf_no_extension"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_pdf == true
     end
   end
@@ -79,9 +79,9 @@ defmodule E2e.ContentTest do
   describe "content_remove_tags" do
     test "content_remove_tags" do
       engine_config = "{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_remove_tags"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
     end
   end
@@ -89,9 +89,9 @@ defmodule E2e.ContentTest do
   describe "content_utf8_bom" do
     test "content_utf8_bom" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/content_utf8_bom"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.detected_charset) == "utf-8"
       assert result.html != ""
     end

@@ -15,7 +15,7 @@
 		"status": 302,
 		"body": "",
 		"headers": {
-			"location": "http://this-hostname-does-not-exist-kreuzcrawl-test.invalid/"
+			"location": "http://this-hostname-does-not-exist-crawlberg-test.invalid/"
 		}
 	}
 }

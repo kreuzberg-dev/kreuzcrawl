@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "filter_bm25_crawl_integration" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_BM25_CRAWL_INTEGRATION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_bm25_crawl_integration", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -41,7 +41,7 @@ test "filter_bm25_empty_query" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_BM25_EMPTY_QUERY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_bm25_empty_query", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -54,7 +54,7 @@ test "filter_bm25_high_threshold" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_BM25_HIGH_THRESHOLD")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_bm25_high_threshold", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.scrape("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -67,7 +67,7 @@ test "filter_bm25_relevant_pages" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_BM25_RELEVANT_PAGES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_bm25_relevant_pages", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.scrape("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -80,7 +80,7 @@ test "filter_bm25_threshold_zero" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_BM25_THRESHOLD_ZERO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_bm25_threshold_zero", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -93,7 +93,7 @@ test "filter_noop_crawl_all_kept" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_NOOP_CRAWL_ALL_KEPT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_noop_crawl_all_kept", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -106,6 +106,6 @@ test "filter_noop_passes_all" {
 
     const url = if (std.c.getenv("MOCK_SERVER_FILTER_NOOP_PASSES_ALL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/filter_noop_passes_all", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }

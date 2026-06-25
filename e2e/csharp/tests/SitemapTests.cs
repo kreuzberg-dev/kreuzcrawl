@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: sitemap.</summary>
     public class SitemapTests
@@ -26,9 +26,9 @@ namespace Kreuzcrawl
         public async Task Test_SitemapBasic()
         {
             // Parses a standard urlset sitemap
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_basic";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 4);
 
         }
@@ -38,9 +38,9 @@ namespace Kreuzcrawl
         {
             // Parses a gzip-compressed sitemap file
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_compressed_gzip";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 3);
 
         }
@@ -49,9 +49,9 @@ namespace Kreuzcrawl
         public async Task Test_SitemapEmpty()
         {
             // Handles empty sitemap gracefully
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_empty";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 0);
 
         }
@@ -61,10 +61,10 @@ namespace Kreuzcrawl
         {
             // Discovers sitemap via robots.txt Sitemap directive
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_from_robots_txt";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 4);
 
         }
@@ -73,10 +73,10 @@ namespace Kreuzcrawl
         public async Task Test_SitemapIndex()
         {
             // Follows sitemap index to discover child sitemaps
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_SITEMAP_INDEX");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_index";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 3);
 
         }
@@ -86,9 +86,9 @@ namespace Kreuzcrawl
         {
             // Filters sitemap URLs by lastmod date
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_lastmod_filter";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 4);
 
         }
@@ -98,9 +98,9 @@ namespace Kreuzcrawl
         {
             // Uses sitemap URLs exclusively without following page links
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_only_mode";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 4);
 
         }
@@ -110,9 +110,9 @@ namespace Kreuzcrawl
         {
             // Parses sitemap with XHTML namespace alternate links
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_xhtml_links";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 2);
 
         }

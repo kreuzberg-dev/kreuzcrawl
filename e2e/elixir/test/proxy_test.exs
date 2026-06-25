@@ -9,9 +9,9 @@ defmodule E2e.ProxyTest do
   describe "proxy_authenticated" do
     test "proxy_authenticated" do
       engine_config = "{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/proxy_authenticated"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) == 0
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.ProxyTest do
   describe "proxy_basic_success" do
     test "proxy_basic_success" do
       engine_config = "{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/proxy_basic_success"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) == 0
     end
   end

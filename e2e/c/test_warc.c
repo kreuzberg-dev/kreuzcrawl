@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_warc_basic_output(void) {
     /* Scrape single page with WARC output enabled writes to file */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_test.warc\"}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_WARC_BASIC_OUTPUT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,9 +30,9 @@ void test_warc_basic_output(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/warc_basic_output", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     assert(pages_json != NULL);
     char* pages_0_json = alef_json_array_get_index(pages_json, 0);
     char* pages_0_status_code = alef_json_get_string(pages_0_json, "status_code");
@@ -41,17 +41,17 @@ void test_warc_basic_output(void) {
     assert(pages_length == 1 && "equals assertion failed");
     free(pages_0_status_code);
     free(pages_0_json);
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_warc_multi_page_crawl(void) {
     /* Crawl multiple pages with depth=1 and WARC output enabled */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_crawl.warc\"}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_WARC_MULTI_PAGE_CRAWL");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -62,14 +62,14 @@ void test_warc_multi_page_crawl(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/warc_multi_page_crawl", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length >= 2 && "expected greater than or equal");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

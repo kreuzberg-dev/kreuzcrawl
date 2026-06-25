@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: engine.</summary>
     public class EngineTests
@@ -26,9 +26,9 @@ namespace Kreuzcrawl
         public async Task Test_EngineBatchBasic()
         {
             // CrawlEngine with defaults batch scrapes like the free function
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_batch_basic";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
             // skipped: field 'batch.completed_count' not available on result type        // skipped: field 'batch.total_count' not available on result type
         }
 
@@ -37,10 +37,10 @@ namespace Kreuzcrawl
         {
             // CrawlEngine with defaults crawls multiple pages like the free function
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENGINE_CRAWL_BASIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_crawl_basic";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'crawl.min_pages' not available on result type
         }
 
@@ -48,10 +48,10 @@ namespace Kreuzcrawl
         public async Task Test_EngineMapBasic()
         {
             // CrawlEngine with defaults discovers URLs like the free function
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENGINE_MAP_BASIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_map_basic";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
             // skipped: field 'map.min_urls' not available on result type
         }
 
@@ -59,10 +59,10 @@ namespace Kreuzcrawl
         public async Task Test_EngineScrapeBasic()
         {
             // CrawlEngine with defaults scrapes a page identically to the free function
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENGINE_SCRAPE_BASIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_scrape_basic";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
     Assert.Equal("text/html", result.ContentType!.Trim());
     Assert.Equal("Engine Test", result.Metadata.Title!.Trim());
@@ -77,13 +77,13 @@ namespace Kreuzcrawl
         {
             // CrawlEngine with defaults streams events like the free function
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENGINE_STREAM_BASIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_stream_basic";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }

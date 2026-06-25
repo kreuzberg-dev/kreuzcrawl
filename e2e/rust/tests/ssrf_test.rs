@@ -6,8 +6,8 @@
 // fixtures/validation/validation_ssrf_loopback_denied.json and run
 // `task alef:generate` to replace this file with alef-generated output.
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::scrape;
+use crawlberg::create_engine;
+use crawlberg::scrape;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -25,10 +25,10 @@ const LOOPBACK_URL: &str = "http://127.0.0.1:9/";
 ///
 /// SAFETY: tests in this file are `#[tokio::test]` flavoured but the env
 /// mutation runs before any worker thread or engine inspects the variable;
-/// no other test in this binary reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK`.
+/// no other test in this binary reads `CRAWLBERG_ALLOW_PRIVATE_NETWORK`.
 fn clear_ssrf_bypass() {
     // SAFETY: see fn-level doc.
-    unsafe { std::env::remove_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") };
+    unsafe { std::env::remove_var("CRAWLBERG_ALLOW_PRIVATE_NETWORK") };
 }
 
 #[tokio::test]

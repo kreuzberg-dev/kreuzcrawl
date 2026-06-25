@@ -9,7 +9,7 @@ set -euo pipefail
 test_proxy_authenticated() {
   # Proxy with username and password credentials authenticates successfully
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_PROXY_AUTHENTICATED:-${MOCK_SERVER_URL}/fixtures/proxy_authenticated}" --config '{"proxy":{"password":"proxypass","url":"http://127.0.0.1:8889","username":"proxyuser"},"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_PROXY_AUTHENTICATED:-${MOCK_SERVER_URL}/fixtures/proxy_authenticated}" --config '{"proxy":{"password":"proxypass","url":"http://127.0.0.1:8889","username":"proxyuser"},"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -19,7 +19,7 @@ test_proxy_authenticated() {
 test_proxy_basic_success() {
   # Configure proxy URL and successfully crawl through it
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_PROXY_BASIC_SUCCESS:-${MOCK_SERVER_URL}/fixtures/proxy_basic_success}" --config '{"proxy":{"url":"http://127.0.0.1:8888"},"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_PROXY_BASIC_SUCCESS:-${MOCK_SERVER_URL}/fixtures/proxy_basic_success}" --config '{"proxy":{"url":"http://127.0.0.1:8888"},"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')

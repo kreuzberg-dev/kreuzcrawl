@@ -6,15 +6,15 @@
 // and run `task alef:generate` to replace this file with alef-generated output.
 
 import { beforeAll, describe, expect, it } from "vitest";
-import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
+import { scrape, createEngine } from "@kreuzberg/crawlberg";
 
 // SSRF rejection tests must observe the *default* policy
 // (deny_private=true). All other e2e tests opt in to
-// KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true so they can reach the loopback
+// CRAWLBERG_ALLOW_PRIVATE_NETWORK=true so they can reach the loopback
 // mock-server; that override would defeat these assertions, so clear it
 // before constructing any engine in this file.
 beforeAll(() => {
-	delete process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK;
+	delete process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK;
 });
 
 // Port 9 (discard) is deliberately chosen: SSRF policy rejects the URL

@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,74 +165,74 @@ void main() {
   });
 
   test('Handles 204 No Content response gracefully', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("content_204_no_content");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(204));
     expect(result.html, anyOf(isNull, isEmpty));
   });
 
   test('Handles ISO-8859-1 encoded page correctly', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_charset_iso8859");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.detectedCharset.toString().trim(), equals('iso-8859-1'.toString().trim()));
   });
 
   test('Handles 200 response with empty body gracefully', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_empty_body");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
   });
 
   test('Handles response with Accept-Encoding gzip negotiation', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_gzip_compressed");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.html, isNotNull);
     expect(result.statusCode, equals(200));
   });
 
   test('Respects max body size limit and truncates or skips oversized pages', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_body_size":1024,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_large_page_limit");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.bodySize, lessThan(1025));
   });
 
   test('Extracts content with aggressive preprocessing, excluding nav, sidebar, footer', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"content":{"preprocessing_preset":"aggressive"},"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_main_only");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
   });
 
   test('Detects PDF content by Content-Type header when URL has no .pdf extension', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_pdf_no_extension");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isPdf, equals(true));
   });
 
   test('Removes specified HTML elements by CSS selector before processing', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"remove_tags":["nav","aside","footer"],"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_remove_tags");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.html, isNotNull);
   });
 
   test('Handles UTF-8 content with BOM marker correctly', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_utf8_bom");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.detectedCharset.toString().trim(), equals('utf-8'.toString().trim()));
     expect(result.html, isNotNull);
   });

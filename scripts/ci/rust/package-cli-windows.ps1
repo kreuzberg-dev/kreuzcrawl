@@ -14,6 +14,6 @@ $ErrorActionPreference = 'Stop'
 Write-Host "=== Packaging CLI binary for $Target ==="
 
 cd target/$Target/release
-Compress-Archive -Path kreuzcrawl.exe -DestinationPath ../../../kreuzcrawl-cli-$Target.zip
+Compress-Archive -Path crawlberg.exe -DestinationPath ../../../crawlberg-cli-$Target.zip
 
-Write-Host "Packaging complete: kreuzcrawl-cli-$Target.zip"
+Write-Host "Packaging complete: crawlberg-cli-$Target.zip"

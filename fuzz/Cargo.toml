@@ -1,5 +1,5 @@
 [package]
-name = "kreuzcrawl-fuzz"
+name = "crawlberg-fuzz"
 version = "0.0.0"
 edition = "2024"
 publish = false
@@ -24,5 +24,5 @@ doc = false
 test = false
 
 [dependencies]
-kreuzcrawl = { path = "../crates/kreuzcrawl" }
+crawlberg = { path = "../crates/crawlberg" }
 libfuzzer-sys = "0.4"

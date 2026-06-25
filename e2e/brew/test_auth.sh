@@ -9,7 +9,7 @@ set -euo pipefail
 test_auth_basic_http() {
   # Sends HTTP Basic authentication header
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_AUTH_BASIC_HTTP:-${MOCK_SERVER_URL}/fixtures/auth_basic_http}" --config '{"auth":{"password":"testpass","type":"basic","username":"testuser"},"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_AUTH_BASIC_HTTP:-${MOCK_SERVER_URL}/fixtures/auth_basic_http}" --config '{"auth":{"password":"testpass","type":"basic","username":"testuser"},"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_auth_header_sent
   val_auth_header_sent=$(echo "$output" | jq -r '.auth_header_sent')
@@ -22,7 +22,7 @@ test_auth_basic_http() {
 test_auth_bearer_token() {
   # Sends Bearer token in Authorization header
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_AUTH_BEARER_TOKEN:-${MOCK_SERVER_URL}/fixtures/auth_bearer_token}" --config '{"auth":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test","type":"bearer"},"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_AUTH_BEARER_TOKEN:-${MOCK_SERVER_URL}/fixtures/auth_bearer_token}" --config '{"auth":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test","type":"bearer"},"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_auth_header_sent
   val_auth_header_sent=$(echo "$output" | jq -r '.auth_header_sent')
@@ -35,7 +35,7 @@ test_auth_bearer_token() {
 test_auth_custom_header() {
   # Sends authentication via custom header (X-API-Key)
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_AUTH_CUSTOM_HEADER:-${MOCK_SERVER_URL}/fixtures/auth_custom_header}" --config '{"auth":{"name":"X-API-Key","type":"header","value":"sk-test-key-12345"},"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_AUTH_CUSTOM_HEADER:-${MOCK_SERVER_URL}/fixtures/auth_custom_header}" --config '{"auth":{"name":"X-API-Key","type":"header","value":"sk-test-key-12345"},"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_auth_header_sent
   val_auth_header_sent=$(echo "$output" | jq -r '.auth_header_sent')

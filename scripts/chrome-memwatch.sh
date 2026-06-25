@@ -14,7 +14,7 @@
 #     keep this signal-only. SESSION-START / SESSION-END (clean) traces go to
 #     the log file rather than the chat to avoid drowning real alerts when
 #     the rust binary or task runner triggers transient pattern matches.
-#   - $LOG_FILE (default /tmp/kreuzcrawl-chrome-memwatch.log): every sample
+#   - $LOG_FILE (default /tmp/crawlberg-chrome-memwatch.log): every sample
 #     plus every session boundary, for postmortem trend analysis.
 #
 # Leak signal: when a tagged session ends with helper count noticeably above
@@ -26,7 +26,7 @@ set -u
 
 # Default log path is at the repo root (one level above this script) so CI
 # can archive it as a build artifact via a predictable relative path. The
-# file is gitignored — see kreuzcrawl/.gitignore. Override with LOG_FILE=…
+# file is gitignored — see crawlberg/.gitignore. Override with LOG_FILE=…
 # if you want to redirect (e.g. /tmp during ad-hoc debugging).
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_LOG="$SCRIPT_DIR/../chrome-memwatch.log"

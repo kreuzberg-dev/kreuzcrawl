@@ -1,13 +1,13 @@
 # Configuration
 
-All kreuzcrawl operations are controlled through `CrawlConfig`. This guide covers every public field, its default value, and validation rules.
+All crawlberg operations are controlled through `CrawlConfig`. This guide covers every public field, its default value, and validation rules.
 
 ## Constructing an engine
 
 Pass a `CrawlConfig` to `create_engine`, then call `scrape` / `crawl` / `map_urls` / `batch_scrape` / `batch_crawl` against the returned handle:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, create_engine};
+use crawlberg::{CrawlConfig, create_engine};
 
 let engine = create_engine(Some(CrawlConfig {
     max_depth: Some(3),
@@ -26,7 +26,7 @@ let engine = create_engine(Some(CrawlConfig {
 For most use cases, `create_engine` plus one of the top-level async functions is all you need:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, create_engine, scrape, crawl, map_urls};
+use crawlberg::{CrawlConfig, create_engine, scrape, crawl, map_urls};
 
 let engine = create_engine(Some(CrawlConfig {
     max_depth: Some(2),
@@ -43,7 +43,7 @@ Passing `None` to `create_engine` uses `CrawlConfig::default()`.
 For scraping or crawling multiple URLs in one go, use the batch variants. Each URL runs concurrently; failures are captured per-URL rather than bubbling up as an error:
 
 ```rust
-use kreuzcrawl::{create_engine, batch_scrape, batch_crawl};
+use crawlberg::{create_engine, batch_scrape, batch_crawl};
 
 let engine = create_engine(None)?;
 
@@ -167,7 +167,7 @@ For per-request proxy selection or custom rotation logic, implement or compose a
 
 ```rust
 use std::sync::Arc;
-use kreuzcrawl::{ProxyConfig, StaticProxyProvider, CrawlEngineBuilder};
+use crawlberg::{ProxyConfig, StaticProxyProvider, CrawlEngineBuilder};
 
 // Baseline: round-robin pool of proxies.
 let pool = StaticProxyProvider::new(vec![

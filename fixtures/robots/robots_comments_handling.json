@@ -23,7 +23,7 @@
 		],
 		"config": {
 			"respect_robots_txt": true,
-			"user_agent": "kreuzcrawl"
+			"user_agent": "crawlberg"
 		}
 	},
 	"assertions": [

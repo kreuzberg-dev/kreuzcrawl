@@ -9,7 +9,7 @@ set -euo pipefail
 test_stealth_ua_rotation_config() {
   # User-agent rotation config is accepted and crawl succeeds
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_STEALTH_UA_ROTATION_CONFIG:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_config}" --config '{"user_agents":["Mozilla/5.0 (Windows NT 10.0)","Chrome/120.0.0.0"]}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_STEALTH_UA_ROTATION_CONFIG:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_config}" --config '{"user_agents":["Mozilla/5.0 (Windows NT 10.0)","Chrome/120.0.0.0"]}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -19,7 +19,7 @@ test_stealth_ua_rotation_config() {
 test_stealth_ua_rotation_round_robin() {
   # User-agent rotation cycles through multiple agents across multiple requests
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_round_robin}" --config '{"max_depth":1,"max_pages":3,"user_agents":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2"]}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_round_robin}" --config '{"max_depth":1,"max_pages":3,"user_agents":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2"]}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -29,7 +29,7 @@ test_stealth_ua_rotation_round_robin() {
 test_stealth_ua_rotation_single_domain() {
   # Custom user-agent string is applied for single domain crawl
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_STEALTH_UA_ROTATION_SINGLE_DOMAIN:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_single_domain}" --config '{"max_depth":0,"stay_on_domain":true,"user_agents":["Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"]}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_STEALTH_UA_ROTATION_SINGLE_DOMAIN:-${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_single_domain}" --config '{"max_depth":0,"stay_on_domain":true,"user_agents":["Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"]}' --format json --browser-mode never)
 
   local val_pages_0__status_code
   val_pages_0__status_code=$(echo "$output" | jq -r '.pages[0].status_code')

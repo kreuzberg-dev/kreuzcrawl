@@ -1,10 +1,10 @@
-module github.com/xberg-io/kreuzcrawl/packages/go/e2e
+module github.com/xberg-io/crawlberg/packages/go/e2e
 
 go 1.26
 
 require (
-	github.com/xberg-io/kreuzcrawl/packages/go v0.3.0
+	github.com/xberg-io/crawlberg/packages/go v0.3.0
 	github.com/stretchr/testify v1.11.1
 )
 
-replace github.com/xberg-io/kreuzcrawl/packages/go => ../../packages/go
+replace github.com/xberg-io/crawlberg/packages/go => ../../packages/go

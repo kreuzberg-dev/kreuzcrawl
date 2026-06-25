@@ -1,17 +1,17 @@
-//! Native kreuzcrawl adapter — drives the Rust core library directly.
+//! Native crawlberg adapter — drives the Rust core library directly.
 
 use std::time::Duration;
 
 use async_trait::async_trait;
-use kreuzcrawl::{CrawlConfig, CrawlEngineHandle, create_engine};
+use crawlberg::{CrawlConfig, CrawlEngineHandle, create_engine};
 
 use crate::Result;
 use crate::adapter::{ScrapeAdapter, ScrapeInput, ScrapeOutput};
 
-/// Adapter that calls the native kreuzcrawl scraping engine in-process.
+/// Adapter that calls the native crawlberg scraping engine in-process.
 ///
-/// This adapter uses the public binding API (`kreuzcrawl::scrape` /
-/// `kreuzcrawl::batch_scrape`) so it exercises the same code path as every
+/// This adapter uses the public binding API (`crawlberg::scrape` /
+/// `crawlberg::batch_scrape`) so it exercises the same code path as every
 /// language binding.
 pub struct NativeAdapter {
     engine: CrawlEngineHandle,
@@ -34,7 +34,7 @@ impl NativeAdapter {
 #[async_trait]
 impl ScrapeAdapter for NativeAdapter {
     fn name(&self) -> &str {
-        "kreuzcrawl-native"
+        "crawlberg-native"
     }
 
     fn version(&self) -> String {
@@ -54,7 +54,7 @@ impl ScrapeAdapter for NativeAdapter {
     /// in cached mode the runner remaps URLs to a localhost server so the
     /// engine fetches pages normally.
     async fn scrape(&self, url: &str, _cached_html: Option<&str>, timeout: Duration) -> Result<ScrapeOutput> {
-        let result = tokio::time::timeout(timeout, kreuzcrawl::scrape(&self.engine, url))
+        let result = tokio::time::timeout(timeout, crawlberg::scrape(&self.engine, url))
             .await
             .map_err(|_| crate::Error::Adapter(format!("scrape timed out after {timeout:?}")))?
             .map_err(|e| crate::Error::Adapter(format!("scrape failed: {e}")))?;
@@ -86,11 +86,11 @@ impl ScrapeAdapter for NativeAdapter {
 
         let urls: Vec<String> = entries.iter().map(|e| e.url.clone()).collect();
 
-        // `kreuzcrawl::batch_scrape` rejects empty input but is otherwise
+        // `crawlberg::batch_scrape` rejects empty input but is otherwise
         // infallible at the batch level — each entry carries its own
         // `Option<error>`. The internal CrawlConfig timeout applies per-request,
         // so no outer timeout wrapper is needed.
-        let batch_results = kreuzcrawl::batch_scrape(&self.engine, urls)
+        let batch_results = crawlberg::batch_scrape(&self.engine, urls)
             .await
             .map_err(|e| crate::error::Error::Adapter(format!("batch_scrape failed: {e}")))?;
 
@@ -119,8 +119,8 @@ impl ScrapeAdapter for NativeAdapter {
     }
 }
 
-/// Convert a [`kreuzcrawl::ScrapeResult`] into the harness [`ScrapeOutput`].
-fn scrape_result_to_output(result: kreuzcrawl::ScrapeResult) -> ScrapeOutput {
+/// Convert a [`crawlberg::ScrapeResult`] into the harness [`ScrapeOutput`].
+fn scrape_result_to_output(result: crawlberg::ScrapeResult) -> ScrapeOutput {
     let content = result.markdown.map(|m| m.content);
     ScrapeOutput {
         status_code: result.status_code,

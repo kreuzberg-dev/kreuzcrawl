@@ -5,9 +5,9 @@
 # To verify freshness: alef verify --exit-code
 set -euo pipefail
 
-REPO_URL="https://github.com/xberg-io/kreuzcrawl"
+REPO_URL="https://github.com/xberg-io/crawlberg"
 VERSION="0.3.0"
-FFI_PKG_NAME="kreuzcrawl_ffi"
+FFI_PKG_NAME="crawlberg_ffi"
 FFI_DIR="ffi"
 
 # Detect OS and architecture.

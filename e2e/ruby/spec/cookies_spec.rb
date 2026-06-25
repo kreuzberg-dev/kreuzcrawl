@@ -5,7 +5,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'cookies' do
@@ -17,9 +17,9 @@ RSpec.describe 'cookies' do
   end
   it 'cookies_per_domain: Isolates cookies per domain during crawl' do
     engine_config = { 'cookies_enabled' => true, 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_COOKIES_PER_DOMAIN', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/cookies_per_domain"
-    result = Kreuzcrawl.crawl_async(engine, url)
+    result = Crawlberg.crawl_async(engine, url)
     expect(result.cookies.length).to eq(1)
     expect(result.cookies.any? { |item| alef_e2e_item_texts(item).any? { |t| t.include?('domain_cookie') } }).to be(true)
 
@@ -27,18 +27,18 @@ RSpec.describe 'cookies' do
 
   it 'cookies_persistence: Maintains cookies across multiple crawl requests' do
     engine_config = { 'cookies_enabled' => true, 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_COOKIES_PERSISTENCE', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/cookies_persistence"
-    result = Kreuzcrawl.crawl_async(engine, url)
+    result = Crawlberg.crawl_async(engine, url)
     expect(result.cookies.any? { |item| alef_e2e_item_texts(item).any? { |t| t.include?('session') } }).to be(true)
 
   end
 
   it 'cookies_set_cookie_response: Respects Set-Cookie header from server responses' do
     engine_config = { 'cookies_enabled' => true, 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/cookies_set_cookie_response"
-    result = Kreuzcrawl.crawl_async(engine, url)
+    result = Crawlberg.crawl_async(engine, url)
     expect(result.cookies.any? { |item| alef_e2e_item_texts(item).any? { |t| t.include?('tracking') } }).to be(true)
 
   end

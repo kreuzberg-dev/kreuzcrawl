@@ -1,6 +1,6 @@
 # Browser Automation
 
-Kreuzcrawl includes browser-backed rendering for JavaScript-heavy pages. The `browser` feature enables the Chromiumoxide CDP backend; `browser-native` enables the in-process native backend with `BrowserExtras` and network-event capture.
+Crawlberg includes browser-backed rendering for JavaScript-heavy pages. The `browser` feature enables the Chromiumoxide CDP backend; `browser-native` enables the in-process native backend with `BrowserExtras` and network-event capture.
 
 ## Browser modes
 
@@ -8,7 +8,7 @@ The `BrowserMode` enum controls when the headless browser is used instead of a p
 
 | Mode             | Behaviour                                                                                                                                                     |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Auto` (default) | Kreuzcrawl first tries an HTTP fetch. If the response looks like it needs JS rendering (e.g. WAF challenge page), it automatically falls back to the browser. |
+| `Auto` (default) | Crawlberg first tries an HTTP fetch. If the response looks like it needs JS rendering (e.g. WAF challenge page), it automatically falls back to the browser. |
 | `Always`         | Every request goes through the headless browser. Useful for single-page applications or sites that rely entirely on client-side rendering.                    |
 | `Never`          | The browser is never launched. Only plain HTTP fetches are performed.                                                                                         |
 | `Stealth`        | Every request goes through the browser tier with stealth surfaces enabled.                                                                                    |
@@ -16,10 +16,10 @@ The `BrowserMode` enum controls when the headless browser is used instead of a p
 Set the mode in `CrawlConfig`:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, BrowserMode};
+use crawlberg::{CrawlConfig, BrowserMode};
 
 let config = CrawlConfig {
-    browser: kreuzcrawl::BrowserConfig {
+    browser: crawlberg::BrowserConfig {
         mode: BrowserMode::Always,
         ..Default::default()
     },
@@ -37,7 +37,7 @@ Choose the backend with `BrowserConfig::backend`:
 | `BrowserBackend::Native` | `browser-native` | Uses the in-process native backend. Supports `block_url_patterns`, `eval_script` scrape results, `robots_user_agent`, `capture_network_events`, and `BrowserExtras`. |
 
 ```rust
-use kreuzcrawl::{BrowserBackend, BrowserConfig, BrowserMode, CrawlConfig};
+use crawlberg::{BrowserBackend, BrowserConfig, BrowserMode, CrawlConfig};
 
 let config = CrawlConfig {
     browser: BrowserConfig {
@@ -63,7 +63,7 @@ The Chromiumoxide backend keeps a Chrome instance alive across requests; tabs ar
 For long-lived Rust processes (e.g. a worker service handling many crawl jobs), amortise Chrome startup cost by constructing and warming a shared `BrowserPool` once, then injecting it into each `CrawlEngine`:
 
 ```rust
-use kreuzcrawl::{BrowserPool, BrowserPoolConfig, CrawlEngineBuilder};
+use crawlberg::{BrowserPool, BrowserPoolConfig, CrawlEngineBuilder};
 
 // Build and warm the pool at startup. `BrowserPool::new` returns an `Arc<BrowserPool>`.
 let pool = BrowserPool::new(BrowserPoolConfig {
@@ -83,7 +83,7 @@ Requires the `browser` Cargo feature.
 For the native browser backend (`BrowserBackend::Native`), inject a pre-built `NativeBrowserExecutor` to avoid spawning worker threads per engine:
 
 ```rust
-use kreuzcrawl::{BrowserBackend, BrowserConfig, NativeBrowserExecutor, NativeBrowserExecutorConfig, CrawlEngineBuilder};
+use crawlberg::{BrowserBackend, BrowserConfig, NativeBrowserExecutor, NativeBrowserExecutorConfig, CrawlEngineBuilder};
 
 let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig::default())?;
 
@@ -97,7 +97,7 @@ Requires the `browser-native` Cargo feature.
 **Session affinity** keeps same-domain browser sessions alive across requests, preserving cookies and fingerprints. Enable via `BrowserConfig::session_affinity` (defaults to `true`). For custom session routing, use `BrowserSessionPool` (Rust-only):
 
 ```rust
-use kreuzcrawl::BrowserSessionPool;
+use crawlberg::BrowserSessionPool;
 
 let session_pool = BrowserSessionPool::new();
 // Sessions are keyed by domain; reuse is automatic across crawl operations.
@@ -108,7 +108,7 @@ let session_pool = BrowserSessionPool::new();
 Point the Chromiumoxide backend at an already-running Chrome via its CDP WebSocket endpoint instead of launching one locally:
 
 ```rust
-use kreuzcrawl::{BrowserConfig, CrawlConfig};
+use crawlberg::{BrowserConfig, CrawlConfig};
 
 let config = CrawlConfig {
     browser: BrowserConfig {
@@ -126,7 +126,7 @@ This is the recommended pattern when running Chrome in a sidecar container or a 
 Persistent browser profiles retain cookies, localStorage, and other browser state across crawl sessions. Configure them through `CrawlConfig::browser_profile` (named profile to attach) and `CrawlConfig::save_browser_profile` (persist changes on exit):
 
 ```rust
-use kreuzcrawl::CrawlConfig;
+use crawlberg::CrawlConfig;
 
 let config = CrawlConfig {
     browser_profile: Some("my-session".into()),
@@ -135,11 +135,11 @@ let config = CrawlConfig {
 };
 ```
 
-Profile names are validated against path-traversal — only ASCII alphanumerics, hyphens, underscores, and dots are allowed (max 255 characters). Profiles are stored under `<data_dir>/kreuzcrawl/profiles/<name>` and, on Unix, are created with mode `0o700`.
+Profile names are validated against path-traversal — only ASCII alphanumerics, hyphens, underscores, and dots are allowed (max 255 characters). Profiles are stored under `<data_dir>/crawlberg/profiles/<name>` and, on Unix, are created with mode `0o700`.
 
 ## WAF detection
 
-Kreuzcrawl detects WAF and bot-mitigation signals with a built-in TOML fingerprint classifier. When a fingerprint matches, the error path includes `CrawlError::WafBlocked { vendor, .. }`; generic or unrecognized blocks may report `unknown` or `generic`. In `Auto` browser mode, those signals can trigger automatic browser escalation. This is not a guarantee that a challenge can be bypassed.
+Crawlberg detects WAF and bot-mitigation signals with a built-in TOML fingerprint classifier. When a fingerprint matches, the error path includes `CrawlError::WafBlocked { vendor, .. }`; generic or unrecognized blocks may report `unknown` or `generic`. In `Auto` browser mode, those signals can trigger automatic browser escalation. This is not a guarantee that a challenge can be bypassed.
 
 ## Wait strategies
 
@@ -155,7 +155,7 @@ The `BrowserWait` enum controls this behaviour.
 Configure in `BrowserConfig`:
 
 ```rust
-use kreuzcrawl::{BrowserConfig, BrowserWait};
+use crawlberg::{BrowserConfig, BrowserWait};
 
 let browser = BrowserConfig {
     wait: BrowserWait::Selector,

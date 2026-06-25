@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: map. */
 final class MapTest extends TestCase
@@ -21,9 +21,9 @@ final class MapTest extends TestCase
     public function test_map_discover_urls(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MAP_DISCOVER_URLS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/map_discover_urls';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertGreaterThanOrEqual(3, count($result->getUrls()));
 
@@ -35,9 +35,9 @@ final class MapTest extends TestCase
     public function test_map_exclude_patterns(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["excludePaths" => ["/private/.*", "/api/.*"], "maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MAP_EXCLUDE_PATTERNS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/map_exclude_patterns';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(1, count($result->getUrls()));
 
@@ -49,9 +49,9 @@ final class MapTest extends TestCase
     public function test_map_include_subdomains(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["allowSubdomains" => true, "maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MAP_INCLUDE_SUBDOMAINS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/map_include_subdomains';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getUrls()));
 
@@ -63,9 +63,9 @@ final class MapTest extends TestCase
     public function test_map_large_sitemap(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_large_sitemap';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertGreaterThanOrEqual(100, count($result->getUrls()));
 
@@ -77,9 +77,9 @@ final class MapTest extends TestCase
     public function test_map_limit_pagination(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["mapLimit" => 5, "maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MAP_LIMIT_PAGINATION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/map_limit_pagination';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertLessThanOrEqual(5, count($result->getUrls()));
 
@@ -91,9 +91,9 @@ final class MapTest extends TestCase
     public function test_map_search_filter(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["mapSearch" => "blog", "maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MAP_SEARCH_FILTER') ?: getenv('MOCK_SERVER_URL') . '/fixtures/map_search_filter';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getUrls()));
             $this->assertLessThanOrEqual(2, count($result->getUrls()));

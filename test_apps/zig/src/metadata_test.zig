@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "metadata_article_times" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_ARTICLE_TIMES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_article_times", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -50,7 +50,7 @@ test "metadata_favicons" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_FAVICONS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_favicons", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -69,7 +69,7 @@ test "metadata_headings" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_HEADINGS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_headings", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -89,7 +89,7 @@ test "metadata_hreflang" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_HREFLANG")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_hreflang", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -108,7 +108,7 @@ test "metadata_keywords_author" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_KEYWORDS_AUTHOR")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_keywords_author", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -125,7 +125,7 @@ test "metadata_keywords_author" {
     }
     try testing.expectEqualStrings("Jane Developer", std.mem.trim(u8, result.object.get("metadata").?.object.get("author").?.string, " \n\r\t"));
     try testing.expect(result.object.get("metadata").?.object.get("viewport").? != .null);
-    try testing.expectEqualStrings("kreuzcrawl/1.0", std.mem.trim(u8, result.object.get("metadata").?.object.get("generator").?.string, " \n\r\t"));
+    try testing.expectEqualStrings("crawlberg/1.0", std.mem.trim(u8, result.object.get("metadata").?.object.get("generator").?.string, " \n\r\t"));
     try testing.expectEqualStrings("#ff6600", std.mem.trim(u8, result.object.get("metadata").?.object.get("theme_color").?.string, " \n\r\t"));
     try testing.expectEqualStrings("index, follow", std.mem.trim(u8, result.object.get("metadata").?.object.get("robots").?.string, " \n\r\t"));
     try testing.expectEqualStrings("en", std.mem.trim(u8, result.object.get("metadata").?.object.get("html_lang").?.string, " \n\r\t"));
@@ -141,7 +141,7 @@ test "metadata_og_video_audio" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_OG_VIDEO_AUDIO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_og_video_audio", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -161,7 +161,7 @@ test "metadata_response_headers" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_RESPONSE_HEADERS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_response_headers", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -182,7 +182,7 @@ test "metadata_word_count" {
 
     const url = if (std.c.getenv("MOCK_SERVER_METADATA_WORD_COUNT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/metadata_word_count", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

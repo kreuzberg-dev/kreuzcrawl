@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_links_anchor_fragment(void) {
     /* Identifies fragment-only links as anchor type */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_ANCHOR_FRAGMENT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,24 +30,24 @@ void test_links_anchor_fragment(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_anchor_fragment", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     assert(links_json != NULL);
     char* links__link_type = alef_json_get_string(links_json, "link_type");
     assert(links__link_type != NULL && strstr(links__link_type, "anchor") != NULL && "expected to contain substring");
     free(links__link_type);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_base_tag(void) {
     /* Resolves relative URLs using base tag href */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_BASE_TAG");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -58,25 +58,25 @@ void test_links_base_tag(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_base_tag", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(links_length > 2 && "expected greater than");
     assert(links__url != NULL && strstr(links__url, "example.com") != NULL && "expected to contain substring");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_document_types(void) {
     /* Detects PDF, DOCX, XLSX links as document type */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_DOCUMENT_TYPES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -87,24 +87,24 @@ void test_links_document_types(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_document_types", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     assert(links_json != NULL);
     char* links__link_type = alef_json_get_string(links_json, "link_type");
     assert(links__link_type != NULL && strstr(links__link_type, "document") != NULL && "expected to contain substring");
     free(links__link_type);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_empty_href(void) {
     /* Handles empty href attributes without errors */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_EMPTY_HREF");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -115,25 +115,25 @@ void test_links_empty_href(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_empty_href", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(links_length > 0 && "expected greater than");
     assert(links__url != NULL && strstr(links__url, "/valid") != NULL && "expected to contain substring");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_internal_external_classification(void) {
     /* Correctly classifies internal vs external links by domain */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_INTERNAL_EXTERNAL_CLASSIFICATION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -144,25 +144,25 @@ void test_links_internal_external_classification(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_internal_external_classification", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(links_length > 4 && "expected greater than");
     assert(links__url != NULL && strlen(links__url) > 0 && "expected non-empty value");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_mailto_javascript_skip(void) {
     /* Skips mailto:, javascript:, and tel: scheme links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_MAILTO_JAVASCRIPT_SKIP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -173,25 +173,25 @@ void test_links_mailto_javascript_skip(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_mailto_javascript_skip", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(links_length > 0 && "expected greater than");
     assert((links__url == NULL || strstr(links__url, "mailto:") == NULL) && "expected NOT to contain substring");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_protocol_relative(void) {
     /* Handles protocol-relative URLs (//example.com) correctly */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_PROTOCOL_RELATIVE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -202,25 +202,25 @@ void test_links_protocol_relative(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_protocol_relative", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(links_length > 1 && "expected greater than");
     assert(links__url != NULL && strstr(links__url, "//") != NULL && "expected to contain substring");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_rel_attributes(void) {
     /* Preserves rel=nofollow and rel=canonical attributes */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_REL_ATTRIBUTES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -231,22 +231,22 @@ void test_links_rel_attributes(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_rel_attributes", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     assert(links_length > 0 && "expected greater than");
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_links_relative_parent(void) {
     /* Resolves ../ and ./ relative parent path links correctly */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_LINKS_RELATIVE_PARENT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -257,12 +257,12 @@ void test_links_relative_parent(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/links_relative_parent", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     assert(links_length > 3 && "expected greater than");
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

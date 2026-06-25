@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_concurrent_basic(void) {
     /* Concurrent crawling fetches all pages with max_concurrent workers */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONCURRENT_BASIC");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,23 +30,23 @@ void test_concurrent_basic(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/concurrent_basic", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 6 && "equals assertion failed");
     assert(pages_length >= 6 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_concurrent_depth_two_fan_out(void) {
     /* Concurrent depth=2 crawl correctly fans out and deduplicates across levels */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -57,22 +57,22 @@ void test_concurrent_depth_two_fan_out(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/concurrent_depth_two_fan_out", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 4 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_concurrent_max_pages_exact(void) {
     /* Concurrent crawling does not exceed max_pages limit even with high concurrency */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -83,22 +83,22 @@ void test_concurrent_max_pages_exact(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/concurrent_max_pages_exact", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length <= 3 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_concurrent_partial_errors(void) {
     /* Concurrent crawl handles partial failures gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -109,22 +109,22 @@ void test_concurrent_partial_errors(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/concurrent_partial_errors", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 2 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_concurrent_respects_max_pages(void) {
     /* Concurrent crawling respects max_pages limit */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -135,12 +135,12 @@ void test_concurrent_respects_max_pages(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/concurrent_respects_max_pages", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length <= 3 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

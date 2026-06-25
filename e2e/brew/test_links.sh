@@ -9,14 +9,14 @@ set -euo pipefail
 test_links_anchor_fragment() {
   # Identifies fragment-only links as anchor type
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_ANCHOR_FRAGMENT:-${MOCK_SERVER_URL}/fixtures/links_anchor_fragment}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_ANCHOR_FRAGMENT:-${MOCK_SERVER_URL}/fixtures/links_anchor_fragment}" --config '{}' --format json --browser-mode never)
 
 }
 
 test_links_base_tag() {
   # Resolves relative URLs using base tag href
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_BASE_TAG:-${MOCK_SERVER_URL}/fixtures/links_base_tag}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_BASE_TAG:-${MOCK_SERVER_URL}/fixtures/links_base_tag}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -29,14 +29,14 @@ test_links_base_tag() {
 test_links_document_types() {
   # Detects PDF, DOCX, XLSX links as document type
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_DOCUMENT_TYPES:-${MOCK_SERVER_URL}/fixtures/links_document_types}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_DOCUMENT_TYPES:-${MOCK_SERVER_URL}/fixtures/links_document_types}" --config '{}' --format json --browser-mode never)
 
 }
 
 test_links_empty_href() {
   # Handles empty href attributes without errors
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_EMPTY_HREF:-${MOCK_SERVER_URL}/fixtures/links_empty_href}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_EMPTY_HREF:-${MOCK_SERVER_URL}/fixtures/links_empty_href}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -49,7 +49,7 @@ test_links_empty_href() {
 test_links_internal_external_classification() {
   # Correctly classifies internal vs external links by domain
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_INTERNAL_EXTERNAL_CLASSIFICATION:-${MOCK_SERVER_URL}/fixtures/links_internal_external_classification}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_INTERNAL_EXTERNAL_CLASSIFICATION:-${MOCK_SERVER_URL}/fixtures/links_internal_external_classification}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -62,7 +62,7 @@ test_links_internal_external_classification() {
 test_links_mailto_javascript_skip() {
   # Skips mailto:, javascript:, and tel: scheme links
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_MAILTO_JAVASCRIPT_SKIP:-${MOCK_SERVER_URL}/fixtures/links_mailto_javascript_skip}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_MAILTO_JAVASCRIPT_SKIP:-${MOCK_SERVER_URL}/fixtures/links_mailto_javascript_skip}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -75,7 +75,7 @@ test_links_mailto_javascript_skip() {
 test_links_protocol_relative() {
   # Handles protocol-relative URLs (//example.com) correctly
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_PROTOCOL_RELATIVE:-${MOCK_SERVER_URL}/fixtures/links_protocol_relative}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_PROTOCOL_RELATIVE:-${MOCK_SERVER_URL}/fixtures/links_protocol_relative}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -88,7 +88,7 @@ test_links_protocol_relative() {
 test_links_rel_attributes() {
   # Preserves rel=nofollow and rel=canonical attributes
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_REL_ATTRIBUTES:-${MOCK_SERVER_URL}/fixtures/links_rel_attributes}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_REL_ATTRIBUTES:-${MOCK_SERVER_URL}/fixtures/links_rel_attributes}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')
@@ -98,7 +98,7 @@ test_links_rel_attributes() {
 test_links_relative_parent() {
   # Resolves ../ and ./ relative parent path links correctly
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_LINKS_RELATIVE_PARENT:-${MOCK_SERVER_URL}/fixtures/links_relative_parent}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_LINKS_RELATIVE_PARENT:-${MOCK_SERVER_URL}/fixtures/links_relative_parent}" --config '{}' --format json --browser-mode never)
 
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links | length')

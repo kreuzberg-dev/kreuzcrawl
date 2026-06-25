@@ -1,4 +1,4 @@
-# Building Kreuzcrawl
+# Building Crawlberg
 
 The Swift package wraps a Rust library via [swift-bridge](https://github.com/chinedufn/swift-bridge).
 SwiftPM cannot invoke Cargo directly, so you must run the cargo build step first.
@@ -10,12 +10,12 @@ SwiftPM cannot invoke Cargo directly, so you must run the cargo build step first
 From the **repository root**:
 
 ```sh
-cargo build -p kreuzcrawl-swift
+cargo build -p crawlberg-swift
 ```
 
-This compiles `target/debug/libkreuzcrawl_swift.a` and runs
+This compiles `target/debug/libcrawlberg_swift.a` and runs
 `swift-bridge-build` in `build.rs`, which writes generated Swift and C sources
-into `target/debug/build/kreuzcrawl-swift-*/out/`.
+into `target/debug/build/crawlberg-swift-*/out/`.
 
 ### 2. Copy generated sources into the SwiftPM targets
 
@@ -25,10 +25,10 @@ The package uses two internal targets:
 - `Sources/RustBridge/` — Swift bridge files that `import RustBridgeC`
 
 ```sh
-OUT=$(ls -dt target/debug/build/kreuzcrawl-swift-*/out 2>/dev/null | head -1)
+OUT=$(ls -dt target/debug/build/crawlberg-swift-*/out 2>/dev/null | head -1)
 
 # Combine C headers into the RustBridgeC target
-cat "$OUT/SwiftBridgeCore.h" "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.h" \
+cat "$OUT/SwiftBridgeCore.h" "$OUT/crawlberg-swift/crawlberg-swift.h" \
     > packages/swift/Sources/RustBridgeC/RustBridgeC.h
 
 # Copy Swift bridge files, prepending "import RustBridgeC" so they see the C types.
@@ -37,11 +37,11 @@ cat "$OUT/SwiftBridgeCore.h" "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.h" \
 # generated Swift sources.
 { echo "import RustBridgeC"; cat "$OUT/SwiftBridgeCore.swift"; } \
     > packages/swift/Sources/RustBridge/SwiftBridgeCore.swift
-{ echo "import RustBridgeC"; cat "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.swift"; } \
-    > packages/swift/Sources/RustBridge/kreuzcrawl-swift.swift
+{ echo "import RustBridgeC"; cat "$OUT/crawlberg-swift/crawlberg-swift.swift"; } \
+    > packages/swift/Sources/RustBridge/crawlberg-swift.swift
 ```
 
-If the glob `kreuzcrawl-swift-*/out` matches multiple directories, `ls -dt ... | head -1`
+If the glob `crawlberg-swift-*/out` matches multiple directories, `ls -dt ... | head -1`
 picks the most recently modified one.
 
 ### 3. Build and test the Swift package
@@ -57,15 +57,15 @@ Replace `target/debug` with `target/release` and pass
 `--configuration release` to `swift build`:
 
 ```sh
-cargo build --release -p kreuzcrawl-swift
-OUT=$(ls -dt target/release/build/kreuzcrawl-swift-*/out 2>/dev/null | head -1)
+cargo build --release -p crawlberg-swift
+OUT=$(ls -dt target/release/build/crawlberg-swift-*/out 2>/dev/null | head -1)
 
-cat "$OUT/SwiftBridgeCore.h" "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.h" \
+cat "$OUT/SwiftBridgeCore.h" "$OUT/crawlberg-swift/crawlberg-swift.h" \
     > packages/swift/Sources/RustBridgeC/RustBridgeC.h
 { echo "import RustBridgeC"; cat "$OUT/SwiftBridgeCore.swift"; } \
     > packages/swift/Sources/RustBridge/SwiftBridgeCore.swift
-{ echo "import RustBridgeC"; cat "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.swift"; } \
-    > packages/swift/Sources/RustBridge/kreuzcrawl-swift.swift
+{ echo "import RustBridgeC"; cat "$OUT/crawlberg-swift/crawlberg-swift.swift"; } \
+    > packages/swift/Sources/RustBridge/crawlberg-swift.swift
 
 swift build --package-path packages/swift --configuration release
 ```

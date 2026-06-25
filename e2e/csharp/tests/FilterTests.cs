@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: filter.</summary>
     public class FilterTests
@@ -27,10 +27,10 @@ namespace Kreuzcrawl
         {
             // BM25 filter works during multi-page crawl, keeping relevant pages
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_BM25_CRAWL_INTEGRATION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_bm25_crawl_integration";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'filter.remaining_contain_keyword' not available on result type
         }
 
@@ -39,10 +39,10 @@ namespace Kreuzcrawl
         {
             // BM25 filter with empty query passes all pages through
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_BM25_EMPTY_QUERY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_bm25_empty_query";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type
         }
 
@@ -51,10 +51,10 @@ namespace Kreuzcrawl
         {
             // BM25 filter with very high threshold filters out all pages
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_BM25_HIGH_THRESHOLD");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_bm25_high_threshold";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
             // skipped: field 'filter.pages_after_filter' not available on result type
         }
 
@@ -63,10 +63,10 @@ namespace Kreuzcrawl
         {
             // BM25 filter keeps only pages relevant to the query
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_BM25_RELEVANT_PAGES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_bm25_relevant_pages";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
             // skipped: field 'filter.remaining_contain_keyword' not available on result type
         }
 
@@ -75,10 +75,10 @@ namespace Kreuzcrawl
         {
             // BM25 filter with zero threshold passes all pages
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_BM25_THRESHOLD_ZERO");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_bm25_threshold_zero";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type
         }
 
@@ -87,10 +87,10 @@ namespace Kreuzcrawl
         {
             // NoopFilter keeps all pages during a multi-page crawl
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_NOOP_CRAWL_ALL_KEPT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_noop_crawl_all_kept";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'filter.pages_after_filter' not available on result type
         }
 
@@ -99,10 +99,10 @@ namespace Kreuzcrawl
         {
             // No content filter passes all crawled pages through
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_FILTER_NOOP_PASSES_ALL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/filter_noop_passes_all";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
             // skipped: field 'crawl.pages_crawled' not available on result type
         }
 

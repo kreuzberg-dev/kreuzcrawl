@@ -1,7 +1,7 @@
 //go:build ignore
 // +build ignore
 
-package kreuzcrawl
+package crawlberg
 
 import "embed"
 

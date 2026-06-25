@@ -1,14 +1,14 @@
-defmodule Kreuzcrawl.MixProject do
+defmodule Crawlberg.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kreuzcrawl,
+      app: :crawlberg,
       version: "0.3.0",
       elixir: "~> 1.14",
-      elixirc_paths: ["lib", Path.expand("../../packages/elixir/native/kreuzcrawl_nif/src", __DIR__)],
+      elixirc_paths: ["lib", Path.expand("../../packages/elixir/native/crawlberg_nif/src", __DIR__)],
       rustler_crates: [
-        kreuzcrawl_nif: [
+        crawlberg_nif: [
           mode: :release,
           targets: [
             "x86_64-unknown-linux-gnu",
@@ -30,9 +30,9 @@ defmodule Kreuzcrawl.MixProject do
   defp package do
     [
       licenses: ["Elastic-2.0"],
-      links: %{"GitHub" => "https://github.com/xberg-io/kreuzcrawl"},
+      links: %{"GitHub" => "https://github.com/xberg-io/crawlberg"},
       files:
-        ~w(lib .formatter.exs mix.exs README* checksum-*.exs native/kreuzcrawl_nif/Cargo.toml native/kreuzcrawl_nif/Cargo.lock native/kreuzcrawl_nif/src)
+        ~w(lib .formatter.exs mix.exs README* checksum-*.exs native/crawlberg_nif/Cargo.toml native/crawlberg_nif/Cargo.lock native/crawlberg_nif/src)
     ]
   end
 

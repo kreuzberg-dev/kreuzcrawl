@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,217 +166,217 @@ void main() {
 
   test('Handles 401 Unauthorized response correctly', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_401_unauthorized");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 403 Forbidden response correctly', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_403_forbidden");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 404 response correctly', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_404_page");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 408 Request Timeout response correctly', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_408_request_timeout");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 410 Gone response correctly', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_410_gone");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 500 server error', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_500_server");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 502 Bad Gateway response correctly', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_502_bad_gateway");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Browser launch fails when browser mode is always but browser is unavailable', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always","timeout":1}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_browser_launch_failure");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Browser page load times out', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always","timeout":1}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_browser_page_timeout");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles connection refused error gracefully', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_connection_refused");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Content-Length mismatch causes data loss error', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_data_loss_truncated");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles DNS resolution failure gracefully', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_dns_resolution");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Scraping a URL that cannot be found returns an error containing the URL path', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_empty_batch_urls");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 200 with completely empty body gracefully', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("error_empty_response");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.html, anyOf(isNull, isEmpty));
   });
 
   test('Proxy pointing to unreachable address causes connection error during scrape', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"proxy":{"url":"http://127.0.0.1:1"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_invalid_proxy");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles incomplete or truncated HTTP response', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_partial_response");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles 429 rate limiting with Retry-After', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_rate_limited");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Retries request on 503 Service Unavailable response', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_retry_503");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Implements exponential backoff when retrying failed requests', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_retry_backoff");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Handles SSL certificate validation error', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_ssl_invalid_cert");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Mock server delays response longer than request_timeout, surfacing a timeout error', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"request_timeout":500}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_timeout");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Unsupported URL scheme (gopher) is rejected', () async {
     await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
+      final engine = await CrawlbergBridge.createEngine();
       final url = _fixtureUrl("error_unsupported_scheme");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Akamai WAF detection returns WafBlocked error', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_waf_akamai");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('WAF challenge/block detection returns WafBlocked error', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_waf_blocked");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Detects WAF/bot protection false 403 (Cloudflare challenge page)', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_waf_false_403");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Imperva/Incapsula WAF detection', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("error_waf_imperva");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 

@@ -56,9 +56,9 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [linux, darwin]
-            - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [windows]
 
     build:release:
@@ -67,9 +67,9 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --release --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [linux, darwin]
-            - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --release --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [windows]
 
     build:ci:
@@ -79,9 +79,9 @@ tasks:
             CMAKE: "{{.CMAKE_PATH}}"
             RUSTFLAGS: "-C debuginfo=2"
         cmds:
-            - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --release --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [linux, darwin]
-            - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cmd: cargo build --release --workspace --all-features --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
               platforms: [windows]
 
     build:profiling:
@@ -92,7 +92,7 @@ tasks:
             ENABLE_PROFILING: "true"
             RUSTFLAGS: "-g"
         cmds:
-            - cargo build --workspace --release --features full,profiling,api,mcp,otel --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cargo build --workspace --release --features full,profiling,api,mcp,otel --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
 
     cli:build:
         desc: Build CLI binary
@@ -100,7 +100,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cargo build --release --package kreuzcrawl-cli {{if .TARGET}}--target {{.TARGET}}{{end}}
+            - cargo build --release --package crawlberg-cli {{if .TARGET}}--target {{.TARGET}}{{end}}
 
     cli:build:dev:
         desc: Build CLI binary in debug mode
@@ -108,7 +108,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cargo build --package kreuzcrawl-cli
+            - cargo build --package crawlberg-cli
 
     cli:install:
         desc: Install CLI binary
@@ -116,7 +116,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cargo install --path crates/kreuzcrawl-cli
+            - cargo install --path crates/crawlberg-cli
 
     ffi:build:
         desc: Build FFI library for language bindings
@@ -124,7 +124,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cargo build --release --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
+            - cargo build --release --package crawlberg-ffi {{.CARGO_ARGS | default ""}}
 
     ffi:build:dev:
         desc: Build FFI library in debug mode
@@ -132,7 +132,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
             CMAKE: "{{.CMAKE_PATH}}"
         cmds:
-            - cargo build --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
+            - cargo build --package crawlberg-ffi {{.CARGO_ARGS | default ""}}
 
     ffi:build:ci:
         desc: Build FFI library in CI mode (with debug info)
@@ -141,7 +141,7 @@ tasks:
             CMAKE: "{{.CMAKE_PATH}}"
             RUSTFLAGS: "-C debuginfo=2"
         cmds:
-            - cargo build --release --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
+            - cargo build --release --package crawlberg-ffi {{.CARGO_ARGS | default ""}}
 
     test:
         desc: Run all Rust tests
@@ -163,7 +163,7 @@ tasks:
         env:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
         cmds:
-            - cargo test --lib --workspace --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cargo test --lib --workspace --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
 
     lint:
         desc: Auto-fix Rust code linting (cargo fmt + clippy)
@@ -171,7 +171,7 @@ tasks:
             PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
         cmds:
             - cargo fmt --all
-            - cargo clippy --workspace --fix --allow-dirty --allow-staged --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
+            - cargo clippy --workspace --fix --allow-dirty --allow-staged --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm
 
     lint:check:
         desc: Check Rust code linting without modifications
@@ -182,7 +182,7 @@ tasks:
             # -A clippy::inherent_to_string: alef-generated swift-bridge crate emits inherent
             # `to_string(&self)` methods that conflict with Display::to_string. Upstream fix
             # belongs in alef-backend-swift/src/gen_rust_crate/mod.rs allow block.
-            - cargo clippy --workspace --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm -- -D warnings -A clippy::inherent_to_string
+            - cargo clippy --workspace --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm -- -D warnings -A clippy::inherent_to_string
 
     format:
         desc: Format Rust code with modifications (cargo fmt)
@@ -252,9 +252,9 @@ tasks:
             - cargo upgrade --incompatible
             - cargo update
             - cmd: echo "Updating Rust dependencies (Ruby native crate)..."
-            - cmd: cargo upgrade --incompatible --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
+            - cmd: cargo upgrade --incompatible --manifest-path packages/ruby/ext/crawlberg_rb/native/Cargo.toml
               ignore_error: true
-            - cmd: cargo update --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
+            - cmd: cargo update --manifest-path packages/ruby/ext/crawlberg_rb/native/Cargo.toml
               ignore_error: true
 
     e2e:generate:
@@ -288,7 +288,7 @@ tasks:
             RUST_TEST_THREADS: "1"
         # cwd must be e2e/rust/ so cargo's config discovery picks up
         # e2e/rust/.cargo/config.toml — that file's [env] block sets
-        # KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true, which the SSRF defense
+        # CRAWLBERG_ALLOW_PRIVATE_NETWORK=true, which the SSRF defense
         # needs to honor loopback URLs in the suite. Cargo searches for
         # .cargo/config.toml from cwd upward, NOT from the manifest path,
         # so invoking `cargo test --manifest-path e2e/rust/Cargo.toml` from

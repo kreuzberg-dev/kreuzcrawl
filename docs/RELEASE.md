@@ -4,14 +4,14 @@
 
 ### Node Platform Packages OIDC Configuration
 
-The Node platform sub-package `@kreuzberg/kreuzcrawl-linux-x64-musl` requires manual OIDC trusted-publisher setup on npm.
+The Node platform sub-package `@kreuzberg/crawlberg-linux-x64-musl` requires manual OIDC trusted-publisher setup on npm.
 
 **Issue**: The package publishes `0.0.0-bootstrap` only because npm doesn't recognize the GitHub Actions workflow as a trusted publisher.
 
-**Fix**: Go to <https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-linux-x64-musl/access> → Settings → Trusted Publishers → **Add a new trusted publisher**:
+**Fix**: Go to <https://www.npmjs.com/package/@kreuzberg/crawlberg-linux-x64-musl/access> → Settings → Trusted Publishers → **Add a new trusted publisher**:
 
 - Provider: GitHub
-- Repository: xberg-io/kreuzcrawl
+- Repository: xberg-io/crawlberg
 - Workflow: .github/workflows/publish.yaml
 - Job: Publish Node packages
 
@@ -32,7 +32,7 @@ php_{extension_name}-{bare_version}_php{phpver}-{arch}-{os}-{libc}-{tsmode}.tgz
 Example (release v0.3.0-rc.45, PHP 8.4, macOS arm64, NTS):
 
 ```text
-php_kreuzcrawl-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
+php_crawlberg-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
 ```
 
 **PIE url-template** (in Alef scaffold, generates into composer.json):
@@ -41,7 +41,7 @@ php_kreuzcrawl-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
 "url-template": "{repository}/releases/download/v{Version}/php_{extension_name}-{Version}_php{PhpVersion}-{Arch}-{OS}-{Libc}-{TSMode}.tgz"
 ```
 
-When Alef regenerates composer.json (e.g., kreuzcrawl/packages/php/composer.json), PIE's template substitution:
+When Alef regenerates composer.json (e.g., crawlberg/packages/php/composer.json), PIE's template substitution:
 
 - `{Version}` → bare version extracted from tag (e.g., `0.3.0-rc.45` from tag `v0.3.0-rc.45`)
 - `{PhpVersion}` → PHP version (e.g., `8.4`)
@@ -50,7 +50,7 @@ When Alef regenerates composer.json (e.g., kreuzcrawl/packages/php/composer.json
 Final resolved URL:
 
 ```text
-https://github.com/xberg-io/kreuzcrawl/releases/download/v0.3.0-rc.45/php_kreuzcrawl-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
+https://github.com/xberg-io/crawlberg/releases/download/v0.3.0-rc.45/php_crawlberg-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
 ```
 
 This matches Alef's published asset.

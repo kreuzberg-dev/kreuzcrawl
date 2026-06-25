@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "interact_action_sequence" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_ACTION_SEQUENCE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_action_sequence", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#open\",\"type\":\"click\"},{\"selector\":\"#field\",\"text\":\"test_data\",\"type\":\"type\"},{\"selector\":\"#submit\",\"type\":\"click\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#open\",\"type\":\"click\"},{\"selector\":\"#field\",\"text\":\"test_data\",\"type\":\"type\"},{\"selector\":\"#submit\",\"type\":\"click\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -55,7 +55,7 @@ test "interact_click_element" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_CLICK_ELEMENT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_click_element", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#submit\",\"type\":\"click\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#submit\",\"type\":\"click\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -76,7 +76,7 @@ test "interact_execute_js" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_EXECUTE_JS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_execute_js", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"script\":\"document.title\",\"type\":\"executeJs\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"script\":\"document.title\",\"type\":\"executeJs\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -102,7 +102,7 @@ test "interact_invalid_selector" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_INVALID_SELECTOR")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_invalid_selector", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#nonexistent\",\"type\":\"click\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#nonexistent\",\"type\":\"click\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -128,7 +128,7 @@ test "interact_max_actions_exceeded" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_MAX_ACTIONS_EXCEEDED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_max_actions_exceeded", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"}]") catch {
+    const _result_json = crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"}]") catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -144,7 +144,7 @@ test "interact_press_key" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_PRESS_KEY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_press_key", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#searchbox\",\"type\":\"click\"},{\"selector\":\"#searchbox\",\"text\":\"test\",\"type\":\"type\"},{\"key\":\"Enter\",\"type\":\"press\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#searchbox\",\"type\":\"click\"},{\"selector\":\"#searchbox\",\"text\":\"test\",\"type\":\"type\"},{\"key\":\"Enter\",\"type\":\"press\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -165,7 +165,7 @@ test "interact_scrape_default" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_SCRAPE_DEFAULT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_scrape_default", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"type\":\"scrape\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"type\":\"scrape\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -186,7 +186,7 @@ test "interact_screenshot" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_SCREENSHOT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_screenshot", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"full_page\":false,\"type\":\"screenshot\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"full_page\":false,\"type\":\"screenshot\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -207,7 +207,7 @@ test "interact_screenshot_full_page" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_SCREENSHOT_FULL_PAGE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_screenshot_full_page", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"full_page\":true,\"type\":\"screenshot\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"full_page\":true,\"type\":\"screenshot\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -228,7 +228,7 @@ test "interact_scroll_down" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_SCROLL_DOWN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_scroll_down", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"amount\":500,\"direction\":\"down\",\"type\":\"scroll\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"amount\":500,\"direction\":\"down\",\"type\":\"scroll\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -249,7 +249,7 @@ test "interact_type_input" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_TYPE_INPUT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_type_input", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#username\",\"text\":\"john_doe\",\"type\":\"type\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#username\",\"text\":\"john_doe\",\"type\":\"type\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);
@@ -270,7 +270,7 @@ test "interact_wait_selector" {
 
     const url = if (std.c.getenv("MOCK_SERVER_INTERACT_WAIT_SELECTOR")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/interact_wait_selector", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#content\",\"type\":\"wait\"}]");
+    const _result_json = try crawlberg.interact("{\"browser\":{\"mode\":\"always\"}}", url, "[{\"selector\":\"#content\",\"type\":\"wait\"}]");
     defer std.heap.c_allocator.free(_result_json);
     const _wrapped_json = try std.fmt.allocPrint(allocator, "{{\"interaction\":{s}}}", .{_result_json});
     defer allocator.free(_wrapped_json);

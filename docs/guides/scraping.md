@@ -5,7 +5,7 @@ Scraping fetches a single URL and runs the full extraction pipeline: metadata, l
 ## Single-page scrape
 
 ```rust
-use kreuzcrawl::{CrawlConfig, create_engine, scrape};
+use crawlberg::{CrawlConfig, create_engine, scrape};
 
 let engine = create_engine(Some(CrawlConfig::default()))?;
 
@@ -24,7 +24,7 @@ The scrape request routes through the engine's Tower service stack, which applie
 Use `interact()` when a page must be changed before HTML is captured: click a button, type into an input, wait for a selector, run JavaScript, take a screenshot, or scrape the current DOM.
 
 ```rust
-use kreuzcrawl::{
+use crawlberg::{
     BrowserBackend, BrowserConfig, BrowserMode, CrawlConfig, PageAction, create_engine, interact,
 };
 
@@ -220,7 +220,7 @@ When `respect_robots_txt` is `false` (the default), `is_allowed` is always `true
 Strip navigation, sidebars, and boilerplate before extraction via the content preset:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, ContentConfig};
+use crawlberg::{CrawlConfig, ContentConfig};
 
 CrawlConfig {
     content: ContentConfig {
@@ -269,7 +269,7 @@ The `ResponseMeta` struct captures HTTP response headers:
 Scrape pages behind authentication:
 
 ```rust
-use kreuzcrawl::AuthConfig;
+use crawlberg::AuthConfig;
 
 CrawlConfig {
     auth: Some(AuthConfig::Bearer {

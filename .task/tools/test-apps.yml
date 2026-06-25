@@ -89,7 +89,7 @@ tasks:
         cmds:
             - go mod download
             # Trigger the published module's `//go:generate go run ./cmd/download_ffi`
-            # directive so the prebuilt libkreuzcrawl_ffi.{dylib,so,dll} is materialized
+            # directive so the prebuilt libcrawlberg_ffi.{dylib,so,dll} is materialized
             # under the module cache's .lib/<rid>/ directory. cgo's `-L` directive in
             # ffi.go points at that path, so the link step fails without this step.
             - silent: true
@@ -97,8 +97,8 @@ tasks:
                 set -e
                 # `go list -m -f {{.Dir}} <mod>` returns an empty Dir for a published
                 # module unless the version is pinned explicitly; resolve it from go.mod.
-                FFI_VERSION=$(grep -E '^[[:space:]]*github.com/xberg-io/kreuzcrawl/packages/go[[:space:]]' go.mod | awk '{print $NF}')
-                MOD_DIR=$(go list -m -f '{{`{{.Dir}}`}}' "github.com/xberg-io/kreuzcrawl/packages/go@$FFI_VERSION")
+                FFI_VERSION=$(grep -E '^[[:space:]]*github.com/xberg-io/crawlberg/packages/go[[:space:]]' go.mod | awk '{print $NF}')
+                MOD_DIR=$(go list -m -f '{{`{{.Dir}}`}}' "github.com/xberg-io/crawlberg/packages/go@$FFI_VERSION")
                 echo "FFI mod dir: $MOD_DIR"
                 if [ -z "$MOD_DIR" ]; then echo "could not resolve go module dir" >&2; exit 1; fi
                 chmod -R u+w "$MOD_DIR" 2>/dev/null || true
@@ -122,7 +122,7 @@ tasks:
         # environ, so SsrfPolicy::from_env never sees the override. Set it at the
         # process level before the runtime starts (mirrors .task/languages/elixir.yml).
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - mix deps.get
             - mix test test/scrape_test.exs
@@ -134,11 +134,11 @@ tasks:
         # native code's libc environ, so set it at the process level before PHP
         # starts (mirrors the e2e harness fix).
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - bash install.sh
             - composer install
-            - php -dextension=kreuzcrawl vendor/bin/phpunit tests/ScrapeTest.php
+            - php -dextension=crawlberg vendor/bin/phpunit tests/ScrapeTest.php
 
     smoke:csharp:
         desc: Run C# test_app smoke test
@@ -147,7 +147,7 @@ tasks:
         # native binding's libc environ, so SsrfPolicy::from_env never sees the
         # override. Set it at the process level (mirrors .task/languages/csharp.yml).
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - dotnet restore
             - dotnet test --filter FullyQualifiedName~ScrapeTests
@@ -165,7 +165,7 @@ tasks:
         # The published Dart pub.dev tarball does not bundle the native dylib —
         # consumers either build from source under packages/dart/ or set
         # FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR to an absolute path
-        # containing libkreuzcrawl_dart.{dylib,so,dll}. For test_apps we point
+        # containing libcrawlberg_dart.{dylib,so,dll}. For test_apps we point
         # at the in-tree build under packages/dart/lib/src/native/<rid>/.
         env:
             FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR:
@@ -327,7 +327,7 @@ tasks:
         dir: test_apps/csharp
         # See smoke:csharp — .NET cannot set the native libc environ at runtime.
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - dotnet restore
             - dotnet test
@@ -337,18 +337,18 @@ tasks:
         dir: test_apps/php
         # See smoke:php — set the SSRF override at the process level before PHP starts.
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - bash install.sh
             - composer install
-            - php -dextension=kreuzcrawl vendor/bin/phpunit
+            - php -dextension=crawlberg vendor/bin/phpunit
 
     comprehensive:elixir:
         desc: Run Elixir test_app comprehensive tests
         dir: test_apps/elixir
         # See smoke:elixir — BEAM System.put_env does not reach the NIF libc environ.
         env:
-            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+            CRAWLBERG_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - mix deps.get
             - mix test

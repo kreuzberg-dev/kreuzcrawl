@@ -3,7 +3,7 @@
 # To regenerate: alef generate
 # To verify freshness: alef verify --exit-code
 
-module Kreuzcrawl
+module Crawlberg
 
   VERSION: String
 

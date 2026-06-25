@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "auth_basic_http" {
 
     const url = if (std.c.getenv("MOCK_SERVER_AUTH_BASIC_HTTP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/auth_basic_http", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -46,7 +46,7 @@ test "auth_bearer_token" {
 
     const url = if (std.c.getenv("MOCK_SERVER_AUTH_BEARER_TOKEN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/auth_bearer_token", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -64,7 +64,7 @@ test "auth_custom_header" {
 
     const url = if (std.c.getenv("MOCK_SERVER_AUTH_CUSTOM_HEADER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/auth_custom_header", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

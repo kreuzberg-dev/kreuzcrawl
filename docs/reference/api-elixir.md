@@ -366,7 +366,7 @@ Browser fallback configuration.
 | `proxy` | `ProxyConfig \| nil` | `nil` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
 | `block_url_patterns` | `list(String.t())` | `\[\]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `String.t() \| nil` | `nil` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
-| `robots_user_agent` | `String.t() \| nil` | `nil` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `robots_user_agent` | `String.t() \| nil` | `nil` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or crawlberg's default) if unset. Native only. |
 | `capture_network_events` | `boolean()` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `boolean()` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
@@ -993,7 +993,7 @@ def default()
 
 Create a policy from environment variables.
 
-On native platforms, reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
+On native platforms, reads `CRAWLBERG_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
 (case-insensitive), sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
 
 On wasm32 targets (browser/Node.js), environment variables are not accessible to the
@@ -1053,7 +1053,7 @@ Browser backend used for JavaScript rendering.
 | Value | Description |
 |-------|-------------|
 | `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
-| `native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
+| `native` | Crawlberg-owned native browser backend derived from Obscura. |
 
 ---
 

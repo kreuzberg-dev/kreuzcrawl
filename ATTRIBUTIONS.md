@@ -1,6 +1,6 @@
 # Attributions
 
-This file records third-party source code and data vendored into Kreuzcrawl.
+This file records third-party source code and data vendored into Crawlberg.
 
 ## Obscura
 
@@ -14,24 +14,24 @@ This file records third-party source code and data vendored into Kreuzcrawl.
 
 Vendored components:
 
-- `crates/kreuzcrawl-browser/src/dom`
-- `crates/kreuzcrawl-browser/src/net`
-- `crates/kreuzcrawl-browser/src/js`
-- `crates/kreuzcrawl-browser/src/context.rs`
-- `crates/kreuzcrawl-browser/src/lifecycle.rs`
-- `crates/kreuzcrawl-browser/src/page.rs`
-- `crates/kreuzcrawl-browser/js/bootstrap.js`
-- `crates/kreuzcrawl-browser/build.rs`
+- `crates/crawlberg-browser/src/dom`
+- `crates/crawlberg-browser/src/net`
+- `crates/crawlberg-browser/src/js`
+- `crates/crawlberg-browser/src/context.rs`
+- `crates/crawlberg-browser/src/lifecycle.rs`
+- `crates/crawlberg-browser/src/page.rs`
+- `crates/crawlberg-browser/js/bootstrap.js`
+- `crates/crawlberg-browser/build.rs`
 
 These modules are vendored to provide an experimental native browser
-backend that materializes JS-mutated HTML for Kreuzcrawl's existing crawl and
+backend that materializes JS-mutated HTML for Crawlberg's existing crawl and
 html-to-markdown-rs extraction pipeline.
 
 ### Local Modifications
 
-- Collapsed Obscura's browser/dom/net/js crates into the Kreuzcrawl-owned
-  `kreuzcrawl-browser` crate.
-- Added `kreuzcrawl_browser::adapter`, a small Kreuzcrawl-facing
+- Collapsed Obscura's browser/dom/net/js crates into the Crawlberg-owned
+  `crawlberg-browser` crate.
+- Added `crawlberg_browser::adapter`, a small Crawlberg-facing
   rendering API.
 - Disabled the upstream tracker domain blocklist because
   `/tmp/obscura/crates/obscura-net/src/pgl_domains.txt` has no visible

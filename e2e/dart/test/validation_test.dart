@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -167,108 +167,108 @@ void main() {
   test('Browser endpoint must be a valid ws:// or wss:// URL, not http://', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"endpoint":"http://not-websocket:3000","mode":"always"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_browser_endpoint_invalid");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('auth object with empty username in basic auth is rejected', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"auth":{"password":"secret","type":"basic","username":""}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_invalid_auth_config");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Invalid regex in exclude_paths is rejected', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"exclude_paths":["(unclosed"]}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_invalid_exclude_regex");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Invalid regex in include_paths is rejected', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"include_paths":["[invalid"]}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_invalid_include_regex");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('proxy with invalid URL like \'not-a-url\' is rejected', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"proxy":{"url":"not-a-url"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_invalid_proxy_url");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Retry code outside 100-599 is rejected', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"retry_codes":[999]}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_invalid_retry_code");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('max_concurrent=0 is rejected as invalid config (minimum is 1)', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":0}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_max_concurrent_zero");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('max_depth=200 exceeds limit of 100', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":200}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_max_depth_too_high");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('max_pages=0 is rejected as invalid config', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"max_pages":0}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_max_pages_zero");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('max_redirects > 100 is rejected as invalid config', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"max_redirects":200}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_max_redirects_too_high");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('max_body_size set to -1 is rejected as invalid config', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"max_body_size":0}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_negative_body_size");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 
   test('Zero request timeout is rejected as invalid config', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"request_timeout":0}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("validation_timeout_zero");
-      return KreuzcrawlBridge.scrape(engine, url);
+      return CrawlbergBridge.scrape(engine, url);
     }(), throwsA(anything));
   });
 

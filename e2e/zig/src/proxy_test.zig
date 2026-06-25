@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "proxy_authenticated" {
 
     const url = if (std.c.getenv("MOCK_SERVER_PROXY_AUTHENTICATED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/proxy_authenticated", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -45,7 +45,7 @@ test "proxy_basic_success" {
 
     const url = if (std.c.getenv("MOCK_SERVER_PROXY_BASIC_SUCCESS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/proxy_basic_success", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

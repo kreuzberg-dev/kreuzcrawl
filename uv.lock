@@ -8,7 +8,7 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "kreuzcrawl",
+    "crawlberg",
 ]
 
 [manifest.dependency-groups]
@@ -169,7 +169,7 @@ wheels = [
 ]
 
 [[package]]
-name = "kreuzcrawl"
+name = "crawlberg"
 version = "0.3.0"
 source = { editable = "packages/python" }
 

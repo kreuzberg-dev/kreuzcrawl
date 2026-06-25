@@ -1,0 +1,46 @@
+[package]
+name = "crawlberg-browser"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Internal headless-browser fallback used by the crawlberg crawler. Not intended for direct use."
+
+[features]
+default = []
+stealth = ["wreq", "wreq-util"]
+
+[dependencies]
+async-trait = { workspace = true }
+base64 = { workspace = true }
+cssparser = { workspace = true }
+deno_core = { workspace = true }
+deno_error = { workspace = true }
+futures = { workspace = true }
+html5ever = { workspace = true }
+ipnet = { workspace = true }
+png = { workspace = true }
+precomputed-hash = { workspace = true }
+reqwest = { workspace = true }
+selectors = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+wreq-util = { version = "3.0.0-rc.12", optional = true }
+
+[target.'cfg(any(target_os = "linux", target_os = "android"))'.dependencies]
+wreq = { version = "6.0.0-rc.29", optional = true, features = ["prefix-symbols"] }
+
+[target.'cfg(not(any(target_os = "linux", target_os = "android")))'.dependencies]
+wreq = { version = "6.0.0-rc.29", optional = true }
+
+[build-dependencies]
+deno_core = { workspace = true }
+
+[lints]
+workspace = true

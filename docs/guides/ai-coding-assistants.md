@@ -1,8 +1,8 @@
 # AI Coding Assistants
 
-The Kreuzcrawl plugin lives in the [`xberg-io/plugins`](https://github.com/xberg-io/plugins) marketplace. It ships the Kreuzcrawl agent skills (site crawling, HTML→Markdown scraping, headless-Chrome fallback) plus the `kreuzcrawl` MCP server, and works with every major coding agent.
+The Crawlberg plugin lives in the [`xberg-io/plugins`](https://github.com/xberg-io/plugins) marketplace. It ships the Crawlberg agent skills (site crawling, HTML→Markdown scraping, headless-Chrome fallback) plus the `crawlberg` MCP server, and works with every major coding agent.
 
-The plugin shells out to the `kreuzcrawl` CLI. Install it from the [Installation](../getting-started/installation.md) guide (for example, `brew install xberg-io/tap/kreuzcrawl`) before driving the crawler from an assistant.
+The plugin shells out to the `crawlberg` CLI. Install it from the [Installation](../getting-started/installation.md) guide (for example, `brew install xberg-io/tap/crawlberg`) before driving the crawler from an assistant.
 
 ## Installing
 
@@ -13,7 +13,7 @@ Pick your harness below.
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install kreuzcrawl@kreuzberg
+/plugin install crawlberg@kreuzberg
 ```
 
 </details>
@@ -25,13 +25,13 @@ Pick your harness below.
 /plugins add https://github.com/xberg-io/plugins
 ```
 
-Then search for `kreuzcrawl` and select **Install Plugin**.
+Then search for `crawlberg` and select **Install Plugin**.
 </details>
 
 <details>
 <summary><strong>Cursor</strong></summary>
 
-Settings → Plugins → Add from URL → `https://github.com/xberg-io/plugins`, then select **kreuzcrawl**.
+Settings → Plugins → Add from URL → `https://github.com/xberg-io/plugins`, then select **crawlberg**.
 </details>
 
 <details>
@@ -48,7 +48,7 @@ gemini extensions install https://github.com/xberg-io/plugins
 
 ```text
 droid plugin marketplace add https://github.com/xberg-io/plugins
-droid plugin install kreuzcrawl@kreuzberg
+droid plugin install crawlberg@kreuzberg
 ```
 
 </details>
@@ -58,7 +58,7 @@ droid plugin install kreuzcrawl@kreuzberg
 
 ```text
 copilot plugin marketplace add https://github.com/xberg-io/plugins
-copilot plugin install kreuzcrawl@kreuzberg
+copilot plugin install crawlberg@kreuzberg
 ```
 
 </details>
@@ -71,7 +71,7 @@ Add the package to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@kreuzberg/opencode-kreuzcrawl"]
+  "plugin": ["@kreuzberg/opencode-crawlberg"]
 }
 ```
 

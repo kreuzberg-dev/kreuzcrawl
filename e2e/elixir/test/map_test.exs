@@ -9,9 +9,9 @@ defmodule E2e.MapTest do
   describe "map_discover_urls" do
     test "map_discover_urls" do
       engine_config = "{\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MAP_DISCOVER_URLS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_discover_urls"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) >= 3
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.MapTest do
   describe "map_exclude_patterns" do
     test "map_exclude_patterns" do
       engine_config = "{\"exclude_paths\":[\"/private/.*\",\"/api/.*\"],\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MAP_EXCLUDE_PATTERNS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_exclude_patterns"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 1
     end
   end
@@ -29,9 +29,9 @@ defmodule E2e.MapTest do
   describe "map_include_subdomains" do
     test "map_include_subdomains" do
       engine_config = "{\"allow_subdomains\":true,\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MAP_INCLUDE_SUBDOMAINS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_include_subdomains"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) >= 2
     end
   end
@@ -39,9 +39,9 @@ defmodule E2e.MapTest do
   describe "map_large_sitemap" do
     test "map_large_sitemap" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_large_sitemap"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) >= 100
     end
   end
@@ -49,9 +49,9 @@ defmodule E2e.MapTest do
   describe "map_limit_pagination" do
     test "map_limit_pagination" do
       engine_config = "{\"map_limit\":5,\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MAP_LIMIT_PAGINATION") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_limit_pagination"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) <= 5
     end
   end
@@ -59,9 +59,9 @@ defmodule E2e.MapTest do
   describe "map_search_filter" do
     test "map_search_filter" do
       engine_config = "{\"map_search\":\"blog\",\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MAP_SEARCH_FILTER") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/map_search_filter"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) >= 2
       assert length(result.urls) <= 2
     end

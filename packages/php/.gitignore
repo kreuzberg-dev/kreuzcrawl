@@ -1,5 +1,5 @@
 packages/ruby/tmp/
-packages/ruby/ext/kreuzcrawl_rb/native/
+packages/ruby/ext/crawlberg_rb/native/
 packages/ruby/ext/src_rb/
 .alef/
 __pycache__/

@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Install Kreuzcrawl for Rust, Python, TypeScript, Go, Java, Kotlin, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, WebAssembly, or Docker
+description: Install Crawlberg for Rust, Python, TypeScript, Go, Java, Kotlin, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, WebAssembly, or Docker
 ---
 
 ## Installation
@@ -15,25 +15,25 @@ The fastest way to get started. No Rust toolchain needed if you use Homebrew.
 
     ```bash
     brew trust xberg-io/tap
-    brew install xberg-io/tap/kreuzcrawl
+    brew install xberg-io/tap/crawlberg
     ```
 
 === "Cargo"
 
     ```bash
-    cargo install kreuzcrawl-cli
+    cargo install crawlberg-cli
     ```
 
     With optional features:
 
     ```bash
-    cargo install kreuzcrawl-cli --features "api,mcp"
+    cargo install crawlberg-cli --features "api,mcp"
     ```
 
 Verify:
 
 ```bash
-kreuzcrawl --version
+crawlberg --version
 ```
 
 </div>
@@ -48,7 +48,7 @@ kreuzcrawl --version
 
     ```toml title="Cargo.toml"
     [dependencies]
-    kreuzcrawl = "0.3"
+    crawlberg = "0.3"
     tokio = { version = "1", features = ["full"] }
     ```
 
@@ -71,40 +71,40 @@ kreuzcrawl --version
 
     ```toml title="Cargo.toml"
     [dependencies]
-    kreuzcrawl = { version = "0.3", features = ["browser", "ai", "mcp"] }
+    crawlberg = { version = "0.3", features = ["browser", "ai", "mcp"] }
     ```
 
     !!! note "Rust version"
-        Kreuzcrawl requires Rust 1.91+ (edition 2024).
+        Crawlberg requires Rust 1.91+ (edition 2024).
 
 === "Python"
 
     Requires Python 3.10+. Install from PyPI:
 
     ```bash
-    pip install kreuzcrawl
+    pip install crawlberg
     ```
 
     Or with `uv`:
 
     ```bash
-    uv add kreuzcrawl
+    uv add crawlberg
     ```
 
     The package ships pre-built wheels with the Rust core compiled via [maturin](https://www.maturin.rs/). No Rust toolchain needed.
 
 === "TypeScript"
 
-    Install the `@kreuzberg/kreuzcrawl` package:
+    Install the `@kreuzberg/crawlberg` package:
 
     ```bash
-    npm install @kreuzberg/kreuzcrawl
+    npm install @kreuzberg/crawlberg
     ```
 
     Or with pnpm:
 
     ```bash
-    pnpm add @kreuzberg/kreuzcrawl
+    pnpm add @kreuzberg/crawlberg
     ```
 
     The package includes pre-built native binaries via [NAPI-RS](https://napi.rs/) and ships with TypeScript type definitions (`.d.ts`).
@@ -114,7 +114,7 @@ kreuzcrawl --version
     Requires Ruby 3.2+. Add to your `Gemfile`:
 
     ```ruby title="Gemfile"
-    gem "kreuzcrawl", "~> 0.3"
+    gem "crawlberg", "~> 0.3"
     ```
 
     Then:
@@ -126,7 +126,7 @@ kreuzcrawl --version
     Or install directly:
 
     ```bash
-    gem install kreuzcrawl
+    gem install crawlberg
     ```
 
     The gem includes a native extension built with [Magnus](https://github.com/matsadler/magnus) and [rb_sys](https://github.com/oxidize-rb/rb-sys).
@@ -136,11 +136,11 @@ kreuzcrawl --version
     Requires Go 1.21+. The Go bindings use cgo with the C FFI layer:
 
     ```bash
-    go get github.com/xberg-io/kreuzcrawl/packages/go
+    go get github.com/xberg-io/crawlberg/packages/go
     ```
 
     !!! warning "Build requirement"
-        A C compiler is required. The kreuzcrawl shared library must be available at link time.
+        A C compiler is required. The crawlberg shared library must be available at link time.
 
 === "Java"
 
@@ -148,8 +148,8 @@ kreuzcrawl --version
 
     ```xml title="pom.xml"
     <dependency>
-        <groupId>dev.kreuzberg.kreuzcrawl</groupId>
-        <artifactId>kreuzcrawl</artifactId>
+        <groupId>dev.kreuzberg.crawlberg</groupId>
+        <artifactId>crawlberg</artifactId>
         <version>0.3.0</version>
     </dependency>
     ```
@@ -162,7 +162,7 @@ kreuzcrawl --version
 
     ```kotlin title="build.gradle.kts"
     dependencies {
-        implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0")
+        implementation("dev.kreuzberg.crawlberg:crawlberg-android:0.3.0")
     }
     ```
 
@@ -173,13 +173,13 @@ kreuzcrawl --version
     Requires .NET 10+. Add the NuGet package:
 
     ```bash
-    dotnet add package Kreuzcrawl
+    dotnet add package Crawlberg
     ```
 
     Or in your `.csproj`:
 
-    ```xml title="Kreuzcrawl.csproj"
-    <PackageReference Include="Kreuzcrawl" Version="0.3.0" />
+    ```xml title="Crawlberg.csproj"
+    <PackageReference Include="Crawlberg" Version="0.3.0" />
     ```
 
     The C# bindings use P/Invoke to call the C FFI layer.
@@ -189,14 +189,14 @@ kreuzcrawl --version
     Requires PHP 8.2+. Install the extension via Composer:
 
     ```bash
-    composer require xberg-io/kreuzcrawl
+    composer require xberg-io/crawlberg
     ```
 
     The PHP bindings are built with [ext-php-rs](https://github.com/davidcole1340/ext-php-rs) and load as a native PHP extension.
 
     !!! tip "Verify the extension is loaded"
         ```bash
-        php -m | grep kreuzcrawl
+        php -m | grep crawlberg
         ```
 
 === "Elixir"
@@ -206,7 +206,7 @@ kreuzcrawl --version
     ```elixir title="mix.exs"
     defp deps do
       [
-        {:kreuzcrawl, "~> 0.3"}
+        {:crawlberg, "~> 0.3"}
       ]
     end
     ```
@@ -225,11 +225,11 @@ kreuzcrawl --version
     For browser or Node.js environments via wasm-bindgen:
 
     ```bash
-    npm install @kreuzberg/kreuzcrawl-wasm
+    npm install @kreuzberg/crawlberg-wasm
     ```
 
     ```typescript
-    import init from "@kreuzberg/kreuzcrawl-wasm";
+    import init from "@kreuzberg/crawlberg-wasm";
     await init();
     ```
 
@@ -241,7 +241,7 @@ kreuzcrawl --version
     Requires Dart or Flutter with native FFI support:
 
     ```bash
-    dart pub add kreuzcrawl
+    dart pub add crawlberg
     ```
 
 === "Swift"
@@ -249,7 +249,7 @@ kreuzcrawl --version
     Add the Swift package from GitHub:
 
     ```swift
-    .package(url: "https://github.com/xberg-io/kreuzcrawl", exact: "0.3.0")
+    .package(url: "https://github.com/xberg-io/crawlberg", exact: "0.3.0")
     ```
 
 === "Zig"
@@ -257,18 +257,18 @@ kreuzcrawl --version
     Use the generated Zig package over the C FFI layer:
 
     ```bash
-    zig fetch --save https://github.com/xberg-io/kreuzcrawl/archive/refs/tags/v0.3.0.tar.gz
+    zig fetch --save https://github.com/xberg-io/crawlberg/archive/refs/tags/v0.3.0.tar.gz
     ```
 
 === "C FFI"
 
-    For languages not listed above, kreuzcrawl provides a C-compatible FFI layer. Build the shared library:
+    For languages not listed above, crawlberg provides a C-compatible FFI layer. Build the shared library:
 
     ```bash
-    cargo build --release -p kreuzcrawl-ffi
+    cargo build --release -p crawlberg-ffi
     ```
 
-    The output is a shared library (`libkreuzcrawl.so` / `libkreuzcrawl.dylib` / `kreuzcrawl.dll`) with C headers generated by `cbindgen`.
+    The output is a shared library (`libcrawlberg.so` / `libcrawlberg.dylib` / `crawlberg.dll`) with C headers generated by `cbindgen`.
 
 ---
 
@@ -277,20 +277,20 @@ kreuzcrawl --version
 Pull the official image:
 
 ```bash
-docker pull ghcr.io/xberg-io/kreuzcrawl:latest
+docker pull ghcr.io/xberg-io/crawlberg:latest
 ```
 
 Run the CLI:
 
 ```bash
-docker run --rm ghcr.io/xberg-io/kreuzcrawl:latest scrape https://example.com
+docker run --rm ghcr.io/xberg-io/crawlberg:latest scrape https://example.com
 ```
 
 Run with a volume for WARC output:
 
 ```bash
 docker run --rm -v $(pwd)/output:/output \
-  ghcr.io/xberg-io/kreuzcrawl:latest \
+  ghcr.io/xberg-io/crawlberg:latest \
   crawl https://example.com --depth 2 --warc-output /output/archive.warc
 ```
 

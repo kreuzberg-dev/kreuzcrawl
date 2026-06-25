@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: validation. */
 final class ValidationTest extends TestCase
@@ -21,9 +21,9 @@ final class ValidationTest extends TestCase
     public function test_validation_browser_endpoint_invalid(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["endpoint" => "http://not-websocket:3000", "mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_browser_endpoint_invalid';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -31,9 +31,9 @@ final class ValidationTest extends TestCase
     public function test_validation_invalid_auth_config(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["auth" => ["password" => "secret", "type" => "basic"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_auth_config';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -41,9 +41,9 @@ final class ValidationTest extends TestCase
     public function test_validation_invalid_exclude_regex(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["excludePaths" => ["(unclosed"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_exclude_regex';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -51,9 +51,9 @@ final class ValidationTest extends TestCase
     public function test_validation_invalid_include_regex(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["includePaths" => ["[invalid"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_include_regex';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -61,9 +61,9 @@ final class ValidationTest extends TestCase
     public function test_validation_invalid_proxy_url(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["proxy" => ["url" => "not-a-url"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_proxy_url';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -71,9 +71,9 @@ final class ValidationTest extends TestCase
     public function test_validation_invalid_retry_code(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["retryCodes" => [999]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_retry_code';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -81,9 +81,9 @@ final class ValidationTest extends TestCase
     public function test_validation_max_concurrent_zero(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 0]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_max_concurrent_zero';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -91,9 +91,9 @@ final class ValidationTest extends TestCase
     public function test_validation_max_depth_too_high(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 200]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_max_depth_too_high';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -101,9 +101,9 @@ final class ValidationTest extends TestCase
     public function test_validation_max_pages_zero(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["maxPages" => 0]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_max_pages_zero';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -111,9 +111,9 @@ final class ValidationTest extends TestCase
     public function test_validation_max_redirects_too_high(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["maxRedirects" => 200]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_max_redirects_too_high';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -121,9 +121,9 @@ final class ValidationTest extends TestCase
     public function test_validation_negative_body_size(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["maxBodySize" => 0]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_negative_body_size';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -131,9 +131,9 @@ final class ValidationTest extends TestCase
     public function test_validation_timeout_zero(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["requestTimeout" => 0]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_timeout_zero';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 }

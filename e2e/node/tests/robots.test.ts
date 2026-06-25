@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 
 import { describe, expect, it } from "vitest";
-import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
+import { scrape, createEngine } from "@kreuzberg/crawlberg";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {
 	const contentEncoding = response.headers.get("content-encoding");
@@ -83,7 +83,7 @@ describe("robots", () => {
 		expect(result.isAllowed).toBe(true);
 	}, 30000);
 	it("robots_comments_handling: Correctly parses robots.txt with inline and line comments", async () => {
-		const engineConfig = { respectRobotsTxt: true, userAgent: "kreuzcrawl" };
+		const engineConfig = { respectRobotsTxt: true, userAgent: "crawlberg" };
 		const engine = createEngine(engineConfig);
 		const url =
 			process.env.MOCK_SERVER_ROBOTS_COMMENTS_HANDLING ??
@@ -92,7 +92,7 @@ describe("robots", () => {
 		expect(result.isAllowed).toBe(true);
 	}, 30000);
 	it("robots_crawl_delay: Respects crawl-delay directive from robots.txt", async () => {
-		const engineConfig = { respectRobotsTxt: true, userAgent: "kreuzcrawl" };
+		const engineConfig = { respectRobotsTxt: true, userAgent: "crawlberg" };
 		const engine = createEngine(engineConfig);
 		const url =
 			process.env.MOCK_SERVER_ROBOTS_CRAWL_DELAY ?? `${process.env.MOCK_SERVER_URL}/fixtures/robots_crawl_delay`;
@@ -144,7 +144,7 @@ describe("robots", () => {
 		expect(result.isAllowed).toBe(true);
 	}, 30000);
 	it("robots_request_rate: Parses request-rate directive from robots.txt", async () => {
-		const engineConfig = { respectRobotsTxt: true, userAgent: "kreuzcrawl" };
+		const engineConfig = { respectRobotsTxt: true, userAgent: "crawlberg" };
 		const engine = createEngine(engineConfig);
 		const url =
 			process.env.MOCK_SERVER_ROBOTS_REQUEST_RATE ??
@@ -163,7 +163,7 @@ describe("robots", () => {
 		expect(result.isAllowed).toBe(true);
 	}, 30000);
 	it("robots_user_agent_specific: Matches user-agent specific rules in robots.txt", async () => {
-		const engineConfig = { respectRobotsTxt: true, userAgent: "KreuzcrawlBot" };
+		const engineConfig = { respectRobotsTxt: true, userAgent: "CrawlbergBot" };
 		const engine = createEngine(engineConfig);
 		const url =
 			process.env.MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC ??

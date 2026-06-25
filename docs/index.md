@@ -1,9 +1,9 @@
 ---
-title: Kreuzcrawl
-description: "Kreuzcrawl - High-performance Rust web crawling engine with always-on HTML->Markdown, browser fallbacks, REST/MCP servers, and generated language packages."
+title: Crawlberg
+description: "Crawlberg - High-performance Rust web crawling engine with always-on HTML->Markdown, browser fallbacks, REST/MCP servers, and generated language packages."
 ---
 
-## kreuzcrawl
+## crawlberg
 
 High-performance web crawling and scraping with a Rust core and generated language packages. Always-on HTML→Markdown conversion, structured metadata, Chromiumoxide and native browser backends, REST/MCP servers, a CLI, and a Docker image.
 
@@ -18,7 +18,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 ---
 
-### Why Kreuzcrawl
+### Why Crawlberg
 
 <div class="grid cards" markdown>
 
@@ -56,29 +56,29 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 | Language              | Package                                                     | Docs                                             |
 | :-------------------- | :---------------------------------------------------------- | :----------------------------------------------- |
-| **Rust**              | `cargo add kreuzcrawl`                                      | [API Reference](reference/api-rust.md)           |
-| **Python**            | `pip install kreuzcrawl`                                    | [API Reference](reference/api-python.md)         |
-| **TypeScript / Node** | `npm install @kreuzberg/kreuzcrawl`                         | [API Reference](reference/api-typescript.md)     |
-| **WebAssembly**       | `npm install @kreuzberg/kreuzcrawl-wasm`                    | [API Reference](reference/api-wasm.md)           |
-| **Go**                | `go get github.com/xberg-io/kreuzcrawl/packages/go`    | [API Reference](reference/api-go.md)             |
-| **Java**              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`         | [API Reference](reference/api-java.md)           |
-| **Kotlin (Android)**  | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-android` | [API Reference](reference/api-kotlin-android.md) |
-| **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
-| **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
-| **PHP**               | `composer require xberg-io/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
-| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0"}`                                 | [API Reference](reference/api-elixir.md)         |
-| **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
+| **Rust**              | `cargo add crawlberg`                                      | [API Reference](reference/api-rust.md)           |
+| **Python**            | `pip install crawlberg`                                    | [API Reference](reference/api-python.md)         |
+| **TypeScript / Node** | `npm install @kreuzberg/crawlberg`                         | [API Reference](reference/api-typescript.md)     |
+| **WebAssembly**       | `npm install @kreuzberg/crawlberg-wasm`                    | [API Reference](reference/api-wasm.md)           |
+| **Go**                | `go get github.com/xberg-io/crawlberg/packages/go`    | [API Reference](reference/api-go.md)             |
+| **Java**              | Maven Central `dev.kreuzberg.crawlberg:crawlberg`         | [API Reference](reference/api-java.md)           |
+| **Kotlin (Android)**  | Maven Central `dev.kreuzberg.crawlberg:crawlberg-android` | [API Reference](reference/api-kotlin-android.md) |
+| **C#**                | `dotnet add package Crawlberg`                             | [API Reference](reference/api-csharp.md)         |
+| **Ruby**              | `gem install crawlberg`                                    | [API Reference](reference/api-ruby.md)           |
+| **PHP**               | `composer require xberg-io/crawlberg`                 | [API Reference](reference/api-php.md)            |
+| **Elixir**            | `{:crawlberg, "~> 0.3.0"}`                                 | [API Reference](reference/api-elixir.md)         |
+| **Dart / Flutter**    | `dart pub add crawlberg`                                   | [API Reference](reference/api-dart.md)           |
 | **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
 | **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |
 | **C (FFI)**           | Shared library + header                                     | [API Reference](reference/api-c.md)              |
-| **CLI**               | `cargo install kreuzcrawl-cli`                              | [CLI Guide](cli/usage.md)                        |
-| **Docker**            | `ghcr.io/xberg-io/kreuzcrawl`                          | [Docker Guide](guides/docker.md)                 |
+| **CLI**               | `cargo install crawlberg-cli`                              | [CLI Guide](cli/usage.md)                        |
+| **Docker**            | `ghcr.io/xberg-io/crawlberg`                          | [Docker Guide](guides/docker.md)                 |
 
 !!! tip "Choosing between TypeScript packages"
 
-    **`@kreuzberg/kreuzcrawl`** — Native NAPI-RS bindings. Use for Node.js servers and CLI tools. Full feature set including the browser fallback.
+    **`@kreuzberg/crawlberg`** — Native NAPI-RS bindings. Use for Node.js servers and CLI tools. Full feature set including the browser fallback.
 
-    **`@kreuzberg/kreuzcrawl-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No native browser backend, REST server, MCP server, or native streaming crawl wrappers.
+    **`@kreuzberg/crawlberg-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No native browser backend, REST server, MCP server, or native streaming crawl wrappers.
 
 ---
 
@@ -87,7 +87,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, ContentConfig, create_engine, crawl};
+    use crawlberg::{CrawlConfig, ContentConfig, create_engine, crawl};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -112,7 +112,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
     ```python title="main.py"
     import asyncio
-    from kreuzcrawl import CrawlConfig, create_engine, crawl
+    from crawlberg import CrawlConfig, create_engine, crawl
 
     async def main():
         engine = create_engine(CrawlConfig(max_depth=2, max_pages=50))
@@ -126,7 +126,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 === "TypeScript"
 
     ```typescript title="index.ts"
-    import { createEngine, crawl } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, crawl } from "@kreuzberg/crawlberg";
 
     const engine = createEngine({ maxDepth: 2, maxPages: 50 });
     const result = await crawl(engine, "https://example.com");
@@ -150,7 +150,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
   Managed extraction API with SDKs, dashboards, and observability.
 
-- :material-spider-web:{ .lg .middle } **[kreuzcrawl](https://github.com/xberg-io/kreuzcrawl)**
+- :material-spider-web:{ .lg .middle } **[crawlberg](https://github.com/xberg-io/crawlberg)**
 
   Web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 
@@ -180,7 +180,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 - :material-rocket-launch:{ .lg .middle } **Get Started**
 
-  Install Kreuzcrawl and run your first crawl in under five minutes.
+  Install Crawlberg and run your first crawl in under five minutes.
 
   [:octicons-arrow-right-24: Quick Start](getting-started/quickstart.md)
 
@@ -204,7 +204,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 - :material-console:{ .lg .middle } **CLI & Servers**
 
-  The `kreuzcrawl` CLI, REST API server, and MCP server for AI agents.
+  The `crawlberg` CLI, REST API server, and MCP server for AI agents.
 
   [:octicons-arrow-right-24: CLI Usage](cli/usage.md)
 
@@ -220,6 +220,6 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 ### Getting Help
 
-- **Bugs & feature requests** — [Open an issue on GitHub](https://github.com/xberg-io/kreuzcrawl/issues)
+- **Bugs & feature requests** — [Open an issue on GitHub](https://github.com/xberg-io/crawlberg/issues)
 - **Community chat** — [Join the Discord](https://discord.gg/xt9WY3GnKR)
 - **Contributing** — [Read the contributor guide](contributing.md)

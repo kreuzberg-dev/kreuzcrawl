@@ -5,75 +5,75 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'sitemap' do
   it 'sitemap_basic: Parses a standard urlset sitemap' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_basic"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(4)
 
   end
 
   it 'sitemap_compressed_gzip: Parses a gzip-compressed sitemap file' do
     engine_config = { 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_compressed_gzip"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(3)
 
   end
 
   it 'sitemap_empty: Handles empty sitemap gracefully' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_empty"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(0)
 
   end
 
   it 'sitemap_from_robots_txt: Discovers sitemap via robots.txt Sitemap directive' do
     engine_config = { 'respect_robots_txt' => true }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_from_robots_txt"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(4)
 
   end
 
   it 'sitemap_index: Follows sitemap index to discover child sitemaps' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = ENV.fetch('MOCK_SERVER_SITEMAP_INDEX', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_index"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(3)
 
   end
 
   it 'sitemap_lastmod_filter: Filters sitemap URLs by lastmod date' do
     engine_config = { 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_lastmod_filter"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(4)
 
   end
 
   it 'sitemap_only_mode: Uses sitemap URLs exclusively without following page links' do
     engine_config = { 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_only_mode"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(4)
 
   end
 
   it 'sitemap_xhtml_links: Parses sitemap with XHTML namespace alternate links' do
     engine_config = { 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/sitemap_xhtml_links"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     expect(result.urls.length).to eq(2)
 
   end

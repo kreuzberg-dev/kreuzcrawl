@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "content_204_no_content" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_204_NO_CONTENT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_204_no_content", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -49,7 +49,7 @@ test "content_charset_iso8859" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_CHARSET_ISO8859")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_charset_iso8859", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -66,7 +66,7 @@ test "content_empty_body" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_EMPTY_BODY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_empty_body", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -83,7 +83,7 @@ test "content_gzip_compressed" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_GZIP_COMPRESSED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_gzip_compressed", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -101,7 +101,7 @@ test "content_large_page_limit" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_LARGE_PAGE_LIMIT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_large_page_limit", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"max_body_size\":1024,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"max_body_size\":1024,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -118,7 +118,7 @@ test "content_main_only" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_MAIN_ONLY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_main_only", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -131,7 +131,7 @@ test "content_pdf_no_extension" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_PDF_NO_EXTENSION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_pdf_no_extension", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -148,7 +148,7 @@ test "content_remove_tags" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_REMOVE_TAGS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_remove_tags", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -165,7 +165,7 @@ test "content_utf8_bom" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONTENT_UTF8_BOM")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/content_utf8_bom", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

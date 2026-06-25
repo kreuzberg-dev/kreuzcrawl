@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: validation.</summary>
     public class ValidationTests
@@ -26,12 +26,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationBrowserEndpointInvalid()
         {
             // Browser endpoint must be a valid ws:// or wss:// URL, not http://
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"browser\":{\"endpoint\":\"http://not-websocket:3000\",\"mode\":\"always\"}}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_browser_endpoint_invalid";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -39,12 +39,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationInvalidAuthConfig()
         {
             // auth object with empty username in basic auth is rejected
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"password\":\"secret\",\"type\":\"basic\",\"username\":\"\"}}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_auth_config";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -52,12 +52,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationInvalidExcludeRegex()
         {
             // Invalid regex in exclude_paths is rejected
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"exclude_paths\":[\"(unclosed\"]}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_exclude_regex";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -65,12 +65,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationInvalidIncludeRegex()
         {
             // Invalid regex in include_paths is rejected
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"include_paths\":[\"[invalid\"]}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_include_regex";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -78,12 +78,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationInvalidProxyUrl()
         {
             // proxy with invalid URL like 'not-a-url' is rejected
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"proxy\":{\"url\":\"not-a-url\"}}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_proxy_url";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -91,12 +91,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationInvalidRetryCode()
         {
             // Retry code outside 100-599 is rejected
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"retry_codes\":[999]}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_retry_code";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -104,12 +104,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationMaxConcurrentZero()
         {
             // max_concurrent=0 is rejected as invalid config (minimum is 1)
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":0}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_concurrent_zero";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -117,12 +117,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationMaxDepthTooHigh()
         {
             // max_depth=200 exceeds limit of 100
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":200}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_depth_too_high";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -130,12 +130,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationMaxPagesZero()
         {
             // max_pages=0 is rejected as invalid config
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_pages\":0}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_pages_zero";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -143,12 +143,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationMaxRedirectsTooHigh()
         {
             // max_redirects > 100 is rejected as invalid config
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_redirects\":200}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_redirects_too_high";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -156,12 +156,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationNegativeBodySize()
         {
             // max_body_size set to -1 is rejected as invalid config
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_body_size\":0}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_negative_body_size";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 
@@ -169,12 +169,12 @@ namespace Kreuzcrawl
         public async Task Test_ValidationTimeoutZero()
         {
             // Zero request timeout is rejected as invalid config
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
                 var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"request_timeout\":0}", ConfigOptions)!;
-                var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+                var engine = CrawlbergConverter.CreateEngine(engineConfig);
                 var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_timeout_zero";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
+                await CrawlbergConverter.ScrapeAsync(engine, url);
             });
         }
 

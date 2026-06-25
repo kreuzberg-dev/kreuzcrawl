@@ -359,7 +359,7 @@ wheels = [
 ]
 
 [[package]]
-name = "kreuzcrawl-api-tests"
+name = "crawlberg-api-tests"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [

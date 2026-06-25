@@ -164,7 +164,7 @@ jobs:
                   context: .
                   file: docker/Dockerfile.alpine
                   load: true
-                  tags: kreuzcrawl-test:latest
+                  tags: crawlberg-test:latest
                   platforms: linux/${{ matrix.arch }}
                   cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
                   cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
@@ -172,12 +172,12 @@ jobs:
             - name: Check Docker image size
               uses: xberg-io/actions/check-docker-image-size@v1
               with:
-                  image: kreuzcrawl-test:latest
+                  image: crawlberg-test:latest
                   warn-mb: "200"
-                  label: kreuzcrawl-cli
+                  label: crawlberg-cli
 
             - name: Run Docker tests
-              run: python3 scripts/ci/docker/test_docker.py --image kreuzcrawl-test:latest --variant cli --verbose
+              run: python3 scripts/ci/docker/test_docker.py --image crawlberg-test:latest --variant cli --verbose
 
             - name: Log in to GitHub Container Registry
               if: ${{ needs.prepare.outputs.dry_run != 'true' }}
@@ -198,7 +198,7 @@ jobs:
                   provenance: false
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.description=Kreuzcrawl web crawling engine — Alpine CLI
+                      org.opencontainers.image.description=Crawlberg web crawling engine — Alpine CLI
                       org.opencontainers.image.licenses=Elastic-2.0
                   outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
                   cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
@@ -228,7 +228,7 @@ jobs:
 
             - name: Clean up test images
               if: ${{ always() }}
-              run: docker rmi kreuzcrawl-test:latest || true
+              run: docker rmi crawlberg-test:latest || true
 
     publish-docker:
         name: Publish Docker image
@@ -336,7 +336,7 @@ jobs:
                   # the image identifier, and delete any package-level version.
                   jq \
                     --arg version "$VERSION" \
-                    --arg image "ghcr.io/xberg-io/kreuzcrawl:$VERSION" \
+                    --arg image "ghcr.io/xberg-io/crawlberg:$VERSION" \
                     '.version = $version | .packages[0].identifier = $image | del(.packages[0].version)' \
                     server.json > server.release.json
 

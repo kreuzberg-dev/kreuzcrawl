@@ -1,19 +1,19 @@
 {
 	"$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-	"name": "io.github.xberg-io/kreuzcrawl",
-	"title": "Kreuzcrawl",
+	"name": "io.github.xberg-io/crawlberg",
+	"title": "Crawlberg",
 	"description": "Scrape, crawl, and map websites to Markdown or JSON via local CLI.",
 	"version": "0.3.0-rc.54",
 	"websiteUrl": "https://xberg.io",
 	"repository": {
-		"url": "https://github.com/xberg-io/kreuzcrawl",
+		"url": "https://github.com/xberg-io/crawlberg",
 		"source": "github",
 		"id": "1176688502"
 	},
 	"packages": [
 		{
 			"registryType": "oci",
-			"identifier": "ghcr.io/xberg-io/kreuzcrawl:0.3.0-rc.54",
+			"identifier": "ghcr.io/xberg-io/crawlberg:0.3.0-rc.54",
 			"version": "0.3.0-rc.54",
 			"transport": {
 				"type": "stdio"

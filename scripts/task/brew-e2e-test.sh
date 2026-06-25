@@ -11,7 +11,7 @@ FIXTURES_DIR="$REPO_ROOT/fixtures"
 BREW_DIR="$REPO_ROOT/e2e/brew"
 
 # Prepend the freshly-built CLI's release directory so tests resolve our
-# binary, not any system-installed kreuzcrawl (e.g. Homebrew Cellar).
+# binary, not any system-installed crawlberg (e.g. Homebrew Cellar).
 export PATH="$REPO_ROOT/target/release:${PATH}"
 
 if [ ! -x "$MOCK_SERVER_BIN" ]; then

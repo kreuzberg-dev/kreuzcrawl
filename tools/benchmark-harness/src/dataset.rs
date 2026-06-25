@@ -115,7 +115,7 @@ pub async fn download_scrape_evals(output_dir: &Path, force: bool) -> Result<usi
     }
 
     let client = reqwest::Client::builder()
-        .user_agent("kreuzcrawl-benchmark-harness/1.0")
+        .user_agent("crawlberg-benchmark-harness/1.0")
         .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
         .build()
         .map_err(|error| Error::Dataset(format!("failed to build HTTP client: {error}")))?;

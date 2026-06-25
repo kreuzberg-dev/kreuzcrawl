@@ -18,7 +18,7 @@ tasks:
         dir: packages/zig
         precondition: "command -v zig >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-ffi
+            - cargo build --release -p crawlberg-ffi
             - zig build
 
     build:dev:
@@ -26,7 +26,7 @@ tasks:
         dir: packages/zig
         precondition: "command -v zig >/dev/null 2>&1"
         cmds:
-            - cargo build -p kreuzcrawl-ffi
+            - cargo build -p crawlberg-ffi
             - zig build
 
     build:release:
@@ -34,7 +34,7 @@ tasks:
         dir: packages/zig
         precondition: "command -v zig >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-ffi
+            - cargo build --release -p crawlberg-ffi
             - zig build -Doptimize=ReleaseFast
 
     build:ci:
@@ -42,7 +42,7 @@ tasks:
         dir: packages/zig
         precondition: "command -v zig >/dev/null 2>&1"
         cmds:
-            - cargo build --release -p kreuzcrawl-ffi
+            - cargo build --release -p crawlberg-ffi
             - zig build
 
     test:

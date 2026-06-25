@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "sitemap_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{}", url);
+    const _result_json = try crawlberg.map_urls("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -45,7 +45,7 @@ test "sitemap_compressed_gzip" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_COMPRESSED_GZIP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_compressed_gzip", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.map_urls("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -62,7 +62,7 @@ test "sitemap_empty" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_EMPTY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_empty", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{}", url);
+    const _result_json = try crawlberg.map_urls("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -79,7 +79,7 @@ test "sitemap_from_robots_txt" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_from_robots_txt", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{\"respect_robots_txt\":true}", url);
+    const _result_json = try crawlberg.map_urls("{\"respect_robots_txt\":true}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -96,7 +96,7 @@ test "sitemap_index" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_INDEX")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_index", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{}", url);
+    const _result_json = try crawlberg.map_urls("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -113,7 +113,7 @@ test "sitemap_lastmod_filter" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_LASTMOD_FILTER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_lastmod_filter", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.map_urls("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -130,7 +130,7 @@ test "sitemap_only_mode" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_ONLY_MODE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_only_mode", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.map_urls("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -147,7 +147,7 @@ test "sitemap_xhtml_links" {
 
     const url = if (std.c.getenv("MOCK_SERVER_SITEMAP_XHTML_LINKS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/sitemap_xhtml_links", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.map_urls("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

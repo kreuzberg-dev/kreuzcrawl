@@ -2,13 +2,13 @@ version: "3"
 
 # Development cycle workflows: cleanup, alef generate, binding rebuild, e2e cycles.
 #
-# These tasks codify the iteration loops we run when changing the kreuzcrawl
+# These tasks codify the iteration loops we run when changing the crawlberg
 # core or alef codegen. They handle the awkward bits that bite repeatedly:
 #   - The alef-generated mock-server lives at e2e/rust/target/, NOT the
 #     workspace target/ (the legacy tools/mock-server is unrelated).
 #   - The Python e2e venv (e2e/python/.venv) caches a stale .so after a
-#     kreuzcrawl-py rebuild — needs `uv sync --reinstall` to refresh.
-#   - The Elixir e2e suite respects KREUZCRAWL_BUILD=1 (set per-task in
+#     crawlberg-py rebuild — needs `uv sync --reinstall` to refresh.
+#   - The Elixir e2e suite respects CRAWLBERG_BUILD=1 (set per-task in
 #     .task/languages/elixir.yml) to force NIF rebuild instead of pulling
 #     a stale precompiled binary from the package's tagged release.
 
@@ -96,7 +96,7 @@ tasks:
             - task: clean:e2e
 
     # ============================================================
-    # REBUILD (after kreuzcrawl-core or binding-source changes)
+    # REBUILD (after crawlberg-core or binding-source changes)
     # ============================================================
 
     rebuild:bindings:

@@ -18,7 +18,7 @@ Open a stream and iterate over events:
 
 ```rust
 use futures::StreamExt;
-use kreuzcrawl::{CrawlConfig, CrawlEvent, batch_crawl_stream, create_engine, crawl_stream};
+use crawlberg::{CrawlConfig, CrawlEvent, batch_crawl_stream, create_engine, crawl_stream};
 
 let engine = create_engine(Some(CrawlConfig {
     max_depth: Some(2),
@@ -76,7 +76,7 @@ payload as a dict via the `page`, `error`, and `complete` getters (the others re
 
 ```python
 import asyncio
-from kreuzcrawl import create_engine, crawl_stream, CrawlConfig
+from crawlberg import create_engine, crawl_stream, CrawlConfig
 
 async def main():
     engine = create_engine(CrawlConfig(

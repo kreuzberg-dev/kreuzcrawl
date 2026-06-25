@@ -6,10 +6,10 @@
 
 declare(strict_types=1);
 
-if (getenv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK') === false) {
-    putenv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true');
-    $_ENV['KREUZCRAWL_ALLOW_PRIVATE_NETWORK'] = 'true';
-    $_SERVER['KREUZCRAWL_ALLOW_PRIVATE_NETWORK'] = 'true';
+if (getenv('CRAWLBERG_ALLOW_PRIVATE_NETWORK') === false) {
+    putenv('CRAWLBERG_ALLOW_PRIVATE_NETWORK=true');
+    $_ENV['CRAWLBERG_ALLOW_PRIVATE_NETWORK'] = 'true';
+    $_SERVER['CRAWLBERG_ALLOW_PRIVATE_NETWORK'] = 'true';
 }
 
 

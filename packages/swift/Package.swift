@@ -1,18 +1,18 @@
 // swift-tools-version: 6.0
 import PackageDescription
 
-// NOTE: Run `cargo build -p kreuzcrawl-swift` and then rerun `alef generate`
+// NOTE: Run `cargo build -p crawlberg-swift` and then rerun `alef generate`
 // before `swift build`. Alef materializes the swift-bridge Swift/C outputs into
 // Sources/RustBridge and Sources/RustBridgeC when the Cargo build output exists.
 // See README.md for the full workflow.
 let package = Package(
-  name: "Kreuzcrawl",
+  name: "Crawlberg",
   platforms: [
     .macOS(.v13),
     .iOS(.v16),
   ],
   products: [
-    .library(name: "Kreuzcrawl", targets: ["Kreuzcrawl"])
+    .library(name: "Crawlberg", targets: ["Crawlberg"])
   ],
   targets: [
     // RustBridgeC: pure C/headers target. Swift files in RustBridge import this
@@ -25,8 +25,8 @@ let package = Package(
     ),
     // RustBridge: Swift wrapper around the Rust static library.
     // Depends on RustBridgeC so the generated Swift files can use the C types.
-    // linkerSettings wire the Rust staticlibs (libkreuzcrawl_swift.a and libkreuzcrawl_ffi.a)
-    // produced by `cargo build -p kreuzcrawl-swift` and the FFI crate so
+    // linkerSettings wire the Rust staticlibs (libcrawlberg_swift.a and libcrawlberg_ffi.a)
+    // produced by `cargo build -p crawlberg-swift` and the FFI crate so
     // `swift build` / `swift test` can resolve the `__swift_bridge__$*` and FFI C symbols.
     // Both target/release and target/debug are searched so either cargo profile works.
     // The FFI library is needed because the generated Swift service API code (App.swift)
@@ -40,19 +40,19 @@ let package = Package(
           "-L../../target/release",
           "-L../../target/debug",
         ]),
-        .linkedLibrary("kreuzcrawl_swift"),
-        .linkedLibrary("kreuzcrawl_ffi"),
+        .linkedLibrary("crawlberg_swift"),
+        .linkedLibrary("crawlberg_ffi"),
         .linkedFramework("Security", .when(platforms: [.macOS, .iOS])),
         .linkedFramework("CoreFoundation", .when(platforms: [.macOS, .iOS])),
         .linkedFramework("SystemConfiguration", .when(platforms: [.macOS])),
       ]
     ),
     .target(
-      name: "Kreuzcrawl", dependencies: ["RustBridge"],
-      path: "Sources/Kreuzcrawl",
+      name: "Crawlberg", dependencies: ["RustBridge"],
+      path: "Sources/Crawlberg",
       exclude: ["LICENSE"]),
     .testTarget(
-      name: "KreuzcrawlTests", dependencies: ["Kreuzcrawl"],
-      path: "Tests/KreuzcrawlTests"),
+      name: "CrawlbergTests", dependencies: ["Crawlberg"],
+      path: "Tests/CrawlbergTests"),
   ]
 )

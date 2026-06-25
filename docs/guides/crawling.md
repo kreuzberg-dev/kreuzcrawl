@@ -1,13 +1,13 @@
 # Crawling
 
-Crawling follows links from a seed URL, building a collection of pages up to a configured depth and page limit. Kreuzcrawl provides both collected and streaming interfaces, batch operations, and pluggable strategies for URL selection.
+Crawling follows links from a seed URL, building a collection of pages up to a configured depth and page limit. Crawlberg provides both collected and streaming interfaces, batch operations, and pluggable strategies for URL selection.
 
 ## Basic crawl
 
 The simplest crawl fetches a single seed URL and follows its links:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, create_engine, crawl};
+use crawlberg::{CrawlConfig, create_engine, crawl};
 
 let engine = create_engine(Some(CrawlConfig {
     max_depth: Some(2),
@@ -95,7 +95,7 @@ The engine compiles these patterns once at the start of the crawl and validates 
 Crawl multiple seed URLs concurrently, each following links independently:
 
 ```rust
-use kreuzcrawl::batch_crawl;
+use crawlberg::batch_crawl;
 
 let results = batch_crawl(
     &engine,
@@ -119,7 +119,7 @@ for entry in &results.results {
 There is also `batch_scrape` for scraping multiple individual URLs without link following:
 
 ```rust
-use kreuzcrawl::batch_scrape;
+use crawlberg::batch_scrape;
 
 let results = batch_scrape(
     &engine,

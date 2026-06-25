@@ -5,7 +5,7 @@
 #   docker build -f docker/Dockerfile.musl-build \
 #     --output type=local,dest=./dist .
 #
-# Produces: dist/kreuzcrawl (binary)
+# Produces: dist/crawlberg (binary)
 # =============================================================================
 FROM alpine:3.21 AS builder
 
@@ -28,26 +28,26 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Copy workspace manifests and only the required crates
 COPY Cargo.toml Cargo.lock ./
-COPY crates/kreuzcrawl/ crates/kreuzcrawl/
-COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
-COPY crates/kreuzcrawl-bindings-common/ crates/kreuzcrawl-bindings-common/
-COPY crates/kreuzcrawl-browser/ crates/kreuzcrawl-browser/
+COPY crates/crawlberg/ crates/crawlberg/
+COPY crates/crawlberg-cli/ crates/crawlberg-cli/
+COPY crates/crawlberg-bindings-common/ crates/crawlberg-bindings-common/
+COPY crates/crawlberg-browser/ crates/crawlberg-browser/
 
 # Replace workspace members with only the crates we have.
 # Use sed -z (null-terminated mode) so the regex spans newlines: the workspace
 # members list in Cargo.toml is multi-line.
-RUN sed -i -z 's|members = \[[^]]*\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli", "crates/kreuzcrawl-bindings-common", "crates/kreuzcrawl-browser"]|' Cargo.toml
+RUN sed -i -z 's|members = \[[^]]*\]|members = ["crates/crawlberg", "crates/crawlberg-cli", "crates/crawlberg-bindings-common", "crates/crawlberg-browser"]|' Cargo.toml
 
 RUN . "$HOME/.cargo/env" && \
-    cargo build --release --package kreuzcrawl-cli --features "api,mcp" && \
-    cp target/release/kreuzcrawl /build/kreuzcrawl && \
-    strip /build/kreuzcrawl
+    cargo build --release --package crawlberg-cli --features "api,mcp" && \
+    cp target/release/crawlberg /build/crawlberg && \
+    strip /build/crawlberg
 
 # Verify the binary
-RUN file /build/kreuzcrawl
+RUN file /build/crawlberg
 
 # =============================================================================
 # Output stage — just the binary
 # =============================================================================
 FROM scratch
-COPY --from=builder /build/kreuzcrawl /kreuzcrawl
+COPY --from=builder /build/crawlberg /crawlberg

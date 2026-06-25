@@ -1,18 +1,18 @@
 # OpenTelemetry Observability
 
-Kreuzcrawl emits W3C-standard traces and metrics via OpenTelemetry, aligned with semantic conventions and xberg-enterprise's existing naming. Integrate your observability backend (Jaeger, Prometheus, Grafana, Datadog) to track crawl performance, identify bottlenecks, and diagnose WAF issues.
+Crawlberg emits W3C-standard traces and metrics via OpenTelemetry, aligned with semantic conventions and xberg-enterprise's existing naming. Integrate your observability backend (Jaeger, Prometheus, Grafana, Datadog) to track crawl performance, identify bottlenecks, and diagnose WAF issues.
 
 ## Why OpenTelemetry
 
-OpenTelemetry provides a vendor-neutral API for instrumenting applications. Kreuzcrawl emits distributed traces (spans with W3C TraceContext headers) and metrics (counters, histograms, up-down counters) compatible with the [W3C TraceContext](https://www.w3.org/TR/trace-context/) specification. This enables end-to-end observability: trace a single request through your service layer into kreuzcrawl's engine, see exactly where time is spent, and correlate with WAF signals across your infrastructure.
+OpenTelemetry provides a vendor-neutral API for instrumenting applications. Crawlberg emits distributed traces (spans with W3C TraceContext headers) and metrics (counters, histograms, up-down counters) compatible with the [W3C TraceContext](https://www.w3.org/TR/trace-context/) specification. This enables end-to-end observability: trace a single request through your service layer into crawlberg's engine, see exactly where time is spent, and correlate with WAF signals across your infrastructure.
 
 ## Quick start with `init_otlp`
 
 Enable the `telemetry-init` feature and call the one-line helper to attach both tracer and meter providers:
 
 ```rust
-use kreuzcrawl::telemetry::{TelemetryConfig, init_otlp};
-use kreuzcrawl::{batch_crawl, create_engine};
+use crawlberg::telemetry::{TelemetryConfig, init_otlp};
+use crawlberg::{batch_crawl, create_engine};
 
 let _guard = init_otlp(TelemetryConfig {
     service_name: "my-crawler".into(),
@@ -35,7 +35,7 @@ The `TelemetryGuard` flushes all pending spans and metrics on drop, ensuring cle
 
 ## Bring-your-own SDK
 
-If your application already initializes OpenTelemetry (as in xberg-enterprise's `crates/observability/src/telemetry.rs:135-152`), kreuzcrawl automatically emits spans and metrics to the global tracer and meter without any init call. Dependency versions must align:
+If your application already initializes OpenTelemetry (as in xberg-enterprise's `crates/observability/src/telemetry.rs:135-152`), crawlberg automatically emits spans and metrics to the global tracer and meter without any init call. Dependency versions must align:
 
 | Crate | Version |
 |-------|---------|
@@ -50,15 +50,15 @@ Mixing major versions will break propagator injection and cause spans to drop. V
 
 ## W3C TraceContext propagation
 
-Kreuzcrawl preserves W3C TraceContext headers across HTTP requests, making it easy to correlate crawl activity with upstream services. Rust callers can use:
+Crawlberg preserves W3C TraceContext headers across HTTP requests, making it easy to correlate crawl activity with upstream services. Rust callers can use:
 
 - `with_traceparent(traceparent: &str, callback: impl Fn() -> R) -> R` — execute a callback with the given trace context active, so child spans become descendants.
 - `current_traceparent() -> Option<String>` — extract the current trace context as a W3C `traceparent` header value (format: `00-<trace_id>-<span_id>-<flags>`).
 
-Generated language bindings do not expose these helpers today because `with_traceparent` requires a Rust callback. Propagate trace context at the host-service layer with that language's OpenTelemetry SDK, and pass request headers normally into services that wrap kreuzcrawl.
+Generated language bindings do not expose these helpers today because `with_traceparent` requires a Rust callback. Propagate trace context at the host-service layer with that language's OpenTelemetry SDK, and pass request headers normally into services that wrap crawlberg.
 
 ```rust
-use kreuzcrawl::telemetry::{current_traceparent, with_traceparent};
+use crawlberg::telemetry::{current_traceparent, with_traceparent};
 
 let incoming = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
 let _traceparent = with_traceparent(incoming, || {
@@ -68,7 +68,7 @@ let _traceparent = with_traceparent(incoming, || {
 
 ## Span catalogue
 
-Every span is emitted via `tracing::info_span!` and automatically bridged to OpenTelemetry by the `tracing_opentelemetry::layer()`. Attribute keys use W3C semantic conventions where available (from `opentelemetry_semantic_conventions`), or kreuzcrawl-specific extensions (prefixed `crawl.`).
+Every span is emitted via `tracing::info_span!` and automatically bridged to OpenTelemetry by the `tracing_opentelemetry::layer()`. Attribute keys use W3C semantic conventions where available (from `opentelemetry_semantic_conventions`), or crawlberg-specific extensions (prefixed `crawl.`).
 
 | Span Name | Site | Attributes |
 |-----------|------|-----------|
@@ -83,7 +83,7 @@ Every span is emitted via `tracing::info_span!` and automatically bridged to Ope
 
 ## Metric catalogue
 
-Kreuzcrawl emits 10 OTel instruments via `kreuzcrawl::telemetry::metrics::registry()`. Names align with xberg-enterprise's existing emission points, so cloud can consolidate duplicate metrics in a follow-up.
+Crawlberg emits 10 OTel instruments via `crawlberg::telemetry::metrics::registry()`. Names align with xberg-enterprise's existing emission points, so cloud can consolidate duplicate metrics in a follow-up.
 
 | Metric Name | Instrument | Labels | Description |
 |-------------|-----------|--------|-------------|
@@ -141,4 +141,4 @@ Stack this with `crawl_pages_duration_seconds_bucket` (latency percentiles) to c
 
 ## Cloud alignment note
 
-Kreuzberg-cloud currently emits ~12 duplicate `crawl_*` metrics and one manual `crawl.engine.batch` span at `services/worker/src/observability/metrics.rs:131-272` and `crawl_handler.rs:281-286`. Once kreuzcrawl's observability lands, cloud will delete its duplicate emitters in a follow-up PR. No user-facing changes — cloud's observability dashboards and alerts continue to work unchanged.
+Kreuzberg-cloud currently emits ~12 duplicate `crawl_*` metrics and one manual `crawl.engine.batch` span at `services/worker/src/observability/metrics.rs:131-272` and `crawl_handler.rs:281-286`. Once crawlberg's observability lands, cloud will delete its duplicate emitters in a follow-up PR. No user-facing changes — cloud's observability dashboards and alerts continue to work unchanged.

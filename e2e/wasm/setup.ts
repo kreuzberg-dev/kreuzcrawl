@@ -6,7 +6,7 @@ import { createRequire } from "module";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 // Pre-initialize the wasm-bindgen module so that exports are callable
 // in every vitest worker. The async default export uses fetch() which
@@ -14,7 +14,7 @@ process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
 // readFileSync buffer instead.
 try {
 	const _require = createRequire(import.meta.url);
-	const wasmPkgDir = _require.resolve("@kreuzberg/kreuzcrawl-wasm");
+	const wasmPkgDir = _require.resolve("@kreuzberg/crawlberg-wasm");
 	const wasmModule = await import(/* @vite-ignore */ wasmPkgDir);
 	const initSync = (wasmModule as unknown as Record<string, unknown>).initSync as
 		| ((mod: WebAssembly.Module | BufferSource) => unknown)

@@ -1,6 +1,6 @@
 """Shared fixtures for schemathesis API contract tests.
 
-Starts a kreuzcrawl API server before the test session and tears it down after.
+Starts a crawlberg API server before the test session and tears it down after.
 The server is built with `--features api` and runs on a random available port.
 """
 
@@ -52,7 +52,7 @@ def api_url() -> str:
             "run",
             "--release",
             "-p",
-            "kreuzcrawl-cli",
+            "crawlberg-cli",
             "--features",
             "api",
             "--",

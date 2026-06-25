@@ -1465,7 +1465,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl"
+name = "crawlberg"
 version = "0.3.0-rc.87"
 dependencies = [
  "ahash",
@@ -1505,11 +1505,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl-e2e-rust"
+name = "crawlberg-e2e-rust"
 version = "0.3.0-rc.87"
 dependencies = [
  "axum",
- "kreuzcrawl",
+ "crawlberg",
  "serde",
  "serde_json",
  "tokio",

@@ -9,7 +9,7 @@ set -euo pipefail
 test_sitemap_basic() {
   # Parses a standard urlset sitemap
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_BASIC:-${MOCK_SERVER_URL}/fixtures/sitemap_basic}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_BASIC:-${MOCK_SERVER_URL}/fixtures/sitemap_basic}" --config '{}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -19,7 +19,7 @@ test_sitemap_basic() {
 test_sitemap_compressed_gzip() {
   # Parses a gzip-compressed sitemap file
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_COMPRESSED_GZIP:-${MOCK_SERVER_URL}/fixtures/sitemap_compressed_gzip}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_COMPRESSED_GZIP:-${MOCK_SERVER_URL}/fixtures/sitemap_compressed_gzip}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -29,7 +29,7 @@ test_sitemap_compressed_gzip() {
 test_sitemap_empty() {
   # Handles empty sitemap gracefully
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_EMPTY:-${MOCK_SERVER_URL}/fixtures/sitemap_empty}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_EMPTY:-${MOCK_SERVER_URL}/fixtures/sitemap_empty}" --config '{}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -39,7 +39,7 @@ test_sitemap_empty() {
 test_sitemap_from_robots_txt() {
   # Discovers sitemap via robots.txt Sitemap directive
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT:-${MOCK_SERVER_URL}/fixtures/sitemap_from_robots_txt}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT:-${MOCK_SERVER_URL}/fixtures/sitemap_from_robots_txt}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -49,7 +49,7 @@ test_sitemap_from_robots_txt() {
 test_sitemap_index() {
   # Follows sitemap index to discover child sitemaps
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_INDEX:-${MOCK_SERVER_URL}/fixtures/sitemap_index}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_INDEX:-${MOCK_SERVER_URL}/fixtures/sitemap_index}" --config '{}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -59,7 +59,7 @@ test_sitemap_index() {
 test_sitemap_lastmod_filter() {
   # Filters sitemap URLs by lastmod date
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_LASTMOD_FILTER:-${MOCK_SERVER_URL}/fixtures/sitemap_lastmod_filter}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_LASTMOD_FILTER:-${MOCK_SERVER_URL}/fixtures/sitemap_lastmod_filter}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -69,7 +69,7 @@ test_sitemap_lastmod_filter() {
 test_sitemap_only_mode() {
   # Uses sitemap URLs exclusively without following page links
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_ONLY_MODE:-${MOCK_SERVER_URL}/fixtures/sitemap_only_mode}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_ONLY_MODE:-${MOCK_SERVER_URL}/fixtures/sitemap_only_mode}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -79,7 +79,7 @@ test_sitemap_only_mode() {
 test_sitemap_xhtml_links() {
   # Parses sitemap with XHTML namespace alternate links
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_SITEMAP_XHTML_LINKS:-${MOCK_SERVER_URL}/fixtures/sitemap_xhtml_links}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_SITEMAP_XHTML_LINKS:-${MOCK_SERVER_URL}/fixtures/sitemap_xhtml_links}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')

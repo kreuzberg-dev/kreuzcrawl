@@ -1,6 +1,6 @@
 # Markdown Conversion
 
-Kreuzcrawl converts every HTML page to Markdown automatically. The conversion produces a rich `MarkdownResult` that includes the Markdown text, a document structure tree, extracted tables, numbered citations, and LLM-optimized fit content.
+Crawlberg converts every HTML page to Markdown automatically. The conversion produces a rich `MarkdownResult` that includes the Markdown text, a document structure tree, extracted tables, numbered citations, and LLM-optimized fit content.
 
 ## Always-on conversion
 

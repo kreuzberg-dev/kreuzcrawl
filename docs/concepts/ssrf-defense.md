@@ -1,6 +1,6 @@
 # SSRF Defense
 
-Kreuzcrawl refuses outbound HTTP requests targeting internal infrastructure,
+Crawlberg refuses outbound HTTP requests targeting internal infrastructure,
 cloud metadata endpoints, and unsupported schemes. The policy is on by
 default and applies to every crawl, scrape, sitemap fetch, robots.txt fetch,
 asset download, and link-following enqueue.
@@ -31,13 +31,13 @@ Two equivalent paths:
 **Environment variable** — applies to every crawler in the process:
 
 ```bash
-export KREUZCRAWL_ALLOW_PRIVATE_NETWORK=1
+export CRAWLBERG_ALLOW_PRIVATE_NETWORK=1
 ```
 
 **Per-config builder** — applies to a single CrawlConfig:
 
 ```rust
-use kreuzcrawl::CrawlConfigBuilder;
+use crawlberg::CrawlConfigBuilder;
 
 let config = CrawlConfigBuilder::default()
     .allow_private_networks(true)
@@ -53,7 +53,7 @@ in effect.
 Allowlist specific hosts while keeping the rest of the policy strict:
 
 ```rust
-use kreuzcrawl::{CrawlConfigBuilder, HostMatcher};
+use crawlberg::{CrawlConfigBuilder, HostMatcher};
 
 let config = CrawlConfigBuilder::default()
     .ssrf_allowlist_host(HostMatcher::Suffix(".internal.xberg.io".into()))
@@ -95,7 +95,7 @@ the queue and a `tracing::warn!` is emitted with structured fields
 
 ## Browser layer parity
 
-The headless browser layer (`kreuzcrawl-browser`) shares the same policy core
+The headless browser layer (`crawlberg-browser`) shares the same policy core
 and applies it to every JS-initiated `fetch()` and every navigation. Two
 browser-specific extras are kept:
 

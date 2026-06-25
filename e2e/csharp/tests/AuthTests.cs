@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: auth.</summary>
     public class AuthTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // Sends HTTP Basic authentication header
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_basic_http";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.AuthHeaderSent);
     Assert.True(result.StatusCode == 200);
 
@@ -40,9 +40,9 @@ namespace Kreuzcrawl
         {
             // Sends Bearer token in Authorization header
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_bearer_token";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.AuthHeaderSent);
     Assert.True(result.StatusCode == 200);
 
@@ -53,9 +53,9 @@ namespace Kreuzcrawl
         {
             // Sends authentication via custom header (X-API-Key)
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_custom_header";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.AuthHeaderSent);
     Assert.True(result.StatusCode == 200);
 

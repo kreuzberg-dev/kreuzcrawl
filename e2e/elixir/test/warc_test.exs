@@ -8,10 +8,10 @@ defmodule E2e.WarcTest do
 
   describe "warc_basic_output" do
     test "warc_basic_output" do
-      engine_config = "{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_test.warc\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/warc_basic_output"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert Enum.at(result.pages, 0).status_code == 200
       assert length(result.pages) == 1
     end
@@ -19,10 +19,10 @@ defmodule E2e.WarcTest do
 
   describe "warc_multi_page_crawl" do
     test "warc_multi_page_crawl" do
-      engine_config = "{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_crawl.warc\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_WARC_MULTI_PAGE_CRAWL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/warc_multi_page_crawl"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) >= 2
       assert result.stayed_on_domain == true
     end

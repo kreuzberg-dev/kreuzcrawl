@@ -11,4 +11,4 @@ export DYLD_LIBRARY_PATH="/opt/homebrew/lib:${REPO_ROOT}/target/release${DYLD_LI
 export ORT_DYLIB_PATH="${ORT_DYLIB_PATH:-/opt/homebrew/lib/libonnxruntime.dylib}"
 
 cd "${REPO_ROOT}/packages/csharp"
-dotnet test Kreuzcrawl.Tests/Kreuzcrawl.Tests.csproj -c Release
+dotnet test Crawlberg.Tests/Crawlberg.Tests.csproj -c Release

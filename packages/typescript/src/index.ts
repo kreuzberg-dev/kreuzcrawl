@@ -16,7 +16,7 @@ export {
 	interact,
 	mapUrls,
 	scrape,
-} from "@kreuzberg/kreuzcrawl";
+} from "@kreuzberg/crawlberg";
 
 export type {
 	ActionResult,
@@ -58,4 +58,4 @@ export type {
 	ScrapeResult,
 	SitemapUrl,
 	SsrfPolicy,
-} from "@kreuzberg/kreuzcrawl";
+} from "@kreuzberg/crawlberg";

@@ -9,7 +9,7 @@ set -euo pipefail
 test_robots_allow_all() {
   # Permissive robots.txt allows all paths
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_ALLOW_ALL:-${MOCK_SERVER_URL}/fixtures/robots_allow_all}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_ALLOW_ALL:-${MOCK_SERVER_URL}/fixtures/robots_allow_all}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -19,7 +19,7 @@ test_robots_allow_all() {
 test_robots_allow_override() {
   # Allow directive overrides Disallow for specific paths
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_ALLOW_OVERRIDE:-${MOCK_SERVER_URL}/fixtures/robots_allow_override}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_ALLOW_OVERRIDE:-${MOCK_SERVER_URL}/fixtures/robots_allow_override}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -29,7 +29,7 @@ test_robots_allow_override() {
 test_robots_comments_handling() {
   # Correctly parses robots.txt with inline and line comments
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_COMMENTS_HANDLING:-${MOCK_SERVER_URL}/fixtures/robots_comments_handling}" --config '{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_COMMENTS_HANDLING:-${MOCK_SERVER_URL}/fixtures/robots_comments_handling}" --config '{"respect_robots_txt":true,"user_agent":"crawlberg"}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -39,7 +39,7 @@ test_robots_comments_handling() {
 test_robots_crawl_delay() {
   # Respects crawl-delay directive from robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_CRAWL_DELAY:-${MOCK_SERVER_URL}/fixtures/robots_crawl_delay}" --config '{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_CRAWL_DELAY:-${MOCK_SERVER_URL}/fixtures/robots_crawl_delay}" --config '{"respect_robots_txt":true,"user_agent":"crawlberg"}' --format json --browser-mode never)
 
   local val_robots_crawl_delay
   val_robots_crawl_delay=$(echo "$output" | jq -r '.crawl_delay')
@@ -49,7 +49,7 @@ test_robots_crawl_delay() {
 test_robots_disallow_path() {
   # Robots.txt disallows specific paths
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_DISALLOW_PATH:-${MOCK_SERVER_URL}/fixtures/robots_disallow_path}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_DISALLOW_PATH:-${MOCK_SERVER_URL}/fixtures/robots_disallow_path}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -59,7 +59,7 @@ test_robots_disallow_path() {
 test_robots_meta_nofollow() {
   # Detects nofollow meta robots tag and skips link extraction
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_META_NOFOLLOW:-${MOCK_SERVER_URL}/fixtures/robots_meta_nofollow}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_META_NOFOLLOW:-${MOCK_SERVER_URL}/fixtures/robots_meta_nofollow}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_nofollow_detected
   val_robots_nofollow_detected=$(echo "$output" | jq -r '.nofollow_detected')
@@ -69,7 +69,7 @@ test_robots_meta_nofollow() {
 test_robots_meta_noindex() {
   # Detects noindex meta robots tag in HTML page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_META_NOINDEX:-${MOCK_SERVER_URL}/fixtures/robots_meta_noindex}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_META_NOINDEX:-${MOCK_SERVER_URL}/fixtures/robots_meta_noindex}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_noindex_detected
   val_robots_noindex_detected=$(echo "$output" | jq -r '.noindex_detected')
@@ -79,7 +79,7 @@ test_robots_meta_noindex() {
 test_robots_missing_404() {
   # Missing robots.txt (404) allows all crawling
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_MISSING_404:-${MOCK_SERVER_URL}/fixtures/robots_missing_404}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_MISSING_404:-${MOCK_SERVER_URL}/fixtures/robots_missing_404}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -89,7 +89,7 @@ test_robots_missing_404() {
 test_robots_multiple_user_agents() {
   # Picks the most specific user-agent block from robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_MULTIPLE_USER_AGENTS:-${MOCK_SERVER_URL}/fixtures/robots_multiple_user_agents}" --config '{"respect_robots_txt":true,"user_agent":"SpecificBot"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_MULTIPLE_USER_AGENTS:-${MOCK_SERVER_URL}/fixtures/robots_multiple_user_agents}" --config '{"respect_robots_txt":true,"user_agent":"SpecificBot"}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -99,7 +99,7 @@ test_robots_multiple_user_agents() {
 test_robots_request_rate() {
   # Parses request-rate directive from robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_REQUEST_RATE:-${MOCK_SERVER_URL}/fixtures/robots_request_rate}" --config '{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_REQUEST_RATE:-${MOCK_SERVER_URL}/fixtures/robots_request_rate}" --config '{"respect_robots_txt":true,"user_agent":"crawlberg"}' --format json --browser-mode never)
 
   local val_robots_crawl_delay
   val_robots_crawl_delay=$(echo "$output" | jq -r '.crawl_delay')
@@ -112,7 +112,7 @@ test_robots_request_rate() {
 test_robots_sitemap_directive() {
   # Discovers sitemap URL from Sitemap directive in robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_SITEMAP_DIRECTIVE:-${MOCK_SERVER_URL}/fixtures/robots_sitemap_directive}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_SITEMAP_DIRECTIVE:-${MOCK_SERVER_URL}/fixtures/robots_sitemap_directive}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -122,7 +122,7 @@ test_robots_sitemap_directive() {
 test_robots_user_agent_specific() {
   # Matches user-agent specific rules in robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC:-${MOCK_SERVER_URL}/fixtures/robots_user_agent_specific}" --config '{"respect_robots_txt":true,"user_agent":"KreuzcrawlBot"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC:-${MOCK_SERVER_URL}/fixtures/robots_user_agent_specific}" --config '{"respect_robots_txt":true,"user_agent":"CrawlbergBot"}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -132,7 +132,7 @@ test_robots_user_agent_specific() {
 test_robots_wildcard_paths() {
   # Handles wildcard Disallow patterns in robots.txt
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_WILDCARD_PATHS:-${MOCK_SERVER_URL}/fixtures/robots_wildcard_paths}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_WILDCARD_PATHS:-${MOCK_SERVER_URL}/fixtures/robots_wildcard_paths}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_is_allowed
   val_robots_is_allowed=$(echo "$output" | jq -r '.is_allowed')
@@ -142,7 +142,7 @@ test_robots_wildcard_paths() {
 test_robots_x_robots_tag() {
   # Respects X-Robots-Tag HTTP header directives
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ROBOTS_X_ROBOTS_TAG:-${MOCK_SERVER_URL}/fixtures/robots_x_robots_tag}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ROBOTS_X_ROBOTS_TAG:-${MOCK_SERVER_URL}/fixtures/robots_x_robots_tag}" --config '{"respect_robots_txt":true}' --format json --browser-mode never)
 
   local val_robots_x_robots_tag
   val_robots_x_robots_tag=$(echo "$output" | jq -r '.x_robots_tag')

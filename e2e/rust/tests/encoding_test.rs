@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: encoding
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::scrape;
+use crawlberg::create_engine;
+use crawlberg::scrape;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: batch. */
 final class BatchTest extends TestCase
@@ -21,10 +21,10 @@ final class BatchTest extends TestCase
     public function test_batch_crawl_basic(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_CRAWL_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_crawl_basic';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/seed1", "/seed2"]);
-        $result = Kreuzcrawl::batchCrawl($engine, $urls);
+        $result = Crawlberg::batchCrawl($engine, $urls);
 
             $this->assertEquals(2, $result->completedCount);
             $this->assertEquals(0, $result->failedCount);
@@ -38,10 +38,10 @@ final class BatchTest extends TestCase
     public function test_batch_crawl_partial_failure(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_crawl_partial_failure';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/good_seed", "/bad_seed"]);
-        $result = Kreuzcrawl::batchCrawl($engine, $urls);
+        $result = Crawlberg::batchCrawl($engine, $urls);
 
             $this->assertEquals(1, $result->completedCount);
             $this->assertEquals(1, $result->failedCount);
@@ -55,10 +55,10 @@ final class BatchTest extends TestCase
     public function test_batch_crawl_with_config(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_crawl_with_config';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/seed1", "/seed2"]);
-        $result = Kreuzcrawl::batchCrawl($engine, $urls);
+        $result = Crawlberg::batchCrawl($engine, $urls);
 
             $this->assertEquals(2, $result->completedCount);
             $this->assertEquals(0, $result->failedCount);
@@ -70,10 +70,10 @@ final class BatchTest extends TestCase
     /** Batch scrape with empty batch_urls array returns error */
     public function test_batch_scrape_empty_urls_error(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $urls_base = getenv('MOCK_SERVER_BATCH_SCRAPE_EMPTY_URLS_ERROR') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_scrape_empty_urls_error';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, []);
-        Kreuzcrawl::batchScrape($engine, $urls);
+        Crawlberg::batchScrape($engine, $urls);
     }
 
 
@@ -81,10 +81,10 @@ final class BatchTest extends TestCase
     public function test_batch_scrape_with_config(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["content" => ["preprocessingPreset" => "aggressive"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_scrape_with_config';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/article1", "/article2"]);
-        $result = Kreuzcrawl::batchScrape($engine, $urls);
+        $result = Crawlberg::batchScrape($engine, $urls);
 
             $this->assertEquals(2, $result->completedCount);
             $this->assertEquals(0, $result->failedCount);
@@ -97,10 +97,10 @@ final class BatchTest extends TestCase
     /** Batch scrape of multiple URLs all succeeding */
     public function test_scrape_batch_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $urls_base = getenv('MOCK_SERVER_SCRAPE_BATCH_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_basic';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/page1", "/page2", "/page3"]);
-        $result = Kreuzcrawl::batchScrape($engine, $urls);
+        $result = Crawlberg::batchScrape($engine, $urls);
 
             $this->assertEquals(3, $result->completedCount);
             $this->assertEquals(0, $result->failedCount);
@@ -113,10 +113,10 @@ final class BatchTest extends TestCase
     /** Batch scrape with one URL failing returns partial results */
     public function test_scrape_batch_partial_failure(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $urls_base = getenv('MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_partial_failure';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/good1", "/bad", "/good2"]);
-        $result = Kreuzcrawl::batchScrape($engine, $urls);
+        $result = Crawlberg::batchScrape($engine, $urls);
 
             $this->assertEquals(2, $result->completedCount);
             $this->assertEquals(1, $result->failedCount);
@@ -129,10 +129,10 @@ final class BatchTest extends TestCase
     /** Batch scrape of 2 URLs completes with 2 results */
     public function test_scrape_batch_progress(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $urls_base = getenv('MOCK_SERVER_SCRAPE_BATCH_PROGRESS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_progress';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/target", "/other"]);
-        $result = Kreuzcrawl::batchScrape($engine, $urls);
+        $result = Crawlberg::batchScrape($engine, $urls);
 
             $this->assertEquals(2, $result->totalCount);
             $this->assertEquals(2, $result->completedCount);

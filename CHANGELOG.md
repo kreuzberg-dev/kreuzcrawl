@@ -1,8 +1,15 @@
 # Changelog
 
-All notable changes to kreuzcrawl are documented here.
+All notable changes to crawlberg are documented here.
 
 ## [Unreleased]
+
+### Changed
+
+- **Renamed the project from `kreuzcrawl` to `crawlberg`.** The crate (`crawlberg`), every
+  per-language package, the C FFI symbol prefix (`kcrawl_*` → `cberg_*`), the Go module
+  (`github.com/xberg-io/crawlberg`), and the docs domain (`docs.crawlberg.xberg.io`) follow. The
+  npm scope `@kreuzberg`, Java groupId `dev.kreuzberg`, and Composer vendor `xberg-io` are unchanged.
 
 ### Fixed
 
@@ -15,7 +22,7 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [0.3.0] - 2026-06-23
 
-First stable release. kreuzcrawl ships a Rust core with active bindings for
+First stable release. crawlberg ships a Rust core with active bindings for
 Python, TypeScript/Node, Ruby, PHP, Go, Java/JNI, C#, Elixir, WebAssembly,
 Dart, Kotlin/Android, Swift, Zig, and C FFI, plus a CLI, an HTTP API, and an
 MCP server.
@@ -24,7 +31,7 @@ MCP server.
 
 - **Tiered dispatch engine.** The crawl engine chains HTTP → Bypass → Browser
   tiers driven by per-attempt signals rather than a single bypass
-  short-circuit. Public `kreuzcrawl::types::dispatch` surface: `Tier`,
+  short-circuit. Public `crawlberg::types::dispatch` surface: `Tier`,
   `EscalationStrategy`, `EscalationReason`, `AttemptOutcome`, `RetryDirective`,
   `RetryPolicy`, `WafSignal`, `WafClassifier`, `DomainStatePort`,
   `DomainRecommendation`, `EscalationBudget`, and `DispatchProfile` (dispatch
@@ -35,7 +42,7 @@ MCP server.
   hot-reload (debounced, atomic `ArcSwap`, Kubernetes ConfigMap-safe), and
   `EwmaDomainState` for per-domain block-rate tracking that promotes/demotes
   the starting tier.
-- **SSRF defense.** New `kreuzcrawl::net::ssrf` module — `SsrfPolicy`,
+- **SSRF defense.** New `crawlberg::net::ssrf` module — `SsrfPolicy`,
   `HostMatcher` (`Exact`/`Suffix`/`Cidr`), `SsrfError`, and async
   `validate_url`. `CrawlConfig::ssrf` plus builder methods
   `allow_private_networks(bool)` and `ssrf_allowlist_host(HostMatcher)`;
@@ -46,7 +53,7 @@ MCP server.
   `CrawlEngineBuilder::with_browser_pool` / `with_native_executor` and
   `CrawlEngineHandle::from_engine` let consumers construct and `warm()` a pool
   once and reuse it across all crawl jobs.
-- **Public substrate parsers.** `kreuzcrawl::robots` and `kreuzcrawl::sitemap`
+- **Public substrate parsers.** `crawlberg::robots` and `crawlberg::sitemap`
   are public (`parse_robots_txt`, `is_path_allowed`, `RobotsRules`,
   `parse_sitemap_xml`, `parse_sitemap_index`, `is_sitemap_index`) — usable
   without spinning up the engine.
@@ -63,8 +70,8 @@ MCP server.
   Streamable HTTP at `/mcp` when the binary is built with the `api` + `mcp`
   features.
 - **Observability.** OpenTelemetry counters
-  `kreuzcrawl_waf_fingerprint_matches_total` and
-  `kreuzcrawl_escalations_total`, plus property tests, cargo-fuzz targets, and
+  `crawlberg_waf_fingerprint_matches_total` and
+  `crawlberg_escalations_total`, plus property tests, cargo-fuzz targets, and
   Criterion benchmarks covering the WAF subsystem.
 
 ### Changed
@@ -93,7 +100,7 @@ MCP server.
   `follow_redirects`), within-batch URL dedup no longer races, crawl
   child-depth is incremented (restoring `max_depth` and `include_paths`
   semantics), and `CrawlConfig` JSON deserialization honors
-  `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` through a `SsrfPolicy::from_env` serde
+  `CRAWLBERG_ALLOW_PRIVATE_NETWORK` through a `SsrfPolicy::from_env` serde
   default. Each is covered by a regression test.
 - **MCP server exposed zero tools.** The handler was missing rmcp's
   `#[tool_handler]`, so `tools/list`/`tools/call` returned an empty list over
@@ -110,7 +117,7 @@ MCP server.
   mitigation (every resolved IP must pass the policy), redirect-chain
   re-validation (bounded by `ssrf.max_redirects`, default 5), and
   link-enqueue validation with bounded concurrency. Opt out via
-  `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=1` or
+  `CRAWLBERG_ALLOW_PRIVATE_NETWORK=1` or
   `CrawlConfig::allow_private_networks(true)`.
 
 ### Build

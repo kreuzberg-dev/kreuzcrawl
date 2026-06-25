@@ -13,9 +13,9 @@ import {
 	WasmContentConfig,
 	WasmProxyConfig,
 	WasmSsrfPolicy,
-} from "@kreuzberg/kreuzcrawl-wasm";
+} from "@kreuzberg/crawlberg-wasm";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {
 	const contentEncoding = response.headers.get("content-encoding");
@@ -98,7 +98,7 @@ describe("robots", () => {
 	it("robots_comments_handling: Correctly parses robots.txt with inline and line comments", async () => {
 		const engineConfig = WasmCrawlConfig.default();
 		engineConfig.respectRobotsTxt = true;
-		engineConfig.userAgent = "kreuzcrawl";
+		engineConfig.userAgent = "crawlberg";
 		engineConfig.ssrf.denyPrivate = false;
 		const engine = createEngine(engineConfig);
 		const url =
@@ -110,7 +110,7 @@ describe("robots", () => {
 	it("robots_crawl_delay: Respects crawl-delay directive from robots.txt", async () => {
 		const engineConfig = WasmCrawlConfig.default();
 		engineConfig.respectRobotsTxt = true;
-		engineConfig.userAgent = "kreuzcrawl";
+		engineConfig.userAgent = "crawlberg";
 		engineConfig.ssrf.denyPrivate = false;
 		const engine = createEngine(engineConfig);
 		const url =
@@ -176,7 +176,7 @@ describe("robots", () => {
 	it("robots_request_rate: Parses request-rate directive from robots.txt", async () => {
 		const engineConfig = WasmCrawlConfig.default();
 		engineConfig.respectRobotsTxt = true;
-		engineConfig.userAgent = "kreuzcrawl";
+		engineConfig.userAgent = "crawlberg";
 		engineConfig.ssrf.denyPrivate = false;
 		const engine = createEngine(engineConfig);
 		const url =
@@ -200,7 +200,7 @@ describe("robots", () => {
 	it("robots_user_agent_specific: Matches user-agent specific rules in robots.txt", async () => {
 		const engineConfig = WasmCrawlConfig.default();
 		engineConfig.respectRobotsTxt = true;
-		engineConfig.userAgent = "KreuzcrawlBot";
+		engineConfig.userAgent = "CrawlbergBot";
 		engineConfig.ssrf.denyPrivate = false;
 		const engine = createEngine(engineConfig);
 		const url =

@@ -9,7 +9,7 @@ set -euo pipefail
 test_cookies_per_domain() {
   # Isolates cookies per domain during crawl
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_COOKIES_PER_DOMAIN:-${MOCK_SERVER_URL}/fixtures/cookies_per_domain}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_COOKIES_PER_DOMAIN:-${MOCK_SERVER_URL}/fixtures/cookies_per_domain}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_cookies_length
   val_cookies_length=$(echo "$output" | jq -r '.cookies | length')
@@ -22,7 +22,7 @@ test_cookies_per_domain() {
 test_cookies_persistence() {
   # Maintains cookies across multiple crawl requests
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_COOKIES_PERSISTENCE:-${MOCK_SERVER_URL}/fixtures/cookies_persistence}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_COOKIES_PERSISTENCE:-${MOCK_SERVER_URL}/fixtures/cookies_persistence}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_cookies
   val_cookies=$(echo "$output" | jq -r '.cookies')
@@ -32,7 +32,7 @@ test_cookies_persistence() {
 test_cookies_set_cookie_response() {
   # Respects Set-Cookie header from server responses
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE:-${MOCK_SERVER_URL}/fixtures/cookies_set_cookie_response}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE:-${MOCK_SERVER_URL}/fixtures/cookies_set_cookie_response}" --config '{"cookies_enabled":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_cookies
   val_cookies=$(echo "$output" | jq -r '.cookies')

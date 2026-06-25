@@ -14,7 +14,7 @@
 // TODO(ssrf-parity): Re-evaluate once a wasm-compatible SSRF shim is available.
 
 import { describe, expect, it } from "vitest";
-import { scrape, createEngine } from "@kreuzberg/kreuzcrawl-wasm";
+import { scrape, createEngine } from "@kreuzberg/crawlberg-wasm";
 
 describe("ssrf", () => {
 	it("ssrf_loopback_error_surfaces: loopback URL scrape returns an error (WASM may not surface ssrf_policy_violation specifically)", async () => {

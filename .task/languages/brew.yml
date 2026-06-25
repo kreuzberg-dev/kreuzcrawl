@@ -13,7 +13,7 @@ tasks:
             - shellcheck *.sh
 
     e2e:test:
-        desc: Run brew E2E tests (kreuzcrawl CLI; auto-builds and prepends to PATH)
+        desc: Run brew E2E tests (crawlberg CLI; auto-builds and prepends to PATH)
         deps:
             - task: :rust:cli:build
             - task: :_dev_wf:mock-server:rebuild

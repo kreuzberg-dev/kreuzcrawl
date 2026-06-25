@@ -9,9 +9,9 @@ defmodule E2e.StrategyTest do
   describe "strategy_adaptive_saturation" do
     test "strategy_adaptive_saturation" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":2,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/strategy_adaptive_saturation"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.StrategyTest do
   describe "strategy_adaptive_window" do
     test "strategy_adaptive_window" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/strategy_adaptive_window"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
@@ -29,9 +29,9 @@ defmodule E2e.StrategyTest do
   describe "strategy_best_first_seed" do
     test "strategy_best_first_seed" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STRATEGY_BEST_FIRST_SEED") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/strategy_best_first_seed"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
       # skipped: field 'strategy.first_page_url_contains' not available on result type
     end
@@ -40,9 +40,9 @@ defmodule E2e.StrategyTest do
   describe "strategy_bfs_default_order" do
     test "strategy_bfs_default_order" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":2}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/strategy_bfs_default_order"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
       # skipped: field 'strategy.crawl_order' not available on result type
     end
@@ -51,9 +51,9 @@ defmodule E2e.StrategyTest do
   describe "strategy_dfs_depth_first" do
     test "strategy_dfs_depth_first" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":2}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/strategy_dfs_depth_first"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
       # skipped: field 'strategy.crawl_order' not available on result type
     end

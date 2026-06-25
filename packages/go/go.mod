@@ -1,3 +1,3 @@
-module github.com/xberg-io/kreuzcrawl/packages/go
+module github.com/xberg-io/crawlberg/packages/go
 
 go 1.26

@@ -9,9 +9,9 @@ defmodule E2e.BrowserTest do
   describe "browser_config_auto_no_feature" do
     test "browser_config_auto_no_feature" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_config_auto_no_feature"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == true
       assert result.browser_used == false
@@ -21,9 +21,9 @@ defmodule E2e.BrowserTest do
   describe "browser_config_never_mode" do
     test "browser_config_never_mode" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_config_never_mode"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == true
       assert result.browser_used == false
@@ -33,9 +33,9 @@ defmodule E2e.BrowserTest do
   describe "browser_crawl_mode_always" do
     test "browser_crawl_mode_always" do
       engine_config = "{\"browser\":{\"mode\":\"always\"},\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_BROWSER_CRAWL_MODE_ALWAYS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_crawl_mode_always"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) >= 2
       # skipped: field 'browser_used' not available on result type
     end
@@ -44,18 +44,18 @@ defmodule E2e.BrowserTest do
   describe "browser_crawl_waf_fallback" do
     test "browser_crawl_waf_fallback" do
       engine_config = "{\"browser\":{\"mode\":\"auto\"},\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_BROWSER_CRAWL_WAF_FALLBACK") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_crawl_waf_fallback"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) >= 1
     end
   end
 
   describe "browser_detect_minimal_page" do
     test "browser_detect_minimal_page" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_minimal_page"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == false
       assert result.browser_used == false
@@ -65,9 +65,9 @@ defmodule E2e.BrowserTest do
   describe "browser_detect_next_empty" do
     test "browser_detect_next_empty" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_next_empty"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == true
       assert result.browser_used == false
@@ -76,9 +76,9 @@ defmodule E2e.BrowserTest do
 
   describe "browser_detect_next_rendered" do
     test "browser_detect_next_rendered" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_next_rendered"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.html != ""
       assert result.js_render_hint == false
@@ -88,9 +88,9 @@ defmodule E2e.BrowserTest do
 
   describe "browser_detect_normal_page" do
     test "browser_detect_normal_page" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_normal_page"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == false
       assert result.browser_used == false
@@ -100,9 +100,9 @@ defmodule E2e.BrowserTest do
   describe "browser_detect_nuxt_shell" do
     test "browser_detect_nuxt_shell" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_nuxt_shell"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == true
       assert result.browser_used == false
@@ -112,9 +112,9 @@ defmodule E2e.BrowserTest do
   describe "browser_detect_react_shell" do
     test "browser_detect_react_shell" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_react_shell"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.html != ""
       assert result.js_render_hint == true
@@ -125,9 +125,9 @@ defmodule E2e.BrowserTest do
   describe "browser_detect_vue_shell" do
     test "browser_detect_vue_shell" do
       engine_config = "{\"browser\":{\"mode\":\"never\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_detect_vue_shell"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.js_render_hint == true
       assert result.browser_used == false
@@ -137,9 +137,9 @@ defmodule E2e.BrowserTest do
   describe "browser_extra_wait" do
     test "browser_extra_wait" do
       engine_config = "{\"browser\":{\"extra_wait\":200,\"mode\":\"always\",\"wait\":\"network_idle\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_extra_wait"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
     end
   end
@@ -147,9 +147,9 @@ defmodule E2e.BrowserTest do
   describe "browser_fallback_spa_render" do
     test "browser_fallback_spa_render" do
       engine_config = "{\"browser\":{\"mode\":\"always\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_fallback_spa_render"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.js_render_hint == true
       assert result.browser_used == true
     end
@@ -158,9 +158,9 @@ defmodule E2e.BrowserTest do
   describe "browser_fallback_waf_blocked" do
     test "browser_fallback_waf_blocked" do
       engine_config = "{\"browser\":{\"mode\":\"always\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_fallback_waf_blocked"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
     end
   end
@@ -168,9 +168,9 @@ defmodule E2e.BrowserTest do
   describe "browser_mode_always" do
     test "browser_mode_always" do
       engine_config = "{\"browser\":{\"mode\":\"always\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_mode_always"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
     end
   end
@@ -178,9 +178,9 @@ defmodule E2e.BrowserTest do
   describe "browser_profile_basic" do
     test "browser_profile_basic" do
       engine_config = "{\"browser\":{\"mode\":\"always\"},\"browser_profile\":\"test-profile\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_profile_basic"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
       assert result.status_code == 200
     end
@@ -189,9 +189,9 @@ defmodule E2e.BrowserTest do
   describe "browser_wait_fixed" do
     test "browser_wait_fixed" do
       engine_config = "{\"browser\":{\"extra_wait\":100,\"mode\":\"always\",\"wait\":\"fixed\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_wait_fixed"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
       assert result.status_code == 200
     end
@@ -200,9 +200,9 @@ defmodule E2e.BrowserTest do
   describe "browser_wait_selector" do
     test "browser_wait_selector" do
       engine_config = "{\"browser\":{\"mode\":\"always\",\"wait\":\"selector\",\"wait_selector\":\"\#content\"}}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/browser_wait_selector"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.browser_used == true
       assert result.status_code == 200
     end

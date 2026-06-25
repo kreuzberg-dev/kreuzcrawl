@@ -9,7 +9,7 @@ set -euo pipefail
 test_scrape_asset_dedup() {
   # Same asset linked twice results in one download with one unique hash
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_ASSET_DEDUP:-${MOCK_SERVER_URL}/fixtures/scrape_asset_dedup}" --config '{"download_assets":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_ASSET_DEDUP:-${MOCK_SERVER_URL}/fixtures/scrape_asset_dedup}" --config '{"download_assets":true}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -25,7 +25,7 @@ test_scrape_asset_dedup() {
 test_scrape_asset_max_size() {
   # Skips assets exceeding max_asset_size limit
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_ASSET_MAX_SIZE:-${MOCK_SERVER_URL}/fixtures/scrape_asset_max_size}" --config '{"download_assets":true,"max_asset_size":150}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_ASSET_MAX_SIZE:-${MOCK_SERVER_URL}/fixtures/scrape_asset_max_size}" --config '{"download_assets":true,"max_asset_size":150}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -38,7 +38,7 @@ test_scrape_asset_max_size() {
 test_scrape_asset_type_filter() {
   # Only downloads image assets when asset_types filter is set
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_ASSET_TYPE_FILTER:-${MOCK_SERVER_URL}/fixtures/scrape_asset_type_filter}" --config '{"asset_types":["image"],"download_assets":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_ASSET_TYPE_FILTER:-${MOCK_SERVER_URL}/fixtures/scrape_asset_type_filter}" --config '{"asset_types":["image"],"download_assets":true}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -54,7 +54,7 @@ test_scrape_asset_type_filter() {
 test_scrape_basic_html_page() {
   # Scrapes a simple HTML page and extracts title, description, and links
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_BASIC_HTML_PAGE:-${MOCK_SERVER_URL}/fixtures/scrape_basic_html_page}" --config '{"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_BASIC_HTML_PAGE:-${MOCK_SERVER_URL}/fixtures/scrape_basic_html_page}" --config '{"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -88,7 +88,7 @@ test_scrape_basic_html_page() {
 test_scrape_complex_links() {
   # Classifies links by type: internal, external, anchor, document, image
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_COMPLEX_LINKS:-${MOCK_SERVER_URL}/fixtures/scrape_complex_links}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_COMPLEX_LINKS:-${MOCK_SERVER_URL}/fixtures/scrape_complex_links}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -104,7 +104,7 @@ test_scrape_complex_links() {
 test_scrape_download_assets() {
   # Downloads CSS, JS, and image assets from page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_DOWNLOAD_ASSETS:-${MOCK_SERVER_URL}/fixtures/scrape_download_assets}" --config '{"download_assets":true}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_DOWNLOAD_ASSETS:-${MOCK_SERVER_URL}/fixtures/scrape_download_assets}" --config '{"download_assets":true}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -117,7 +117,7 @@ test_scrape_download_assets() {
 test_scrape_dublin_core() {
   # Extracts Dublin Core metadata from a page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_DUBLIN_CORE:-${MOCK_SERVER_URL}/fixtures/scrape_dublin_core}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_DUBLIN_CORE:-${MOCK_SERVER_URL}/fixtures/scrape_dublin_core}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -136,7 +136,7 @@ test_scrape_dublin_core() {
 test_scrape_empty_page() {
   # Handles an empty HTML document without errors
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_EMPTY_PAGE:-${MOCK_SERVER_URL}/fixtures/scrape_empty_page}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_EMPTY_PAGE:-${MOCK_SERVER_URL}/fixtures/scrape_empty_page}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -152,7 +152,7 @@ test_scrape_empty_page() {
 test_scrape_feed_discovery() {
   # Discovers RSS, Atom, and JSON feed links
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_FEED_DISCOVERY:-${MOCK_SERVER_URL}/fixtures/scrape_feed_discovery}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_FEED_DISCOVERY:-${MOCK_SERVER_URL}/fixtures/scrape_feed_discovery}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -165,7 +165,7 @@ test_scrape_feed_discovery() {
 test_scrape_image_sources() {
   # Extracts images from img, picture, og:image, twitter:image
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_IMAGE_SOURCES:-${MOCK_SERVER_URL}/fixtures/scrape_image_sources}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_IMAGE_SOURCES:-${MOCK_SERVER_URL}/fixtures/scrape_image_sources}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -181,7 +181,7 @@ test_scrape_image_sources() {
 test_scrape_js_heavy_spa() {
   # Handles SPA page with JavaScript-only content (no server-rendered HTML)
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_JS_HEAVY_SPA:-${MOCK_SERVER_URL}/fixtures/scrape_js_heavy_spa}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_JS_HEAVY_SPA:-${MOCK_SERVER_URL}/fixtures/scrape_js_heavy_spa}" --config '{}' --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
@@ -191,7 +191,7 @@ test_scrape_js_heavy_spa() {
 test_scrape_json_ld() {
   # Extracts JSON-LD structured data from a page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_JSON_LD:-${MOCK_SERVER_URL}/fixtures/scrape_json_ld}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_JSON_LD:-${MOCK_SERVER_URL}/fixtures/scrape_json_ld}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -210,7 +210,7 @@ test_scrape_json_ld() {
 test_scrape_malformed_html() {
   # Gracefully handles broken HTML without crashing
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_MALFORMED_HTML:-${MOCK_SERVER_URL}/fixtures/scrape_malformed_html}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_MALFORMED_HTML:-${MOCK_SERVER_URL}/fixtures/scrape_malformed_html}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -226,7 +226,7 @@ test_scrape_malformed_html() {
 test_scrape_og_metadata() {
   # Extracts full Open Graph metadata from a page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_OG_METADATA:-${MOCK_SERVER_URL}/fixtures/scrape_og_metadata}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_OG_METADATA:-${MOCK_SERVER_URL}/fixtures/scrape_og_metadata}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -254,7 +254,7 @@ test_scrape_og_metadata() {
 test_scrape_twitter_card() {
   # Extracts Twitter Card metadata from a page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_SCRAPE_TWITTER_CARD:-${MOCK_SERVER_URL}/fixtures/scrape_twitter_card}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_SCRAPE_TWITTER_CARD:-${MOCK_SERVER_URL}/fixtures/scrape_twitter_card}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')

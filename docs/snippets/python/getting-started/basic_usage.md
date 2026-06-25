@@ -1,7 +1,7 @@
 ```python title="Python"
 import asyncio
 
-from kreuzcrawl import CrawlConfig, create_engine, crawl, scrape
+from crawlberg import CrawlConfig, create_engine, crawl, scrape
 
 
 async def main() -> None:

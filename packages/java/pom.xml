@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.kreuzberg.kreuzcrawl</groupId>
-    <artifactId>kreuzcrawl</artifactId>
+    <groupId>dev.kreuzberg.crawlberg</groupId>
+    <artifactId>crawlberg</artifactId>
     <version>0.3.0</version>
     <packaging>jar</packaging>
 
-    <name>kreuzcrawl</name>
+    <name>crawlberg</name>
     <description>High-performance web crawling engine</description>
-    <url>https://github.com/xberg-io/kreuzcrawl</url>
+    <url>https://github.com/xberg-io/crawlberg</url>
 
     <licenses>
         <license>
@@ -27,9 +27,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/xberg-io/kreuzcrawl.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/xberg-io/kreuzcrawl.git</developerConnection>
-        <url>https://github.com/xberg-io/kreuzcrawl</url>
+        <connection>scm:git:git://github.com/xberg-io/crawlberg.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/xberg-io/crawlberg.git</developerConnection>
+        <url>https://github.com/xberg-io/crawlberg</url>
     </scm>
 
     <properties>

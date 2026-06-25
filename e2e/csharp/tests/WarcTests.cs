@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: warc.</summary>
     public class WarcTests
@@ -26,10 +26,10 @@ namespace Kreuzcrawl
         public async Task Test_WarcBasicOutput()
         {
             // Scrape single page with WARC output enabled writes to file
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_test.warc\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/warc_basic_output";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages[0].StatusCode == 200);
     Assert.True(result.Pages.Count == 1);
 
@@ -39,11 +39,11 @@ namespace Kreuzcrawl
         public async Task Test_WarcMultiPageCrawl()
         {
             // Crawl multiple pages with depth=1 and WARC output enabled
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_crawl.warc\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_WARC_MULTI_PAGE_CRAWL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/warc_multi_page_crawl";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
     Assert.True(result.StayedOnDomain);
 

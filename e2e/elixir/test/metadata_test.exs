@@ -8,9 +8,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_article_times" do
     test "metadata_article_times" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_article_times"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       # skipped: field 'article.published_time' not available on result type
       # skipped: field 'article.modified_time' not available on result type
@@ -22,9 +22,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_favicons" do
     test "metadata_favicons" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_favicons"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       # skipped: field 'favicons.length' not available on result type
       # skipped: field 'favicons[].apple_touch' not available on result type
@@ -33,9 +33,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_headings" do
     test "metadata_headings" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_headings"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       # skipped: field 'headings.h1.length' not available on result type
       # skipped: field 'headings.h1[0].text' not available on result type
@@ -45,9 +45,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_hreflang" do
     test "metadata_hreflang" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_hreflang"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       # skipped: field 'hreflang.length' not available on result type
       # skipped: field 'hreflang[].lang' not available on result type
@@ -56,9 +56,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_keywords_author" do
     test "metadata_keywords_author" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_keywords_author"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert String.trim(result.metadata.title) == "Comprehensive Metadata Test Page"
       assert result.metadata.canonical_url != ""
@@ -66,7 +66,7 @@ defmodule E2e.MetadataTest do
       assert String.contains?(to_string(result.metadata.keywords), "rust")
       assert String.trim(result.metadata.author) == "Jane Developer"
       assert result.metadata.viewport != ""
-      assert String.trim(result.metadata.generator) == "kreuzcrawl/1.0"
+      assert String.trim(result.metadata.generator) == "crawlberg/1.0"
       assert String.trim(result.metadata.theme_color) == "\#ff6600"
       assert String.trim(result.metadata.robots) == "index, follow"
       assert String.trim(result.metadata.html_lang) == "en"
@@ -76,9 +76,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_og_video_audio" do
     test "metadata_og_video_audio" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_og_video_audio"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert String.trim(result.metadata.og_video) == "https://example.com/video.mp4"
       assert String.trim(result.metadata.og_audio) == "https://example.com/audio.mp3"
@@ -88,9 +88,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_response_headers" do
     test "metadata_response_headers" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_response_headers"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       # skipped: field 'response_headers.etag' not available on result type
       # skipped: field 'response_headers.last_modified' not available on result type
@@ -101,9 +101,9 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_word_count" do
     test "metadata_word_count" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/metadata_word_count"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.metadata.word_count > 99
       assert result.metadata.word_count < 301

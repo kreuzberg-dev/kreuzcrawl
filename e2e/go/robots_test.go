@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/crawlberg/packages/go"
 )
 
 func Test_RobotsAllowAll(t *testing.T) {
@@ -60,7 +60,7 @@ func Test_RobotsAllowOverride(t *testing.T) {
 func Test_RobotsCommentsHandling(t *testing.T) {
 	// Correctly parses robots.txt with inline and line comments
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"crawlberg"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)
@@ -81,7 +81,7 @@ func Test_RobotsCommentsHandling(t *testing.T) {
 func Test_RobotsCrawlDelay(t *testing.T) {
 	// Respects crawl-delay directive from robots.txt
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"crawlberg"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)
@@ -207,7 +207,7 @@ func Test_RobotsMultipleUserAgents(t *testing.T) {
 func Test_RobotsRequestRate(t *testing.T) {
 	// Parses request-rate directive from robots.txt
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"crawlberg"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)
@@ -252,7 +252,7 @@ func Test_RobotsSitemapDirective(t *testing.T) {
 func Test_RobotsUserAgentSpecific(t *testing.T) {
 	// Matches user-agent specific rules in robots.txt
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"KreuzcrawlBot"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":true,"user_agent":"CrawlbergBot"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)

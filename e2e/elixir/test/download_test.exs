@@ -9,9 +9,9 @@ defmodule E2e.DownloadTest do
   describe "download_basic_pdf" do
     test "download_basic_pdf" do
       engine_config = "{\"download_documents\":true,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/download_basic_pdf"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.downloaded_document.mime_type) == "application/pdf"
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.DownloadTest do
   describe "download_filename_extraction" do
     test "download_filename_extraction" do
       engine_config = "{\"download_documents\":true,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/download_filename_extraction"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.downloaded_document.mime_type) == "application/pdf"
       assert result.status_code == 200
     end
@@ -30,9 +30,9 @@ defmodule E2e.DownloadTest do
   describe "download_mime_filter" do
     test "download_mime_filter" do
       engine_config = "{\"document_mime_types\":[\"application/pdf\"],\"download_documents\":true,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/download_mime_filter"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.downloaded_document.mime_type) == "application/pdf"
     end
   end
@@ -40,9 +40,9 @@ defmodule E2e.DownloadTest do
   describe "download_no_document" do
     test "download_no_document" do
       engine_config = "{\"download_documents\":true,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/download_no_document"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
     end
   end
@@ -50,9 +50,9 @@ defmodule E2e.DownloadTest do
   describe "download_size_limit" do
     test "download_size_limit" do
       engine_config = "{\"document_max_size\":100,\"download_documents\":true,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/download_size_limit"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
     end
   end

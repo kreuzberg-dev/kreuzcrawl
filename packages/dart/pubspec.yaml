@@ -1,7 +1,7 @@
-name: kreuzcrawl
+name: crawlberg
 description: High-performance web crawling engine
 version: 0.3.0
-repository: https://github.com/xberg-io/kreuzcrawl
+repository: https://github.com/xberg-io/crawlberg
 environment:
   sdk: '>=3.11.0 <4.0.0'
 executables:

@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: error
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::scrape;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::create_engine;
+use crawlberg::scrape;
+use crawlberg::CrawlConfig;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -410,7 +410,7 @@ async fn test_error_dns_resolution() {
         stream_chunks: vec![],
         headers: vec![(
             r#"location"#.to_string(),
-            r#"http://this-hostname-does-not-exist-kreuzcrawl-test.invalid/"#.to_string(),
+            r#"http://this-hostname-does-not-exist-crawlberg-test.invalid/"#.to_string(),
         )],
         delay_ms: None,
     };

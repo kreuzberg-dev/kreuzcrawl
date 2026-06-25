@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # alef-generated installer for registry-mode PHP test_app.
-# Installs the xberg-io/kreuzcrawl extension via PIE before `composer install` runs.
+# Installs the xberg-io/crawlberg extension via PIE before `composer install` runs.
 # Requires `php` on PATH; downloads and runs PIE if needed.
 # Version is alef-injected at generate time so the script is self-contained.
 set -euo pipefail
@@ -45,10 +45,10 @@ EXT_DIR="$(php -r 'echo ini_get("extension_dir");')"
 # PIE's `install` has no `--version` option (it parses `--version`/`-V` as
 # "print PIE's own version" and exits without installing). The target version is
 # part of the package coordinate: `vendor/package:constraint`.
-"$PIE" install "xberg-io/kreuzcrawl:$VERSION" --skip-enable-extension
+"$PIE" install "xberg-io/crawlberg:$VERSION" --skip-enable-extension
 
 # Verify the .so/.dylib/.dll exists after install (or was already present).
-test -f "$EXT_DIR/kreuzcrawl.so" || test -f "$EXT_DIR/kreuzcrawl.dylib" || test -f "$EXT_DIR/kreuzcrawl.dll"
+test -f "$EXT_DIR/crawlberg.so" || test -f "$EXT_DIR/crawlberg.dylib" || test -f "$EXT_DIR/crawlberg.dll"
 
 # Enable the extension in php.ini (PIE with --skip-enable-extension doesn't do this automatically).
 # Find the loaded php.ini, check if already enabled, and append if missing.
@@ -60,17 +60,17 @@ else
     echo "::warning::php.ini at $PHP_INI not found; extension may not be auto-loaded by default" >&2
   else
     # Guard against duplicate: check if extension line already exists (uncommented).
-    if ! grep -q "^extension=kreuzcrawl" "$PHP_INI"; then
-      echo "extension=kreuzcrawl" >>"$PHP_INI"
+    if ! grep -q "^extension=crawlberg" "$PHP_INI"; then
+      echo "extension=crawlberg" >>"$PHP_INI"
     fi
   fi
 fi
 
 # Export the installed extension path for downstream test runners (composer test).
 # The test app's run_tests.php checks for PIE_INSTALLED_EXTENSION_PATH and loads the extension via `-d`.
-export PIE_INSTALLED_EXTENSION_PATH="$EXT_DIR/kreuzcrawl.so"
+export PIE_INSTALLED_EXTENSION_PATH="$EXT_DIR/crawlberg.so"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  export PIE_INSTALLED_EXTENSION_PATH="$EXT_DIR/kreuzcrawl.dylib"
+  export PIE_INSTALLED_EXTENSION_PATH="$EXT_DIR/crawlberg.dylib"
 fi
 
 # Verify the extension loads. Use `extension_loaded()` via `php -r` instead of
@@ -79,12 +79,12 @@ fi
 # conf.d entry behind), because PHP prints "Module ... is already loaded" to
 # stderr and the test harness 2>&1 capture treats it as fatal. `extension_loaded`
 # checks runtime state directly and is unaffected by load source or stderr noise.
-if php -r 'exit(extension_loaded("kreuzcrawl") ? 0 : 1);' 2>/dev/null; then
-  echo "kreuzcrawl extension loaded via php.ini"
-elif php -d extension=kreuzcrawl -r 'exit(extension_loaded("kreuzcrawl") ? 0 : 1);' 2>/dev/null; then
-  echo "kreuzcrawl extension loaded via -d flag"
+if php -r 'exit(extension_loaded("crawlberg") ? 0 : 1);' 2>/dev/null; then
+  echo "crawlberg extension loaded via php.ini"
+elif php -d extension=crawlberg -r 'exit(extension_loaded("crawlberg") ? 0 : 1);' 2>/dev/null; then
+  echo "crawlberg extension loaded via -d flag"
 else
-  echo "::error::kreuzcrawl extension failed to load after PIE install" >&2
+  echo "::error::crawlberg extension failed to load after PIE install" >&2
   exit 1
 fi
-echo "kreuzcrawl extension installed and loaded"
+echo "crawlberg extension installed and loaded"

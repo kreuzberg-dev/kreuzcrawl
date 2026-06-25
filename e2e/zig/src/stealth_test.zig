@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "stealth_ua_rotation_config" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STEALTH_UA_ROTATION_CONFIG")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/stealth_ua_rotation_config", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}", url);
+    const _result_json = try crawlberg.scrape("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -45,7 +45,7 @@ test "stealth_ua_rotation_round_robin" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/stealth_ua_rotation_round_robin", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -62,7 +62,7 @@ test "stealth_ua_rotation_single_domain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STEALTH_UA_ROTATION_SINGLE_DOMAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/stealth_ua_rotation_single_domain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

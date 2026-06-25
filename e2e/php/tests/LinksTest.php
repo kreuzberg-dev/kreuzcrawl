@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: links. */
 final class LinksTest extends TestCase
@@ -20,9 +20,9 @@ final class LinksTest extends TestCase
     /** Identifies fragment-only links as anchor type */
     public function test_links_anchor_fragment(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_LINKS_ANCHOR_FRAGMENT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/links_anchor_fragment';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertStringContainsString("anchor", $result->getLinks()[0]->linkType);
 
@@ -33,9 +33,9 @@ final class LinksTest extends TestCase
     /** Resolves relative URLs using base tag href */
     public function test_links_base_tag(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_base_tag';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(2, count($result->getLinks()));
             $this->assertStringContainsString("example.com", $result->getLinks()[0]->url);
@@ -47,9 +47,9 @@ final class LinksTest extends TestCase
     /** Detects PDF, DOCX, XLSX links as document type */
     public function test_links_document_types(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_LINKS_DOCUMENT_TYPES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/links_document_types';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertStringContainsString("document", $result->getLinks()[0]->linkType);
 
@@ -60,9 +60,9 @@ final class LinksTest extends TestCase
     /** Handles empty href attributes without errors */
     public function test_links_empty_href(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_empty_href';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(0, count($result->getLinks()));
             $this->assertStringContainsString("/valid", $result->getLinks()[0]->url);
@@ -74,9 +74,9 @@ final class LinksTest extends TestCase
     /** Correctly classifies internal vs external links by domain */
     public function test_links_internal_external_classification(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_internal_external_classification';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(4, count($result->getLinks()));
             $this->assertNotEmpty($result->getLinks()[0]->url);
@@ -88,9 +88,9 @@ final class LinksTest extends TestCase
     /** Skips mailto:, javascript:, and tel: scheme links */
     public function test_links_mailto_javascript_skip(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_mailto_javascript_skip';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(0, count($result->getLinks()));
             $this->assertStringNotContainsString("mailto:", $result->getLinks()[0]->url);
@@ -102,9 +102,9 @@ final class LinksTest extends TestCase
     /** Handles protocol-relative URLs (//example.com) correctly */
     public function test_links_protocol_relative(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_protocol_relative';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(1, count($result->getLinks()));
             $this->assertStringContainsString("//", $result->getLinks()[0]->url);
@@ -116,9 +116,9 @@ final class LinksTest extends TestCase
     /** Preserves rel=nofollow and rel=canonical attributes */
     public function test_links_rel_attributes(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_rel_attributes';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(0, count($result->getLinks()));
 
@@ -129,9 +129,9 @@ final class LinksTest extends TestCase
     /** Resolves ../ and ./ relative parent path links correctly */
     public function test_links_relative_parent(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_relative_parent';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertGreaterThan(3, count($result->getLinks()));
 

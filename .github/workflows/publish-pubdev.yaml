@@ -3,7 +3,7 @@ name: Publish pub.dev
 # pub.dev OIDC trusted publishing rejects tokens from `release` events.
 # This workflow fires on tag push instead, which produces an accepted token.
 #
-# One-time setup: on pub.dev → kreuzcrawl package → Admin → Automated
+# One-time setup: on pub.dev → crawlberg package → Admin → Automated
 # publishing, set the workflow path to
 # `.github/workflows/publish-pubdev.yaml` and enable "publishing from
 # push events" with tag pattern `v{{version}}`.
@@ -50,7 +50,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: pub
-                  package: kreuzcrawl
+                  package: crawlberg
                   version: ${{ needs.prepare.outputs.version }}
 
     dart-natives:
@@ -109,11 +109,11 @@ jobs:
                 # codegen is not run here (packages/dart/rust/src/frb_generated.rs is
                 # committed). Each runner is native to its target, so no --target/cross
                 # toolchain is required. Mirrors liter-llm / kreuzberg dart natives.
-                cargo build --locked -p kreuzcrawl-dart --release
+                cargo build --locked -p crawlberg-dart --release
                 case "$TARGET" in
-                  *windows*) lib="kreuzcrawl_dart.dll" ;;
-                  *apple*)   lib="libkreuzcrawl_dart.dylib" ;;
-                  *)         lib="libkreuzcrawl_dart.so" ;;
+                  *windows*) lib="crawlberg_dart.dll" ;;
+                  *apple*)   lib="libcrawlberg_dart.dylib" ;;
+                  *)         lib="libcrawlberg_dart.so" ;;
                 esac
                 echo "library-path=$PWD/target/release/$lib" >> "$GITHUB_OUTPUT"
 
@@ -151,7 +151,7 @@ jobs:
               id: build
               with:
                   package-dir: packages/dart/rust
-                  crate-name: kreuzcrawl-dart
+                  crate-name: crawlberg-dart
 
             - name: Download all native artifacts
               uses: actions/download-artifact@v8

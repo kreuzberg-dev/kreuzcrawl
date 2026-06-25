@@ -1,4 +1,4 @@
-//! Benchmark harness library for kreuzcrawl.
+//! Benchmark harness library for crawlberg.
 //!
 //! Provides fixtures, adapters, a benchmark runner, quality metrics, and
 //! statistical helpers for evaluating scraping correctness and performance.

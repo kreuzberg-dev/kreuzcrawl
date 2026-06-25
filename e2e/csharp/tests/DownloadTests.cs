@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: download.</summary>
     public class DownloadTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // Download a basic PDF document with download_documents enabled
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_documents\":true,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/download_basic_pdf";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("application/pdf", result.DownloadedDocument!.MimeType!.Trim());
 
         }
@@ -39,9 +39,9 @@ namespace Kreuzcrawl
         {
             // Extract filename from Content-Disposition header
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_documents\":true,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/download_filename_extraction";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("application/pdf", result.DownloadedDocument!.MimeType!.Trim());
     Assert.True(result.StatusCode == 200);
 
@@ -52,9 +52,9 @@ namespace Kreuzcrawl
         {
             // Only download documents matching specified MIME types (PDF only, not DOCX)
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"document_mime_types\":[\"application/pdf\"],\"download_documents\":true,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/download_mime_filter";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("application/pdf", result.DownloadedDocument!.MimeType!.Trim());
 
         }
@@ -64,9 +64,9 @@ namespace Kreuzcrawl
         {
             // HTML pages are not downloaded as documents even when download_documents is enabled
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_documents\":true,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/download_no_document";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }
@@ -76,9 +76,9 @@ namespace Kreuzcrawl
         {
             // Reject documents exceeding the configured size limit
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"document_max_size\":100,\"download_documents\":true,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/download_size_limit";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }

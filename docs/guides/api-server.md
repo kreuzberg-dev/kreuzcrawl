@@ -1,6 +1,6 @@
 # API Server
 
-Kreuzcrawl includes a Firecrawl v1-compatible REST API server built on Axum. The server
+Crawlberg includes a Firecrawl v1-compatible REST API server built on Axum. The server
 is feature-gated behind `api`.
 
 ## Starting the server
@@ -8,7 +8,7 @@ is feature-gated behind `api`.
 ### CLI
 
 ```bash
-kreuzcrawl serve --host 0.0.0.0 --port 3000
+crawlberg serve --host 0.0.0.0 --port 3000
 ```
 
 | Flag     | Default   | Description            |
@@ -21,7 +21,7 @@ kreuzcrawl serve --host 0.0.0.0 --port 3000
 The `api` module is internal. The public entry point is `serve_api`, re-exported from the crate root:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, serve_api};
+use crawlberg::{CrawlConfig, serve_api};
 
 serve_api("0.0.0.0", 3000, CrawlConfig::default()).await?;
 ```
@@ -29,7 +29,7 @@ serve_api("0.0.0.0", 3000, CrawlConfig::default()).await?;
 Pass a custom config if you need non-default crawl settings:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, serve_api};
+use crawlberg::{CrawlConfig, serve_api};
 
 serve_api("127.0.0.1", 8080, CrawlConfig {
     max_concurrent: Some(20),

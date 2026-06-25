@@ -6,7 +6,7 @@
 [workspace]
 
 [package]
-name = "kreuzcrawl-e2e-rust"
+name = "crawlberg-e2e-rust"
 version = "0.3.0"
 edition = "2021"
 license = "MIT"
@@ -21,7 +21,7 @@ path = "src/main.rs"
 
 [dependencies]
 axum = "0.8"
-kreuzcrawl = { version = "0.3.0", default-features = false, features = ["interact", "browser-chromiumoxide"] }
+crawlberg = { version = "0.3.0", default-features = false, features = ["interact", "browser-chromiumoxide"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }

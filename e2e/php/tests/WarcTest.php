@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: warc. */
 final class WarcTest extends TestCase
@@ -20,10 +20,10 @@ final class WarcTest extends TestCase
     /** Scrape single page with WARC output enabled writes to file */
     public function test_warc_basic_output(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false, "warcOutput" => "/tmp/kreuzcrawl_test.warc"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false, "warcOutput" => "/tmp/crawlberg_test.warc"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/warc_basic_output';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(200, $result->getPages()[0]->statusCode);
             $this->assertEquals(1, count($result->getPages()));
@@ -35,10 +35,10 @@ final class WarcTest extends TestCase
     /** Crawl multiple pages with depth=1 and WARC output enabled */
     public function test_warc_multi_page_crawl(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false, "warcOutput" => "/tmp/kreuzcrawl_crawl.warc"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false, "warcOutput" => "/tmp/crawlberg_crawl.warc"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_WARC_MULTI_PAGE_CRAWL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/warc_multi_page_crawl';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);

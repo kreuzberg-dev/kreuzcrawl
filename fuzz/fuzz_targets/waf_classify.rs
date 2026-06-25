@@ -2,7 +2,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use kreuzcrawl::{TomlClassifier, WafClassifier, http::HttpResponse};
+use crawlberg::{TomlClassifier, WafClassifier, http::HttpResponse};
 
 fuzz_target!(|data: &[u8]| {
     // First byte determines the HTTP status code offset (200..599).

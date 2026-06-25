@@ -9,7 +9,7 @@ set -euo pipefail
 test_content_binary_skip() {
   # Skips image and video content types gracefully
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_CONTENT_BINARY_SKIP:-${MOCK_SERVER_URL}/fixtures/content_binary_skip}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_CONTENT_BINARY_SKIP:-${MOCK_SERVER_URL}/fixtures/content_binary_skip}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_content_was_skipped
   val_content_was_skipped=$(echo "$output" | jq -r '.was_skipped')
@@ -19,7 +19,7 @@ test_content_binary_skip() {
 test_content_pdf_link_skip() {
   # Encounters PDF link and skips or marks as document type
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_CONTENT_PDF_LINK_SKIP:-${MOCK_SERVER_URL}/fixtures/content_pdf_link_skip}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_CONTENT_PDF_LINK_SKIP:-${MOCK_SERVER_URL}/fixtures/content_pdf_link_skip}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_content_was_skipped
   val_content_was_skipped=$(echo "$output" | jq -r '.was_skipped')
@@ -29,7 +29,7 @@ test_content_pdf_link_skip() {
 test_crawl_concurrent_depth() {
   # Concurrent crawl respects max_depth limit
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_CONCURRENT_DEPTH:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_depth}" --config '{"max_concurrent":3,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_CONCURRENT_DEPTH:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_depth}" --config '{"max_concurrent":3,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -42,7 +42,7 @@ test_crawl_concurrent_depth() {
 test_crawl_concurrent_limit() {
   # Respects max concurrent requests limit during crawl
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_CONCURRENT_LIMIT:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_limit}" --config '{"max_concurrent":2,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_CONCURRENT_LIMIT:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_limit}" --config '{"max_concurrent":2,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -52,7 +52,7 @@ test_crawl_concurrent_limit() {
 test_crawl_concurrent_max_pages() {
   # Concurrent crawl respects max_pages budget
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_max_pages}" --config '{"max_concurrent":4,"max_depth":1,"max_pages":3,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/crawl_concurrent_max_pages}" --config '{"max_concurrent":4,"max_depth":1,"max_pages":3,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -62,7 +62,7 @@ test_crawl_concurrent_max_pages() {
 test_crawl_custom_headers() {
   # Sends custom headers on all crawl requests
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_CUSTOM_HEADERS:-${MOCK_SERVER_URL}/fixtures/crawl_custom_headers}" --config '{"custom_headers":{"Accept-Language":"en-US","X-Custom-Header":"test-value"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_CUSTOM_HEADERS:-${MOCK_SERVER_URL}/fixtures/crawl_custom_headers}" --config '{"custom_headers":{"Accept-Language":"en-US","X-Custom-Header":"test-value"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -72,7 +72,7 @@ test_crawl_custom_headers() {
 test_crawl_depth_one() {
   # Follows links one level deep from start page
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_DEPTH_ONE:-${MOCK_SERVER_URL}/fixtures/crawl_depth_one}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_DEPTH_ONE:-${MOCK_SERVER_URL}/fixtures/crawl_depth_one}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -85,7 +85,7 @@ test_crawl_depth_one() {
 test_crawl_depth_priority() {
   # Crawls in breadth-first order, processing depth-0 pages before depth-1
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_DEPTH_PRIORITY:-${MOCK_SERVER_URL}/fixtures/crawl_depth_priority}" --config '{"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_DEPTH_PRIORITY:-${MOCK_SERVER_URL}/fixtures/crawl_depth_priority}" --config '{"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -95,7 +95,7 @@ test_crawl_depth_priority() {
 test_crawl_depth_two() {
   # Crawls 3 levels deep (depth 0, 1, 2)
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_DEPTH_TWO:-${MOCK_SERVER_URL}/fixtures/crawl_depth_two}" --config '{"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_DEPTH_TWO:-${MOCK_SERVER_URL}/fixtures/crawl_depth_two}" --config '{"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -108,7 +108,7 @@ test_crawl_depth_two() {
 test_crawl_depth_two_chain() {
   # Depth=2 crawl follows a chain of links across three levels
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN:-${MOCK_SERVER_URL}/fixtures/crawl_depth_two_chain}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN:-${MOCK_SERVER_URL}/fixtures/crawl_depth_two_chain}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -118,7 +118,7 @@ test_crawl_depth_two_chain() {
 test_crawl_double_slash_normalization() {
   # Normalizes double slashes in URL paths (//page to /page)
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION:-${MOCK_SERVER_URL}/fixtures/crawl_double_slash_normalization}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION:-${MOCK_SERVER_URL}/fixtures/crawl_double_slash_normalization}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -128,7 +128,7 @@ test_crawl_double_slash_normalization() {
 test_crawl_empty_page_no_links() {
   # Crawl completes when child page has no outgoing links
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS:-${MOCK_SERVER_URL}/fixtures/crawl_empty_page_no_links}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS:-${MOCK_SERVER_URL}/fixtures/crawl_empty_page_no_links}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -138,7 +138,7 @@ test_crawl_empty_page_no_links() {
 test_crawl_exclude_path_pattern() {
   # Skips URLs matching the exclude path pattern
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN:-${MOCK_SERVER_URL}/fixtures/crawl_exclude_path_pattern}" --config '{"exclude_paths":["/admin/.*"],"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN:-${MOCK_SERVER_URL}/fixtures/crawl_exclude_path_pattern}" --config '{"exclude_paths":["/admin/.*"],"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -148,7 +148,7 @@ test_crawl_exclude_path_pattern() {
 test_crawl_external_links_ignored() {
   # External links are discovered but not followed when stay_on_domain is true
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED:-${MOCK_SERVER_URL}/fixtures/crawl_external_links_ignored}" --config '{"max_concurrent":1,"max_depth":1,"stay_on_domain":true}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED:-${MOCK_SERVER_URL}/fixtures/crawl_external_links_ignored}" --config '{"max_concurrent":1,"max_depth":1,"stay_on_domain":true}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -161,7 +161,7 @@ test_crawl_external_links_ignored() {
 test_crawl_fragment_stripping() {
   # Strips #fragment from URLs for deduplication
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING:-${MOCK_SERVER_URL}/fixtures/crawl_fragment_stripping}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING:-${MOCK_SERVER_URL}/fixtures/crawl_fragment_stripping}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -171,7 +171,7 @@ test_crawl_fragment_stripping() {
 test_crawl_include_path_pattern() {
   # Only follows URLs matching the include path pattern
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN:-${MOCK_SERVER_URL}/fixtures/crawl_include_path_pattern}" --config '{"include_paths":["/blog/.*"],"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN:-${MOCK_SERVER_URL}/fixtures/crawl_include_path_pattern}" --config '{"include_paths":["/blog/.*"],"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -181,7 +181,7 @@ test_crawl_include_path_pattern() {
 test_crawl_max_depth_zero() {
   # max_depth=0 crawls only the seed page with no link following
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO:-${MOCK_SERVER_URL}/fixtures/crawl_max_depth_zero}" --config '{"max_depth":0}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO:-${MOCK_SERVER_URL}/fixtures/crawl_max_depth_zero}" --config '{"max_depth":0}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -194,7 +194,7 @@ test_crawl_max_depth_zero() {
 test_crawl_max_pages() {
   # Stops crawling at page budget limit
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/crawl_max_pages}" --config '{"max_pages":3,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/crawl_max_pages}" --config '{"max_pages":3,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -204,7 +204,7 @@ test_crawl_max_pages() {
 test_crawl_mixed_content_types() {
   # Crawl handles links to non-HTML content types gracefully
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES:-${MOCK_SERVER_URL}/fixtures/crawl_mixed_content_types}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES:-${MOCK_SERVER_URL}/fixtures/crawl_mixed_content_types}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -214,7 +214,7 @@ test_crawl_mixed_content_types() {
 test_crawl_multiple_redirects_in_traversal() {
   # Multiple linked pages with redirects are handled during crawl traversal
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL:-${MOCK_SERVER_URL}/fixtures/crawl_multiple_redirects_in_traversal}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL:-${MOCK_SERVER_URL}/fixtures/crawl_multiple_redirects_in_traversal}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -224,7 +224,7 @@ test_crawl_multiple_redirects_in_traversal() {
 test_crawl_query_param_dedup() {
   # Deduplicates URLs with same query params in different order
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP:-${MOCK_SERVER_URL}/fixtures/crawl_query_param_dedup}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP:-${MOCK_SERVER_URL}/fixtures/crawl_query_param_dedup}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -234,7 +234,7 @@ test_crawl_query_param_dedup() {
 test_crawl_redirect_in_traversal() {
   # Links that redirect are followed during crawl traversal
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL:-${MOCK_SERVER_URL}/fixtures/crawl_redirect_in_traversal}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL:-${MOCK_SERVER_URL}/fixtures/crawl_redirect_in_traversal}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -244,7 +244,7 @@ test_crawl_redirect_in_traversal() {
 test_crawl_self_link_no_loop() {
   # Page linking to itself does not cause infinite crawl loop
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP:-${MOCK_SERVER_URL}/fixtures/crawl_self_link_no_loop}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP:-${MOCK_SERVER_URL}/fixtures/crawl_self_link_no_loop}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -254,7 +254,7 @@ test_crawl_self_link_no_loop() {
 test_crawl_single_page_no_links() {
   # Crawling a page with no links returns only the seed page
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_SINGLE_PAGE_NO_LINKS:-${MOCK_SERVER_URL}/fixtures/crawl_single_page_no_links}" --config '{"max_depth":2}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_SINGLE_PAGE_NO_LINKS:-${MOCK_SERVER_URL}/fixtures/crawl_single_page_no_links}" --config '{"max_depth":2}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -264,7 +264,7 @@ test_crawl_single_page_no_links() {
 test_crawl_stay_on_domain() {
   # Does not follow external links when stay_on_domain is true
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_STAY_ON_DOMAIN:-${MOCK_SERVER_URL}/fixtures/crawl_stay_on_domain}" --config '{"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_STAY_ON_DOMAIN:-${MOCK_SERVER_URL}/fixtures/crawl_stay_on_domain}" --config '{"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -277,7 +277,7 @@ test_crawl_stay_on_domain() {
 test_crawl_subdomain_exclusion() {
   # Stays on exact domain and skips subdomain links
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION:-${MOCK_SERVER_URL}/fixtures/crawl_subdomain_exclusion}" --config '{"allow_subdomains":false,"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION:-${MOCK_SERVER_URL}/fixtures/crawl_subdomain_exclusion}" --config '{"allow_subdomains":false,"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -290,7 +290,7 @@ test_crawl_subdomain_exclusion() {
 test_crawl_subdomain_inclusion() {
   # Crawls subdomains when allow_subdomains is enabled
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION:-${MOCK_SERVER_URL}/fixtures/crawl_subdomain_inclusion}" --config '{"allow_subdomains":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION:-${MOCK_SERVER_URL}/fixtures/crawl_subdomain_inclusion}" --config '{"allow_subdomains":true,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -300,7 +300,7 @@ test_crawl_subdomain_inclusion() {
 test_crawl_trailing_slash_dedup() {
   # Deduplicates /page and /page/ as the same URL
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP:-${MOCK_SERVER_URL}/fixtures/crawl_trailing_slash_dedup}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP:-${MOCK_SERVER_URL}/fixtures/crawl_trailing_slash_dedup}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -310,7 +310,7 @@ test_crawl_trailing_slash_dedup() {
 test_crawl_url_deduplication() {
   # Deduplicates URLs that differ only by fragment or query params
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CRAWL_URL_DEDUPLICATION:-${MOCK_SERVER_URL}/fixtures/crawl_url_deduplication}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CRAWL_URL_DEDUPLICATION:-${MOCK_SERVER_URL}/fixtures/crawl_url_deduplication}" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')

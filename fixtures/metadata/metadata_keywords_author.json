@@ -50,7 +50,7 @@
 		{
 			"type": "equals",
 			"field": "metadata.generator",
-			"value": "kreuzcrawl/1.0"
+			"value": "crawlberg/1.0"
 		},
 		{
 			"type": "equals",

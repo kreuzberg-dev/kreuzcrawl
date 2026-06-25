@@ -86,7 +86,7 @@ tasks:
             CGO_ENABLED: "1"
             ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
         cmds:
-            - go test -tags kreuzcrawl_dev -timeout 10m -v ./...
+            - go test -tags crawlberg_dev -timeout 10m -v ./...
 
     test:verbose:
         desc: Run Go tests with verbose output

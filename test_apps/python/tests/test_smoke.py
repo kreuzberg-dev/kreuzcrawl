@@ -8,5 +8,5 @@ import importlib
 
 
 def test_imports_published_package():
-    module = importlib.import_module("kreuzcrawl")
+    module = importlib.import_module("crawlberg")
     assert module is not None

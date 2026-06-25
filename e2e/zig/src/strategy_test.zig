@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "strategy_adaptive_saturation" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/strategy_adaptive_saturation", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":2,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":2,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -41,7 +41,7 @@ test "strategy_adaptive_window" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/strategy_adaptive_window", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -54,7 +54,7 @@ test "strategy_best_first_seed" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STRATEGY_BEST_FIRST_SEED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/strategy_best_first_seed", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -67,7 +67,7 @@ test "strategy_bfs_default_order" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/strategy_bfs_default_order", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -80,6 +80,6 @@ test "strategy_dfs_depth_first" {
 
     const url = if (std.c.getenv("MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/strategy_dfs_depth_first", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":1,\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
 }

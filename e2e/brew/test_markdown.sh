@@ -9,7 +9,7 @@ set -euo pipefail
 test_citations_balanced_parens() {
   # Citations correctly handle links inside parentheses with balanced rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_CITATIONS_BALANCED_PARENS:-${MOCK_SERVER_URL}/fixtures/citations_balanced_parens}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_CITATIONS_BALANCED_PARENS:-${MOCK_SERVER_URL}/fixtures/citations_balanced_parens}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -25,7 +25,7 @@ test_citations_balanced_parens() {
 test_citations_duplicate_urls() {
   # Citations deduplicates multiple links to the same URL
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_CITATIONS_DUPLICATE_URLS:-${MOCK_SERVER_URL}/fixtures/citations_duplicate_urls}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_CITATIONS_DUPLICATE_URLS:-${MOCK_SERVER_URL}/fixtures/citations_duplicate_urls}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -41,7 +41,7 @@ test_citations_duplicate_urls() {
 test_markdown_basic_conversion() {
   # HTML is always converted to markdown alongside raw HTML
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_MARKDOWN_BASIC_CONVERSION:-${MOCK_SERVER_URL}/fixtures/markdown_basic_conversion}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_MARKDOWN_BASIC_CONVERSION:-${MOCK_SERVER_URL}/fixtures/markdown_basic_conversion}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -62,7 +62,7 @@ test_markdown_basic_conversion() {
 
 test_markdown_crawl_all_pages() {
   # All crawled pages have markdown field populated
-  kreuzcrawl crawl "${MOCK_SERVER_MARKDOWN_CRAWL_ALL_PAGES:-${MOCK_SERVER_URL}/fixtures/markdown_crawl_all_pages}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  crawlberg crawl "${MOCK_SERVER_MARKDOWN_CRAWL_ALL_PAGES:-${MOCK_SERVER_URL}/fixtures/markdown_crawl_all_pages}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
 }
@@ -70,7 +70,7 @@ test_markdown_crawl_all_pages() {
 test_markdown_fit_content() {
   # Fit markdown removes navigation and boilerplate content
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_MARKDOWN_FIT_CONTENT:-${MOCK_SERVER_URL}/fixtures/markdown_fit_content}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_MARKDOWN_FIT_CONTENT:-${MOCK_SERVER_URL}/fixtures/markdown_fit_content}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -83,7 +83,7 @@ test_markdown_fit_content() {
 test_markdown_headings_and_paragraphs() {
   # Markdown conversion preserves heading hierarchy and paragraph text
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_MARKDOWN_HEADINGS_AND_PARAGRAPHS:-${MOCK_SERVER_URL}/fixtures/markdown_headings_and_paragraphs}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_MARKDOWN_HEADINGS_AND_PARAGRAPHS:-${MOCK_SERVER_URL}/fixtures/markdown_headings_and_paragraphs}" --config '{}' --format json --browser-mode never)
 
   local val_markdown_content
   val_markdown_content=$(echo "$output" | jq -r '.markdown.content')
@@ -96,7 +96,7 @@ test_markdown_headings_and_paragraphs() {
 test_markdown_links_converted() {
   # HTML links are converted to markdown link syntax
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_MARKDOWN_LINKS_CONVERTED:-${MOCK_SERVER_URL}/fixtures/markdown_links_converted}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_MARKDOWN_LINKS_CONVERTED:-${MOCK_SERVER_URL}/fixtures/markdown_links_converted}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -115,7 +115,7 @@ test_markdown_links_converted() {
 test_markdown_with_citations() {
   # Markdown includes citation conversion with numbered references
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_MARKDOWN_WITH_CITATIONS:-${MOCK_SERVER_URL}/fixtures/markdown_with_citations}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_MARKDOWN_WITH_CITATIONS:-${MOCK_SERVER_URL}/fixtures/markdown_with_citations}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')

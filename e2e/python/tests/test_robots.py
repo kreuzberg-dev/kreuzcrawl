@@ -7,7 +7,7 @@
 
 import os
 import pytest  # noqa: F401
-from kreuzcrawl import scrape, create_engine, CrawlConfig
+from crawlberg import scrape, create_engine, CrawlConfig
 
 
 def _alef_e2e_text(value: object) -> str:
@@ -57,7 +57,7 @@ async def test_robots_allow_override() -> None:
 @pytest.mark.asyncio
 async def test_robots_comments_handling() -> None:
     """Correctly parses robots.txt with inline and line comments."""
-    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="kreuzcrawl")
+    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="crawlberg")
     engine = create_engine(engine_config)
     url = (
         os.environ.get("MOCK_SERVER_ROBOTS_COMMENTS_HANDLING")
@@ -71,7 +71,7 @@ async def test_robots_comments_handling() -> None:
 @pytest.mark.asyncio
 async def test_robots_crawl_delay() -> None:
     """Respects crawl-delay directive from robots.txt."""
-    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="kreuzcrawl")
+    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="crawlberg")
     engine = create_engine(engine_config)
     url = (
         os.environ.get("MOCK_SERVER_ROBOTS_CRAWL_DELAY")
@@ -155,7 +155,7 @@ async def test_robots_multiple_user_agents() -> None:
 @pytest.mark.asyncio
 async def test_robots_request_rate() -> None:
     """Parses request-rate directive from robots.txt."""
-    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="kreuzcrawl")
+    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="crawlberg")
     engine = create_engine(engine_config)
     url = (
         os.environ.get("MOCK_SERVER_ROBOTS_REQUEST_RATE")
@@ -184,7 +184,7 @@ async def test_robots_sitemap_directive() -> None:
 @pytest.mark.asyncio
 async def test_robots_user_agent_specific() -> None:
     """Matches user-agent specific rules in robots.txt."""
-    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="KreuzcrawlBot")
+    engine_config = CrawlConfig(respect_robots_txt=True, user_agent="CrawlbergBot")
     engine = create_engine(engine_config)
     url = (
         os.environ.get("MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC")

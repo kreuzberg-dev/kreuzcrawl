@@ -1,12 +1,12 @@
 # Antibot Strategy & Stealth Surfaces
 
-Kreuzcrawl detects WAF/bot-mitigation signals, classifies them with hot-reloadable rules, and can escalate through the configured dispatch chain. Customize policy with `AntibotStrategy`, `DispatchProfile`, retry policy, domain state, and optional caller-supplied bypass providers.
+Crawlberg detects WAF/bot-mitigation signals, classifies them with hot-reloadable rules, and can escalate through the configured dispatch chain. Customize policy with `AntibotStrategy`, `DispatchProfile`, retry policy, domain state, and optional caller-supplied bypass providers.
 
 ## Architecture
 
 Three layers compose the antibot system:
 
-1. **WAF Classifier** — Matches HTTP responses against `crates/kreuzcrawl/rules/waf_fingerprints.toml` and returns a `WafSignal` with `vendor`, `fingerprint_id`, and `weight`.
+1. **WAF Classifier** — Matches HTTP responses against `crates/crawlberg/rules/waf_fingerprints.toml` and returns a `WafSignal` with `vendor`, `fingerprint_id`, and `weight`.
 2. **Decision Hook** — `AntibotStrategy` trait pair: `pre_request` (warm external state) and `post_response` (inspect response, decide next action).
 3. **Dispatch Policy** — `DispatchProfile` combines escalation strategy, retry policy, classifier, domain state, budget, and optional bypass provider.
 
@@ -87,7 +87,7 @@ Wrap `DefaultAntibotStrategy` to inject custom backoff rules per WAF vendor:
 ```rust
 use std::time::Duration;
 use async_trait::async_trait;
-use kreuzcrawl::{
+use crawlberg::{
     AntibotStrategy, Decision, DefaultAntibotStrategy,
     AntibotError, http::HttpResponse, WafSignal,
 };
@@ -140,7 +140,7 @@ let profile = DispatchProfile::builder()
 
 ## Defaults
 
-Without an attached strategy, the engine uses `DefaultAntibotStrategy` (defined at `crates/kreuzcrawl/src/types/antibot.rs:132-164`):
+Without an attached strategy, the engine uses `DefaultAntibotStrategy` (defined at `crates/crawlberg/src/types/antibot.rs:132-164`):
 
 - `pre_request` is a no-op.
 - `post_response` returns `Decision::EscalateBrowser` when a WAF signal is present, `Decision::Accept` otherwise.
@@ -149,7 +149,7 @@ This matches the pre-Cluster-5 escalation logic, so existing code continues to w
 
 ## WAF detection corpus <span class="version-badge">v0.3</span>
 
-Kreuzcrawl classifies WAF fingerprints via `TomlClassifier` at `crates/kreuzcrawl/rules/waf_fingerprints.toml`. The rules currently cover Cloudflare, DataDome, PerimeterX/HUMAN Security, Imperva, AWS WAF, Akamai, F5, and generic block patterns.
+Crawlberg classifies WAF fingerprints via `TomlClassifier` at `crates/crawlberg/rules/waf_fingerprints.toml`. The rules currently cover Cloudflare, DataDome, PerimeterX/HUMAN Security, Imperva, AWS WAF, Akamai, F5, and generic block patterns.
 
 Fingerprints match response headers, body substrings, or status code/header combinations. The classifier supports hot reload via `TomlClassifier::watch()` so rule updates can land without restarting the process.
 
@@ -165,7 +165,7 @@ Build a profile using the fluent builder, which accepts optional trait-object im
 
 ```rust
 use std::sync::Arc;
-use kreuzcrawl::{
+use crawlberg::{
     CrawlConfig, DispatchProfile, EscalationStrategy,
     FixedBudget, EwmaDomainState, LearningRetryPolicy,
     TomlClassifier,
@@ -201,22 +201,22 @@ let config = CrawlConfig::builder()
 Key tuning parameters:
 
 - **`strategy`**: Select the escalation chain (`None`, `BrowserOnly`, `BypassFirst`, `BypassOnly`, `BypassThenBrowser`). See the strategy table above.
-- **`retry_policy`**: Implement [`RetryPolicy`](https://docs.rs/kreuzcrawl/latest/kreuzcrawl/trait.RetryPolicy.html) for custom per-attempt decisions. The default `SimpleRetryPolicy` uses static error-to-directive mappings; `LearningRetryPolicy` consults a `DomainStatePort` for priors. Both live in `crate::defaults::dispatch`.
+- **`retry_policy`**: Implement [`RetryPolicy`](https://docs.rs/crawlberg/latest/crawlberg/trait.RetryPolicy.html) for custom per-attempt decisions. The default `SimpleRetryPolicy` uses static error-to-directive mappings; `LearningRetryPolicy` consults a `DomainStatePort` for priors. Both live in `crate::defaults::dispatch`.
 - **`domain_state`**: Track per-domain block rates via `DomainStatePort`. The in-process `EwmaDomainState` is provided; xberg-enterprise supplies a Postgres-backed impl for multi-process deployments.
 - **`escalation_budget`**: Enforce per-job spend caps via `EscalationBudget`. `FixedBudget` tracks atomic counters; `UnlimitedBudget` is the default.
 - **`max_total_attempts`**: Hard limit on fetch attempts across all tiers. Guards against buggy retry policies. Default: 10.
 
 ## Custom WAF rules and hot-reload
 
-The canonical WAF fingerprint corpus lives in `crates/kreuzcrawl/rules/waf_fingerprints.toml`. Load the builtin rules at compile time, or supply custom TOML files for testing or rule updates without restarting.
+The canonical WAF fingerprint corpus lives in `crates/crawlberg/rules/waf_fingerprints.toml`. Load the builtin rules at compile time, or supply custom TOML files for testing or rule updates without restarting.
 
 ### Loading rules
 
 Use `TomlClassifier` for TOML-backed fingerprinting (Rust-only):
 
 ```rust
-use kreuzcrawl::waf::TomlClassifier;
-use kreuzcrawl::waf_rules_from_path;
+use crawlberg::waf::TomlClassifier;
+use crawlberg::waf_rules_from_path;
 use std::sync::Arc;
 
 // Built-in canonical corpus
@@ -233,16 +233,16 @@ Watch a TOML file for changes and atomically swap rules without restarting:
 
 ```rust
 use std::sync::Arc;
-use kreuzcrawl::waf::TomlClassifier;
-use kreuzcrawl::waf_rules_from_path;
+use crawlberg::waf::TomlClassifier;
+use crawlberg::waf_rules_from_path;
 
 let classifier = Arc::new(TomlClassifier::builtin());
 
 // Start watching for file changes, debounced 500 ms
-let _watcher = classifier.watch("/etc/kreuzcrawl/waf_rules.toml")?;
+let _watcher = classifier.watch("/etc/crawlberg/waf_rules.toml")?;
 
 // Swap rules atomically; concurrent classifiers see new rules on next call
-let new_rules = waf_rules_from_path("/etc/kreuzcrawl/waf_rules.toml")?;
+let new_rules = waf_rules_from_path("/etc/crawlberg/waf_rules.toml")?;
 classifier.swap(new_rules);
 ```
 
@@ -252,6 +252,6 @@ This pattern is Kubernetes-friendly: mount a `ConfigMap` as a file, watch it, an
 
 ## Bypass providers
 
-Kreuzcrawl exposes the `BypassProvider` trait and `BypassResponse` type for caller-owned integrations. Providers are responsible for authentication, request shaping, response decoding, cost metadata, and error mapping.
+Crawlberg exposes the `BypassProvider` trait and `BypassResponse` type for caller-owned integrations. Providers are responsible for authentication, request shaping, response decoding, cost metadata, and error mapping.
 
-Kreuzcrawl does not ship Bright Data, Zyte, ScrapingBee, or other vendor adapters in the core crate.
+Crawlberg does not ship Bright Data, Zyte, ScrapingBee, or other vendor adapters in the core crate.

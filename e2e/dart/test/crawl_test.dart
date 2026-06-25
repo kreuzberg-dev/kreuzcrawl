@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,240 +166,240 @@ void main() {
 
   test('Skips image and video content types gracefully', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_binary_skip");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.wasSkipped, equals(true));
   });
 
   test('Encounters PDF link and skips or marks as document type', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("content_pdf_link_skip");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.wasSkipped, equals(true));
   });
 
   test('Concurrent crawl respects max_depth limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":3,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_concurrent_depth");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(3));
     expect(result.stayedOnDomain, equals(true));
   });
 
   test('Respects max concurrent requests limit during crawl', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":2,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_concurrent_limit");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(5));
   });
 
   test('Concurrent crawl respects max_pages budget', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":4,"max_depth":1,"max_pages":3,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_concurrent_max_pages");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, lessThanOrEqualTo(3));
   });
 
   test('Sends custom headers on all crawl requests', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"custom_headers":{"Accept-Language":"en-US","X-Custom-Header":"test-value"},"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_custom_headers");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Follows links one level deep from start page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_depth_one");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(3));
     expect(result.stayedOnDomain, equals(true));
   });
 
   test('Crawls in breadth-first order, processing depth-0 pages before depth-1', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":2,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_depth_priority");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(4));
   });
 
   test('Crawls 3 levels deep (depth 0, 1, 2)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":2,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_depth_two");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(3));
     expect(result.pages.length, greaterThanOrEqualTo(3));
   });
 
   test('Depth=2 crawl follows a chain of links across three levels', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_depth_two_chain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(3));
   });
 
   test('Normalizes double slashes in URL paths (//page to /page)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_double_slash_normalization");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Crawl completes when child page has no outgoing links', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_empty_page_no_links");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Skips URLs matching the exclude path pattern', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"exclude_paths":["/admin/.*"],"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_exclude_path_pattern");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('External links are discovered but not followed when stay_on_domain is true', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1,"stay_on_domain":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_external_links_ignored");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
     expect(result.stayedOnDomain, equals(true));
   });
 
   test('Strips #fragment from URLs for deduplication', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_fragment_stripping");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Only follows URLs matching the include path pattern', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"include_paths":["/blog/.*"],"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_include_path_pattern");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('max_depth=0 crawls only the seed page with no link following', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":0}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_max_depth_zero");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(1));
     expect(result.pages.length, lessThanOrEqualTo(1));
   });
 
   test('Stops crawling at page budget limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_pages":3,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_max_pages");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, lessThanOrEqualTo(3));
   });
 
   test('Crawl handles links to non-HTML content types gracefully', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_mixed_content_types");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
   });
 
   test('Multiple linked pages with redirects are handled during crawl traversal', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_multiple_redirects_in_traversal");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(1));
   });
 
   test('Deduplicates URLs with same query params in different order', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_query_param_dedup");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Links that redirect are followed during crawl traversal', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_redirect_in_traversal");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(1));
   });
 
   test('Page linking to itself does not cause infinite crawl loop', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_self_link_no_loop");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Crawling a page with no links returns only the seed page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_single_page_no_links");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(1));
   });
 
   test('Does not follow external links when stay_on_domain is true', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_stay_on_domain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
     expect(result.stayedOnDomain, equals(true));
   });
 
   test('Stays on exact domain and skips subdomain links', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"allow_subdomains":false,"max_depth":1,"respect_robots_txt":false,"stay_on_domain":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_subdomain_exclusion");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
     expect(result.stayedOnDomain, equals(true));
   });
 
   test('Crawls subdomains when allow_subdomains is enabled', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"allow_subdomains":true,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_subdomain_inclusion");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
   });
 
   test('Deduplicates /page and /page/ as the same URL', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_trailing_slash_dedup");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(2));
   });
 
   test('Deduplicates URLs that differ only by fragment or query params', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_url_deduplication");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, lessThanOrEqualTo(2));
   });
 

@@ -9,7 +9,7 @@ set -euo pipefail
 test_map_discover_urls() {
   # Discovers all URLs on a site without fetching full content
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_DISCOVER_URLS:-${MOCK_SERVER_URL}/fixtures/map_discover_urls}" --config '{"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_DISCOVER_URLS:-${MOCK_SERVER_URL}/fixtures/map_discover_urls}" --config '{"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -19,7 +19,7 @@ test_map_discover_urls() {
 test_map_exclude_patterns() {
   # Excludes URLs matching patterns from URL map
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_EXCLUDE_PATTERNS:-${MOCK_SERVER_URL}/fixtures/map_exclude_patterns}" --config '{"exclude_paths":["/private/.*","/api/.*"],"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_EXCLUDE_PATTERNS:-${MOCK_SERVER_URL}/fixtures/map_exclude_patterns}" --config '{"exclude_paths":["/private/.*","/api/.*"],"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -29,7 +29,7 @@ test_map_exclude_patterns() {
 test_map_include_subdomains() {
   # Includes subdomain URLs in URL map discovery; page has 1 local and 1 subdomain link
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_INCLUDE_SUBDOMAINS:-${MOCK_SERVER_URL}/fixtures/map_include_subdomains}" --config '{"allow_subdomains":true,"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_INCLUDE_SUBDOMAINS:-${MOCK_SERVER_URL}/fixtures/map_include_subdomains}" --config '{"allow_subdomains":true,"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -39,7 +39,7 @@ test_map_include_subdomains() {
 test_map_large_sitemap() {
   # Handles large sitemap with 100+ URLs
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_LARGE_SITEMAP:-${MOCK_SERVER_URL}/fixtures/map_large_sitemap}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_LARGE_SITEMAP:-${MOCK_SERVER_URL}/fixtures/map_large_sitemap}" --config '{"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -49,7 +49,7 @@ test_map_large_sitemap() {
 test_map_limit_pagination() {
   # Limits map result count to specified maximum
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_LIMIT_PAGINATION:-${MOCK_SERVER_URL}/fixtures/map_limit_pagination}" --config '{"map_limit":5,"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_LIMIT_PAGINATION:-${MOCK_SERVER_URL}/fixtures/map_limit_pagination}" --config '{"map_limit":5,"max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')
@@ -59,7 +59,7 @@ test_map_limit_pagination() {
 test_map_search_filter() {
   # Filters map results by search keyword; 4 links in page but only 2 match 'blog'
   local output
-  output=$(kreuzcrawl map "${MOCK_SERVER_MAP_SEARCH_FILTER:-${MOCK_SERVER_URL}/fixtures/map_search_filter}" --config '{"map_search":"blog","max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg map "${MOCK_SERVER_MAP_SEARCH_FILTER:-${MOCK_SERVER_URL}/fixtures/map_search_filter}" --config '{"map_search":"blog","max_depth":0,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_urls_length
   val_urls_length=$(echo "$output" | jq -r '.urls | length')

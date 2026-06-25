@@ -1,0 +1,15 @@
+{
+  "name": "@kreuzberg/crawlberg-darwin-x64",
+  "version": "0.3.0",
+  "license": "Elastic-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xberg-io/crawlberg.git"
+  },
+  "main": "crawlberg-node.darwin-x64.node",
+  "files": ["crawlberg-node.darwin-x64.node"],
+  "os": ["darwin"],
+  "cpu": ["x64"],
+  "engines": { "node": ">= 18" },
+  "publishConfig": { "access": "public" }
+}

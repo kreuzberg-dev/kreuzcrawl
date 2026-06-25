@@ -84,7 +84,7 @@ print_status INFO "Build directories:"
 if [ -d "$REPO_ROOT/target/release" ]; then
   print_status OK "target/release exists"
   echo "    Contents:"
-  if find "$REPO_ROOT/target/release" -maxdepth 1 -type f \( -name "*libkreuzcrawl_ffi*" -o -name "*.pc" \) -exec ls -lh {} \; | sed 's/^/      /'; then
+  if find "$REPO_ROOT/target/release" -maxdepth 1 -type f \( -name "*libcrawlberg_ffi*" -o -name "*.pc" \) -exec ls -lh {} \; | sed 's/^/      /'; then
     :
   else
     print_status WARN "No FFI library artifacts found"
@@ -96,7 +96,7 @@ fi
 if [ -d "$REPO_ROOT/target/x86_64-pc-windows-gnu/release" ]; then
   print_status OK "target/x86_64-pc-windows-gnu/release exists (Windows MinGW)"
   echo "    Contents:"
-  if find "$REPO_ROOT/target/x86_64-pc-windows-gnu/release" -maxdepth 1 -type f -name "*libkreuzcrawl_ffi*" -exec ls -lh {} \; | sed 's/^/      /'; then
+  if find "$REPO_ROOT/target/x86_64-pc-windows-gnu/release" -maxdepth 1 -type f -name "*libcrawlberg_ffi*" -exec ls -lh {} \; | sed 's/^/      /'; then
     :
   else
     print_status WARN "No FFI library artifacts found"
@@ -177,25 +177,25 @@ fi
 echo ""
 
 print_section "FFI Library Configuration"
-print_status INFO "FFI source directory: $REPO_ROOT/crates/kreuzcrawl-ffi"
-if [ -d "$REPO_ROOT/crates/kreuzcrawl-ffi" ]; then
+print_status INFO "FFI source directory: $REPO_ROOT/crates/crawlberg-ffi"
+if [ -d "$REPO_ROOT/crates/crawlberg-ffi" ]; then
   print_status OK "FFI directory exists"
   print_status INFO "FFI Cargo.toml:"
-  grep '^name\|^version' "$REPO_ROOT/crates/kreuzcrawl-ffi/Cargo.toml" | head -2 | sed 's/^/  /' || true
+  grep '^name\|^version' "$REPO_ROOT/crates/crawlberg-ffi/Cargo.toml" | head -2 | sed 's/^/  /' || true
 fi
 
-print_status INFO "FFI header file: $REPO_ROOT/crates/kreuzcrawl-ffi/include/kreuzcrawl.h"
-if [ -f "$REPO_ROOT/crates/kreuzcrawl-ffi/include/kreuzcrawl.h" ]; then
-  print_status OK "FFI header exists ($(wc -l <"$REPO_ROOT/crates/kreuzcrawl-ffi/include/kreuzcrawl.h") lines)"
+print_status INFO "FFI header file: $REPO_ROOT/crates/crawlberg-ffi/include/crawlberg.h"
+if [ -f "$REPO_ROOT/crates/crawlberg-ffi/include/crawlberg.h" ]; then
+  print_status OK "FFI header exists ($(wc -l <"$REPO_ROOT/crates/crawlberg-ffi/include/crawlberg.h") lines)"
 else
   print_status FAIL "FFI header not found"
 fi
 
-print_status INFO "pkg-config file: $REPO_ROOT/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc"
-if [ -f "$REPO_ROOT/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc" ]; then
+print_status INFO "pkg-config file: $REPO_ROOT/crates/crawlberg-ffi/crawlberg-ffi.pc"
+if [ -f "$REPO_ROOT/crates/crawlberg-ffi/crawlberg-ffi.pc" ]; then
   print_status OK "pkg-config file exists"
   echo "    Contents:"
-  sed 's/^/    /' "$REPO_ROOT/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc"
+  sed 's/^/    /' "$REPO_ROOT/crates/crawlberg-ffi/crawlberg-ffi.pc"
 else
   print_status WARN "pkg-config file not found (will be generated during Rust build)"
 fi

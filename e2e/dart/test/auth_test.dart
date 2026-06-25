@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,27 +166,27 @@ void main() {
 
   test('Sends HTTP Basic authentication header', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"auth":{"password":"testpass","type":"basic","username":"testuser"},"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("auth_basic_http");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.authHeaderSent, equals(true));
     expect(result.statusCode, equals(200));
   });
 
   test('Sends Bearer token in Authorization header', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"auth":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test","type":"bearer"},"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("auth_bearer_token");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.authHeaderSent, equals(true));
     expect(result.statusCode, equals(200));
   });
 
   test('Sends authentication via custom header (X-API-Key)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"auth":{"name":"X-API-Key","type":"header","value":"sk-test-key-12345"},"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("auth_custom_header");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.authHeaderSent, equals(true));
     expect(result.statusCode, equals(200));
   });

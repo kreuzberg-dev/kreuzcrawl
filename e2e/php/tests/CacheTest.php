@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: cache. */
 final class CacheTest extends TestCase
@@ -20,9 +20,9 @@ final class CacheTest extends TestCase
     /** Crawling with disk cache enabled succeeds without errors */
     public function test_cache_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cache_basic';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 
@@ -34,9 +34,9 @@ final class CacheTest extends TestCase
     public function test_cache_etag_conditional(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CACHE_ETAG_CONDITIONAL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cache_etag_conditional';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
             $this->assertEquals(200, $result->getPages()[0]->statusCode);
@@ -49,9 +49,9 @@ final class CacheTest extends TestCase
     public function test_cache_last_modified(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CACHE_LAST_MODIFIED') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cache_last_modified';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
 
@@ -63,9 +63,9 @@ final class CacheTest extends TestCase
     public function test_cache_miss_fresh_fetch(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CACHE_MISS_FRESH_FETCH') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cache_miss_fresh_fetch';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(3, count($result->getPages()));
             $this->assertEquals(200, $result->getPages()[0]->statusCode);

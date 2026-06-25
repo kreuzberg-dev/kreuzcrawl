@@ -21,7 +21,7 @@ $repoRoot = if ($env:REPO_ROOT) { $env:REPO_ROOT } else {
 $goDir = Join-Path $repoRoot "packages/go/v4"
 
 # Set environment variables for Go linting
-$env:PKG_CONFIG_PATH = "$repoRoot/crates/kreuzcrawl-ffi;$($env:PKG_CONFIG_PATH)"
+$env:PKG_CONFIG_PATH = "$repoRoot/crates/crawlberg-ffi;$($env:PKG_CONFIG_PATH)"
 if ($PSVersionTable.Platform -eq 'Win32NT' -or $PSVersionTable.PSVersion.Major -lt 6) {
     # Windows paths
     $env:PATH = "$repoRoot/target/release;$($env:PATH)"

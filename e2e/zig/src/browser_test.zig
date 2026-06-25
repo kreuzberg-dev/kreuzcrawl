@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "browser_config_auto_no_feature" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_CONFIG_AUTO_NO_FEATURE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_config_auto_no_feature", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -47,7 +47,7 @@ test "browser_config_never_mode" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_CONFIG_NEVER_MODE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_config_never_mode", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -66,7 +66,7 @@ test "browser_crawl_mode_always" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_CRAWL_MODE_ALWAYS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_crawl_mode_always", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"browser\":{\"mode\":\"always\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"browser\":{\"mode\":\"always\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -84,7 +84,7 @@ test "browser_crawl_waf_fallback" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_CRAWL_WAF_FALLBACK")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_crawl_waf_fallback", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"browser\":{\"mode\":\"auto\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"browser\":{\"mode\":\"auto\"},\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -101,7 +101,7 @@ test "browser_detect_minimal_page" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_MINIMAL_PAGE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_minimal_page", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -120,7 +120,7 @@ test "browser_detect_next_empty" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_NEXT_EMPTY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_next_empty", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -139,7 +139,7 @@ test "browser_detect_next_rendered" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_NEXT_RENDERED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_next_rendered", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -159,7 +159,7 @@ test "browser_detect_normal_page" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_NORMAL_PAGE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_normal_page", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -178,7 +178,7 @@ test "browser_detect_nuxt_shell" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_NUXT_SHELL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_nuxt_shell", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -197,7 +197,7 @@ test "browser_detect_react_shell" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_REACT_SHELL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_react_shell", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -217,7 +217,7 @@ test "browser_detect_vue_shell" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_DETECT_VUE_SHELL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_detect_vue_shell", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"never\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -236,7 +236,7 @@ test "browser_extra_wait" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_EXTRA_WAIT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_extra_wait", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"extra_wait\":200,\"mode\":\"always\",\"wait\":\"network_idle\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"extra_wait\":200,\"mode\":\"always\",\"wait\":\"network_idle\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -253,7 +253,7 @@ test "browser_fallback_spa_render" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_FALLBACK_SPA_RENDER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_fallback_spa_render", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -271,7 +271,7 @@ test "browser_fallback_waf_blocked" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_FALLBACK_WAF_BLOCKED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_fallback_waf_blocked", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -288,7 +288,7 @@ test "browser_mode_always" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_MODE_ALWAYS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_mode_always", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"always\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -305,7 +305,7 @@ test "browser_profile_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_PROFILE_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_profile_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"always\"},\"browser_profile\":\"test-profile\"}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"always\"},\"browser_profile\":\"test-profile\"}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -323,7 +323,7 @@ test "browser_wait_fixed" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_WAIT_FIXED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_wait_fixed", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"extra_wait\":100,\"mode\":\"always\",\"wait\":\"fixed\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"extra_wait\":100,\"mode\":\"always\",\"wait\":\"fixed\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -341,7 +341,7 @@ test "browser_wait_selector" {
 
     const url = if (std.c.getenv("MOCK_SERVER_BROWSER_WAIT_SELECTOR")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/browser_wait_selector", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"browser\":{\"mode\":\"always\",\"wait\":\"selector\",\"wait_selector\":\"#content\"}}", url);
+    const _result_json = try crawlberg.scrape("{\"browser\":{\"mode\":\"always\",\"wait\":\"selector\",\"wait_selector\":\"#content\"}}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

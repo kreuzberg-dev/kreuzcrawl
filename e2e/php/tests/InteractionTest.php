@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
-use Kreuzcrawl\PageAction;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
+use Crawlberg\PageAction;
 
 /** E2e tests for category: interaction. */
 final class InteractionTest extends TestCase
@@ -22,9 +22,9 @@ final class InteractionTest extends TestCase
     public function test_interact_action_sequence(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_action_sequence';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#open","type":"click"}'), PageAction::from_json('{"selector":"#field","text":"test_data","type":"type"}'), PageAction::from_json('{"selector":"#submit","type":"click"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#open","type":"click"}'), PageAction::from_json('{"selector":"#field","text":"test_data","type":"type"}'), PageAction::from_json('{"selector":"#submit","type":"click"}')]);
 
             $this->assertEquals(0, $result->getActionResults()[0]->actionIndex);
             $this->assertEquals("click", trim($result->getActionResults()[0]->actionType));
@@ -44,9 +44,9 @@ final class InteractionTest extends TestCase
     public function test_interact_click_element(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_click_element';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#submit","type":"click"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#submit","type":"click"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("click", trim($result->getActionResults()[0]->actionType));
@@ -60,9 +60,9 @@ final class InteractionTest extends TestCase
     public function test_interact_execute_js(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_execute_js';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"script":"document.title","type":"executeJs"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"script":"document.title","type":"executeJs"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("executeJs", trim($result->getActionResults()[0]->actionType));
@@ -76,9 +76,9 @@ final class InteractionTest extends TestCase
     public function test_interact_invalid_selector(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_invalid_selector';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#nonexistent","type":"click"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#nonexistent","type":"click"}')]);
 
             $this->assertEquals(false, $result->getActionResults()[0]->success);
             $this->assertEquals("click", trim($result->getActionResults()[0]->actionType));
@@ -92,9 +92,9 @@ final class InteractionTest extends TestCase
     public function test_interact_max_actions_exceeded(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_max_actions_exceeded';
-        Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}')]);
+        Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}'), PageAction::from_json('{"selector":"#btn","type":"click"}')]);
     }
 
 
@@ -102,9 +102,9 @@ final class InteractionTest extends TestCase
     public function test_interact_press_key(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_press_key';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#searchbox","type":"click"}'), PageAction::from_json('{"selector":"#searchbox","text":"test","type":"type"}'), PageAction::from_json('{"key":"Enter","type":"press"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#searchbox","type":"click"}'), PageAction::from_json('{"selector":"#searchbox","text":"test","type":"type"}'), PageAction::from_json('{"key":"Enter","type":"press"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[2]->success);
             $this->assertEquals("press", trim($result->getActionResults()[2]->actionType));
@@ -118,9 +118,9 @@ final class InteractionTest extends TestCase
     public function test_interact_scrape_default(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_scrape_default';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"type":"scrape"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"type":"scrape"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("scrape", trim($result->getActionResults()[0]->actionType));
@@ -134,9 +134,9 @@ final class InteractionTest extends TestCase
     public function test_interact_screenshot(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_screenshot';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"full_page":false,"type":"screenshot"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"full_page":false,"type":"screenshot"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("screenshot", trim($result->getActionResults()[0]->actionType));
@@ -150,9 +150,9 @@ final class InteractionTest extends TestCase
     public function test_interact_screenshot_full_page(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_screenshot_full_page';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"full_page":true,"type":"screenshot"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"full_page":true,"type":"screenshot"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("screenshot", trim($result->getActionResults()[0]->actionType));
@@ -166,9 +166,9 @@ final class InteractionTest extends TestCase
     public function test_interact_scroll_down(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_scroll_down';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"amount":500,"direction":"down","type":"scroll"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"amount":500,"direction":"down","type":"scroll"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("scroll", trim($result->getActionResults()[0]->actionType));
@@ -182,9 +182,9 @@ final class InteractionTest extends TestCase
     public function test_interact_type_input(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_type_input';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#username","text":"john_doe","type":"type"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#username","text":"john_doe","type":"type"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("type", trim($result->getActionResults()[0]->actionType));
@@ -198,9 +198,9 @@ final class InteractionTest extends TestCase
     public function test_interact_wait_selector(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/interact_wait_selector';
-        $result = Kreuzcrawl::interact($engine, $url, [PageAction::from_json('{"selector":"#content","type":"wait"}')]);
+        $result = Crawlberg::interact($engine, $url, [PageAction::from_json('{"selector":"#content","type":"wait"}')]);
 
             $this->assertEquals(true, $result->getActionResults()[0]->success);
             $this->assertEquals("wait", trim($result->getActionResults()[0]->actionType));

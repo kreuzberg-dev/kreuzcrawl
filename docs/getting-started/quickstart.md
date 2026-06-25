@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Scrape, crawl, and map websites with Kreuzcrawl in under 5 minutes
+description: Scrape, crawl, and map websites with Crawlberg in under 5 minutes
 ---
 
 ## Quick Start
@@ -16,7 +16,7 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, create_engine, scrape};
+    use crawlberg::{CrawlConfig, create_engine, scrape};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -42,7 +42,7 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 
     ```python title="scrape.py"
     import asyncio
-    from kreuzcrawl import CrawlConfig, create_engine, scrape
+    from crawlberg import CrawlConfig, create_engine, scrape
 
     async def main() -> None:
         engine = create_engine(CrawlConfig())
@@ -64,7 +64,7 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 === "TypeScript"
 
     ```typescript title="scrape.ts"
-    import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, scrape } from "@kreuzberg/crawlberg";
 
     const engine = createEngine();
     const result = await scrape(engine, "https://example.com");
@@ -85,10 +85,10 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 
     ```bash
     # JSON output with all metadata
-    kreuzcrawl scrape https://example.com
+    crawlberg scrape https://example.com
 
     # Markdown output
-    kreuzcrawl scrape https://example.com --format markdown
+    crawlberg scrape https://example.com --format markdown
     ```
 
 The `ScrapeResult` includes:
@@ -110,7 +110,7 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, create_engine, crawl};
+    use crawlberg::{CrawlConfig, create_engine, crawl};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -140,7 +140,7 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 
     ```python title="crawl.py"
     import asyncio
-    from kreuzcrawl import CrawlConfig, create_engine, crawl
+    from crawlberg import CrawlConfig, create_engine, crawl
 
     async def main() -> None:
         engine = create_engine(CrawlConfig(
@@ -164,7 +164,7 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 === "TypeScript"
 
     ```typescript title="crawl.ts"
-    import { createEngine, crawl } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, crawl } from "@kreuzberg/crawlberg";
 
     const engine = createEngine({
         maxDepth: 2,
@@ -188,10 +188,10 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 
     ```bash
     # Crawl with depth and page limits
-    kreuzcrawl crawl https://example.com --depth 2 --max-pages 50 --respect-robots-txt
+    crawlberg crawl https://example.com --depth 2 --max-pages 50 --respect-robots-txt
 
     # Markdown output
-    kreuzcrawl crawl https://example.com --depth 2 --format markdown
+    crawlberg crawl https://example.com --depth 2 --format markdown
     ```
 
 Key `CrawlConfig` fields for crawling:
@@ -216,7 +216,7 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, create_engine, map_urls};
+    use crawlberg::{CrawlConfig, create_engine, map_urls};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -242,7 +242,7 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 
     ```python title="map.py"
     import asyncio
-    from kreuzcrawl import CrawlConfig, create_engine, map_urls
+    from crawlberg import CrawlConfig, create_engine, map_urls
 
     async def main() -> None:
         engine = create_engine(CrawlConfig(
@@ -262,7 +262,7 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 === "TypeScript"
 
     ```typescript title="map.ts"
-    import { createEngine, mapUrls } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, mapUrls } from "@kreuzberg/crawlberg";
 
     const engine = createEngine({
         respectRobotsTxt: true,
@@ -282,10 +282,10 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 
     ```bash
     # Discover URLs
-    kreuzcrawl map https://example.com --respect-robots-txt
+    crawlberg map https://example.com --respect-robots-txt
 
     # Limit results and filter by search term
-    kreuzcrawl map https://example.com --limit 100 --search "blog"
+    crawlberg map https://example.com --limit 100 --search "blog"
     ```
 
 Each `SitemapUrl` in the result includes:

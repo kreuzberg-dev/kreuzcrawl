@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,42 +166,42 @@ void main() {
 
   test('Concurrent crawling fetches all pages with max_concurrent workers', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":3,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("concurrent_basic");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(6));
     expect(result.pages.length, greaterThanOrEqualTo(6));
   });
 
   test('Concurrent depth=2 crawl correctly fans out and deduplicates across levels', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":3,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("concurrent_depth_two_fan_out");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, equals(4));
   });
 
   test('Concurrent crawling does not exceed max_pages limit even with high concurrency', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":5,"max_depth":1,"max_pages":3}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("concurrent_max_pages_exact");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, lessThanOrEqualTo(3));
   });
 
   test('Concurrent crawl handles partial failures gracefully', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":3,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("concurrent_partial_errors");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
   });
 
   test('Concurrent crawling respects max_pages limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":2,"max_depth":1,"max_pages":3}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("concurrent_respects_max_pages");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, lessThanOrEqualTo(3));
   });
 

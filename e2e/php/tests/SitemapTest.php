@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: sitemap. */
 final class SitemapTest extends TestCase
@@ -20,9 +20,9 @@ final class SitemapTest extends TestCase
     /** Parses a standard urlset sitemap */
     public function test_sitemap_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_basic';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(4, count($result->getUrls()));
 
@@ -34,9 +34,9 @@ final class SitemapTest extends TestCase
     public function test_sitemap_compressed_gzip(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_compressed_gzip';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(3, count($result->getUrls()));
 
@@ -47,9 +47,9 @@ final class SitemapTest extends TestCase
     /** Handles empty sitemap gracefully */
     public function test_sitemap_empty(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_empty';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(0, count($result->getUrls()));
 
@@ -61,9 +61,9 @@ final class SitemapTest extends TestCase
     public function test_sitemap_from_robots_txt(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_from_robots_txt';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(4, count($result->getUrls()));
 
@@ -74,9 +74,9 @@ final class SitemapTest extends TestCase
     /** Follows sitemap index to discover child sitemaps */
     public function test_sitemap_index(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_SITEMAP_INDEX') ?: getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_index';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(3, count($result->getUrls()));
 
@@ -88,9 +88,9 @@ final class SitemapTest extends TestCase
     public function test_sitemap_lastmod_filter(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_lastmod_filter';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(4, count($result->getUrls()));
 
@@ -102,9 +102,9 @@ final class SitemapTest extends TestCase
     public function test_sitemap_only_mode(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_only_mode';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(4, count($result->getUrls()));
 
@@ -116,9 +116,9 @@ final class SitemapTest extends TestCase
     public function test_sitemap_xhtml_links(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_xhtml_links';
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
             $this->assertEquals(2, count($result->getUrls()));
 

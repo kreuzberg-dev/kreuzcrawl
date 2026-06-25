@@ -100,11 +100,11 @@ setup_rust_ffi_paths() {
 }
 
 verify_pkg_config() {
-  if pkg-config --exists kreuzcrawl-ffi 2>/dev/null; then
+  if pkg-config --exists crawlberg-ffi 2>/dev/null; then
     return 0
   else
     {
-      echo "Error: pkg-config cannot find kreuzcrawl-ffi"
+      echo "Error: pkg-config cannot find crawlberg-ffi"
       echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-<not set>}"
       echo "Run 'pkg-config --list-all' to see available packages"
     } >&2
@@ -119,13 +119,13 @@ setup_go_paths_windows() {
   local gnu_target="${repo_root}/target/x86_64-pc-windows-gnu/release"
   local release_target="${repo_root}/target/release"
 
-  export PKG_CONFIG_PATH="${repo_root}/crates/kreuzcrawl-ffi:${PKG_CONFIG_PATH:-}"
+  export PKG_CONFIG_PATH="${repo_root}/crates/crawlberg-ffi:${PKG_CONFIG_PATH:-}"
 
   export PATH="${gnu_target};${release_target};${PATH:-}"
 
   export CGO_ENABLED=1
-  export CGO_CFLAGS="-I${repo_root}/crates/kreuzcrawl-ffi/include"
-  export CGO_LDFLAGS="-L${gnu_target} -L${release_target} -lkreuzcrawl_ffi -static-libgcc -static-libstdc++"
+  export CGO_CFLAGS="-I${repo_root}/crates/crawlberg-ffi/include"
+  export CGO_LDFLAGS="-L${gnu_target} -L${release_target} -lcrawlberg_ffi -static-libgcc -static-libstdc++"
 
   echo "✓ Configured Go cgo environment for Windows"
 }
@@ -135,7 +135,7 @@ setup_go_paths() {
   local repo_root="${1:-${REPO_ROOT:-}}"
   [ -z "$repo_root" ] && return 0
 
-  local pc_path="${repo_root}/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc"
+  local pc_path="${repo_root}/crates/crawlberg-ffi/crawlberg-ffi.pc"
   if [ ! -f "$pc_path" ]; then
     local version=""
     version="$(sed -n 's/^version = \"\\(.*\\)\"/\\1/p' "${repo_root}/Cargo.toml" | head -n 1 || true)"
@@ -160,33 +160,33 @@ setup_go_paths() {
 prefix=${repo_root}
 exec_prefix=\${prefix}
 libdir=${repo_root}/target/release
-includedir=${repo_root}/crates/kreuzcrawl-ffi
+includedir=${repo_root}/crates/crawlberg-ffi
 
-Name: kreuzcrawl-ffi
-Description: C FFI bindings for Kreuzcrawl document intelligence library
+Name: crawlberg-ffi
+Description: C FFI bindings for Crawlberg document intelligence library
 Version: ${version}
-URL: https://kreuzcrawl.dev
-Libs: -L\${libdir} -lkreuzcrawl_ffi
+URL: https://crawlberg.dev
+Libs: -L\${libdir} -lcrawlberg_ffi
 Libs.private: ${libs_private}
 Cflags: -I\${includedir}
 EOF
   fi
 
-  export PKG_CONFIG_PATH="${repo_root}/crates/kreuzcrawl-ffi:${PKG_CONFIG_PATH:-}"
+  export PKG_CONFIG_PATH="${repo_root}/crates/crawlberg-ffi:${PKG_CONFIG_PATH:-}"
 
   export CGO_ENABLED=1
-  export CGO_CFLAGS="-I${repo_root}/crates/kreuzcrawl-ffi/include"
+  export CGO_CFLAGS="-I${repo_root}/crates/crawlberg-ffi/include"
 
   local platform="${RUNNER_OS:-$(uname -s)}"
   case "$platform" in
   Linux)
     export LD_LIBRARY_PATH="${repo_root}/target/release:${LD_LIBRARY_PATH:-}"
-    export CGO_LDFLAGS="-L${repo_root}/target/release -lkreuzcrawl_ffi -Wl,-rpath,${repo_root}/target/release"
+    export CGO_LDFLAGS="-L${repo_root}/target/release -lcrawlberg_ffi -Wl,-rpath,${repo_root}/target/release"
     ;;
   macOS | Darwin)
     export DYLD_LIBRARY_PATH="${repo_root}/target/release:${DYLD_LIBRARY_PATH:-}"
     export DYLD_FALLBACK_LIBRARY_PATH="${repo_root}/target/release:${DYLD_FALLBACK_LIBRARY_PATH:-}"
-    export CGO_LDFLAGS="-L${repo_root}/target/release -lkreuzcrawl_ffi -Wl,-rpath,${repo_root}/target/release"
+    export CGO_LDFLAGS="-L${repo_root}/target/release -lcrawlberg_ffi -Wl,-rpath,${repo_root}/target/release"
     ;;
   Windows | MINGW* | MSYS* | CYGWIN*)
     if [ -z "${CGO_LDFLAGS:-}" ] && [ -z "${GITHUB_ENV:-}" ]; then

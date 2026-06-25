@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,114 +166,114 @@ void main() {
 
   test('Permissive robots.txt allows all paths', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_allow_all");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Allow directive overrides Disallow for specific paths', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_allow_override");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Correctly parses robots.txt with inline and line comments', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"crawlberg"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_comments_handling");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Respects crawl-delay directive from robots.txt', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"crawlberg"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_crawl_delay");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.crawlDelay, equals(2));
   });
 
   test('Robots.txt disallows specific paths', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_disallow_path");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(false));
   });
 
   test('Detects nofollow meta robots tag and skips link extraction', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_meta_nofollow");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.nofollowDetected, equals(true));
   });
 
   test('Detects noindex meta robots tag in HTML page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_meta_noindex");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.noindexDetected, equals(true));
   });
 
   test('Missing robots.txt (404) allows all crawling', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_missing_404");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Picks the most specific user-agent block from robots.txt', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"SpecificBot"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_multiple_user_agents");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Parses request-rate directive from robots.txt', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"kreuzcrawl"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"crawlberg"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_request_rate");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.crawlDelay, equals(5));
     expect(result.isAllowed, equals(true));
   });
 
   test('Discovers sitemap URL from Sitemap directive in robots.txt', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_sitemap_directive");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(true));
   });
 
   test('Matches user-agent specific rules in robots.txt', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"KreuzcrawlBot"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true,"user_agent":"CrawlbergBot"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_user_agent_specific");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(false));
   });
 
   test('Handles wildcard Disallow patterns in robots.txt', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_wildcard_paths");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.isAllowed, equals(false));
   });
 
   test('Respects X-Robots-Tag HTTP header directives', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("robots_x_robots_tag");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.xRobotsTag.toString().trim(), equals('noindex, nofollow'.toString().trim()));
     expect(result.noindexDetected, equals(true));
     expect(result.nofollowDetected, equals(true));

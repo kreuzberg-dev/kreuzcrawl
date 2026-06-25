@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: encoding.</summary>
     public class EncodingTests
@@ -26,10 +26,10 @@ namespace Kreuzcrawl
         public async Task Test_EncodingDoubleEncoded()
         {
             // Handles double-encoded URL characters (%25C3%25B6)
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENCODING_DOUBLE_ENCODED");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/encoding_double_encoded";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
     Assert.True(result.Links.Count >= 1, "expected >= 1");
 
@@ -39,9 +39,9 @@ namespace Kreuzcrawl
         public async Task Test_EncodingMixedCharsetPage()
         {
             // Handles charset mismatch between HTTP header and HTML meta tag
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/encoding_mixed_charset_page";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
 
         }
@@ -50,10 +50,10 @@ namespace Kreuzcrawl
         public async Task Test_EncodingPercentEncodedPath()
         {
             // Handles percent-encoded spaces and characters in URL paths
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/encoding_percent_encoded_path";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
     Assert.True(result.Links.Count >= 2, "expected >= 2");
 
@@ -63,9 +63,9 @@ namespace Kreuzcrawl
         public async Task Test_EncodingUnicodeUrl()
         {
             // Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/encoding_unicode_url";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
 
         }

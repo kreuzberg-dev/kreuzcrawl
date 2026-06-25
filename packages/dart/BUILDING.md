@@ -1,4 +1,4 @@
-# Building kreuzcrawl Dart bindings
+# Building crawlberg Dart bindings
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ cargo install flutter_rust_bridge_codegen
 1. Build the Rust binding crate:
 
    ```sh
-   cargo build -p kreuzcrawl-dart
+   cargo build -p crawlberg-dart
    ```
 
 2. Run the FRB codegen to generate Dart bridge files:

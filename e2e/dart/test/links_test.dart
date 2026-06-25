@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,70 +165,70 @@ void main() {
   });
 
   test('Identifies fragment-only links as anchor type', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_anchor_fragment");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.any((e) => e.linkType.toString().contains('anchor')), isTrue);
   });
 
   test('Resolves relative URLs using base tag href', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_base_tag");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(2));
     expect(result.links.any((e) => e.url.toString().contains('example.com')), isTrue);
   });
 
   test('Detects PDF, DOCX, XLSX links as document type', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_document_types");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.any((e) => e.linkType.toString().contains('document')), isTrue);
   });
 
   test('Handles empty href attributes without errors', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_empty_href");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(0));
     expect(result.links.any((e) => e.url.toString().contains('/valid')), isTrue);
   });
 
   test('Correctly classifies internal vs external links by domain', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_internal_external_classification");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(4));
     expect(result.links.any((e) => e.url.toString().isNotEmpty), isTrue);
   });
 
   test('Skips mailto:, javascript:, and tel: scheme links', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_mailto_javascript_skip");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(0));
     expect(result.links.any((e) => e.url.toString().contains('mailto:')), isFalse);
   });
 
   test('Handles protocol-relative URLs (//example.com) correctly', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_protocol_relative");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(1));
     expect(result.links.any((e) => e.url.toString().contains('//')), isTrue);
   });
 
   test('Preserves rel=nofollow and rel=canonical attributes', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_rel_attributes");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(0));
   });
 
   test('Resolves ../ and ./ relative parent path links correctly', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("links_relative_parent");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.links.length, greaterThan(3));
   });
 

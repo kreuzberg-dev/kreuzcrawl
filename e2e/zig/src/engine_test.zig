@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "engine_batch_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_ENGINE_BATCH_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/engine_batch_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -41,7 +41,7 @@ test "engine_crawl_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_ENGINE_CRAWL_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/engine_crawl_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -54,7 +54,7 @@ test "engine_map_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_ENGINE_MAP_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/engine_map_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.map_urls("{}", url);
+    const _result_json = try crawlberg.map_urls("{}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -67,7 +67,7 @@ test "engine_scrape_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_ENGINE_SCRAPE_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/engine_scrape_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{}", url);
+    const _result_json = try crawlberg.scrape("{}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

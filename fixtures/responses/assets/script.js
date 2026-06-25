@@ -1,2 +1,2 @@
 // Minimal test script
-console.log("kreuzcrawl asset test");
+console.log("crawlberg asset test");

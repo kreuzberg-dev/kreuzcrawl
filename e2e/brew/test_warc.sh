@@ -9,7 +9,7 @@ set -euo pipefail
 test_warc_basic_output() {
   # Scrape single page with WARC output enabled writes to file
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_WARC_BASIC_OUTPUT:-${MOCK_SERVER_URL}/fixtures/warc_basic_output}" --config '{"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_test.warc"}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_WARC_BASIC_OUTPUT:-${MOCK_SERVER_URL}/fixtures/warc_basic_output}" --config '{"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_test.warc"}' --format json --browser-mode never)
 
   local val_pages_0__status_code
   val_pages_0__status_code=$(echo "$output" | jq -r '.pages[0].status_code')
@@ -22,7 +22,7 @@ test_warc_basic_output() {
 test_warc_multi_page_crawl() {
   # Crawl multiple pages with depth=1 and WARC output enabled
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_WARC_MULTI_PAGE_CRAWL:-${MOCK_SERVER_URL}/fixtures/warc_multi_page_crawl}" --config '{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_crawl.warc"}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_WARC_MULTI_PAGE_CRAWL:-${MOCK_SERVER_URL}/fixtures/warc_multi_page_crawl}" --config '{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_crawl.warc"}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')

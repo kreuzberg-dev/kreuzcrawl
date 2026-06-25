@@ -11,23 +11,23 @@ FFI_DIR = ffi
 download_ffi:
 	bash download_ffi.sh
 
-FFI_INCLUDE = $(if $(wildcard $(FFI_DIR)/include/kreuzcrawl.h),$(FFI_DIR)/include,$(if $(wildcard ../../crates/kreuzcrawl-ffi/include/kreuzcrawl.h),../../crates/kreuzcrawl-ffi/include))
+FFI_INCLUDE = $(if $(wildcard $(FFI_DIR)/include/crawlberg.h),$(FFI_DIR)/include,$(if $(wildcard ../../crates/crawlberg-ffi/include/crawlberg.h),../../crates/crawlberg-ffi/include))
 FFI_LIB_DIR = $(if $(wildcard $(FFI_DIR)/lib),$(FFI_DIR)/lib,$(if $(wildcard ../../target/release),../../target/release))
 
-IS_DYNAMIC = $(if $(or $(wildcard $(FFI_LIB_DIR)/libkreuzcrawl_ffi.dylib),$(wildcard $(FFI_LIB_DIR)/libkreuzcrawl_ffi.so)),1,)
+IS_DYNAMIC = $(if $(or $(wildcard $(FFI_LIB_DIR)/libcrawlberg_ffi.dylib),$(wildcard $(FFI_LIB_DIR)/libcrawlberg_ffi.so)),1,)
 
 ifneq ($(FFI_INCLUDE),)
     CFLAGS = -Wall -Wextra -I. -I$(FFI_INCLUDE)
     ifneq ($(IS_DYNAMIC),)
         # Link dynamically with rpath
-        LDFLAGS = -L$(FFI_LIB_DIR) -Wl,-rpath,$(FFI_LIB_DIR) -lkreuzcrawl_ffi
+        LDFLAGS = -L$(FFI_LIB_DIR) -Wl,-rpath,$(FFI_LIB_DIR) -lcrawlberg_ffi
     else
         # Link statically (fallback)
-        LDFLAGS = -L$(FFI_LIB_DIR) $(FFI_LIB_DIR)/libkreuzcrawl_ffi.a
+        LDFLAGS = -L$(FFI_LIB_DIR) $(FFI_LIB_DIR)/libcrawlberg_ffi.a
     endif
 else
-    CFLAGS = -Wall -Wextra -I. $(shell pkg-config --cflags kreuzcrawl_ffi 2>/dev/null)
-    LDFLAGS = $(shell pkg-config --libs kreuzcrawl_ffi 2>/dev/null)
+    CFLAGS = -Wall -Wextra -I. $(shell pkg-config --cflags crawlberg_ffi 2>/dev/null)
+    LDFLAGS = $(shell pkg-config --libs crawlberg_ffi 2>/dev/null)
 endif
 
 SRCS = main.c test_auth.c test_batch.c test_browser.c test_cache.c test_concurrent.c test_content.c test_cookies.c test_crawl.c test_download.c test_encoding.c test_engine.c test_error.c test_filter.c test_interaction.c test_links.c test_map.c test_markdown.c test_metadata.c test_proxy.c test_rate_limit.c test_redirect.c test_robots.c test_scrape.c test_sitemap.c test_stealth.c test_strategy.c test_validation.c test_warc.c

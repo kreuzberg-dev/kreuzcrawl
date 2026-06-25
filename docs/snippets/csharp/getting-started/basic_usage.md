@@ -2,15 +2,15 @@
 using System;
 using System.Threading.Tasks;
 
-using Kreuzcrawl;
+using Crawlberg;
 
 internal static class BasicUsage
 {
     public static async Task Main()
     {
         // Simplest case: scrape a single page with default settings.
-        var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "https://example.com/");
+        var engine = CrawlbergLib.CreateEngine(null);
+        var result = await CrawlbergLib.Scrape(engine, "https://example.com/");
         Console.WriteLine($"Title: {result.Metadata.Title}");
         Console.WriteLine($"Status: {result.StatusCode}");
         Console.WriteLine($"Links found: {result.Links.Count}");
@@ -21,8 +21,8 @@ internal static class BasicUsage
             MaxDepth = 1,
             MaxPages = 5,
         };
-        var crawlEngine = KreuzcrawlLib.CreateEngine(config);
-        var crawlResult = await KreuzcrawlLib.Crawl(
+        var crawlEngine = CrawlbergLib.CreateEngine(config);
+        var crawlResult = await CrawlbergLib.Crawl(
             crawlEngine,
             "https://en.wikipedia.org/wiki/Web_scraping"
         );

@@ -46,7 +46,7 @@ permissions:
 jobs:
     build-ffi:
         name: Build FFI (${{ matrix.target }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ${{ matrix.os }}
         timeout-minutes: ${{ matrix.os == 'windows-latest' && 120 || 60 }}
         strategy:
@@ -78,18 +78,18 @@ jobs:
             - name: Build FFI library
               uses: xberg-io/actions/build-rust-ffi@v1
               with:
-                  crate-name: kreuzcrawl-ffi
+                  crate-name: crawlberg-ffi
 
             - name: Build CLI
               uses: xberg-io/actions/build-rust-cli@v1
               with:
-                  package-name: kreuzcrawl-cli
-                  binary-name: kreuzcrawl
+                  package-name: crawlberg-cli
+                  binary-name: crawlberg
                   extra-cargo-args: --features "api,mcp,warc,ai"
 
             # mock-server is the alef-generated test fixture server that all language
             # e2e conftests spawn. It lives in its own workspace (e2e/rust/Cargo.toml)
-            # and depends on the kreuzcrawl core crate. Built only on linux-arm64
+            # and depends on the crawlberg core crate. Built only on linux-arm64
             # since e2e-tests downloads ffi-aarch64-unknown-linux-gnu.
             - name: Build mock-server (linux-arm64 only)
               if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -102,20 +102,20 @@ jobs:
               with:
                   name: ffi-${{ matrix.target }}
                   path: |
-                      target/release/libkreuzcrawl_ffi.*
-                      target/release/kreuzcrawl_ffi.*
-                      crates/kreuzcrawl-ffi/include/kreuzcrawl.h
-                      crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc
-                      crates/kreuzcrawl-ffi/cmake/
-                      target/release/kreuzcrawl
-                      target/release/kreuzcrawl.exe
+                      target/release/libcrawlberg_ffi.*
+                      target/release/crawlberg_ffi.*
+                      crates/crawlberg-ffi/include/crawlberg.h
+                      crates/crawlberg-ffi/crawlberg-ffi.pc
+                      crates/crawlberg-ffi/cmake/
+                      target/release/crawlberg
+                      target/release/crawlberg.exe
                       e2e/rust/target/release/mock-server
                   retention-days: 7
                   if-no-files-found: error
 
     e2e-tests:
         name: E2E (${{ matrix.lang }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         needs: [build-ffi]
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 90
@@ -191,35 +191,35 @@ jobs:
               run: |
                   mkdir -p target/release e2e/rust/target/release
                   mkdir -p e2e/c/ffi/include e2e/c/ffi/lib
-                  mkdir -p crates/kreuzcrawl-ffi/include packages/go/include packages/go/internal/ffi
+                  mkdir -p crates/crawlberg-ffi/include packages/go/include packages/go/internal/ffi
                   # actions/upload-artifact@v7 preserves directory structure for multi-path
                   # uploads, so files land under ffi-artifacts/target/release/ etc.
                   # Fall back to flat layout for safety.
-                  for src in ffi-artifacts/target/release/libkreuzcrawl_ffi.* ffi-artifacts/libkreuzcrawl_ffi.*; do
+                  for src in ffi-artifacts/target/release/libcrawlberg_ffi.* ffi-artifacts/libcrawlberg_ffi.*; do
                     [ -e "$src" ] && cp "$src" target/release/ || true
                     [ -e "$src" ] && cp "$src" e2e/c/ffi/lib/ || true
                   done
-                  for src in ffi-artifacts/target/release/kreuzcrawl_ffi.* ffi-artifacts/kreuzcrawl_ffi.*; do
+                  for src in ffi-artifacts/target/release/crawlberg_ffi.* ffi-artifacts/crawlberg_ffi.*; do
                     [ -e "$src" ] && cp "$src" target/release/ || true
                     [ -e "$src" ] && cp "$src" e2e/c/ffi/lib/ || true
                   done
-                  for src in ffi-artifacts/crates/kreuzcrawl-ffi/include/kreuzcrawl.h ffi-artifacts/kreuzcrawl.h; do
-                    [ -e "$src" ] && cp "$src" crates/kreuzcrawl-ffi/include/ || true
+                  for src in ffi-artifacts/crates/crawlberg-ffi/include/crawlberg.h ffi-artifacts/crawlberg.h; do
+                    [ -e "$src" ] && cp "$src" crates/crawlberg-ffi/include/ || true
                     [ -e "$src" ] && cp "$src" e2e/c/ffi/include/ || true
                     # packages/go/binding.go (alef-generated) declares
                     # `#cgo CFLAGS: -I${SRCDIR}/include` so cgo needs the header at
-                    # packages/go/include/kreuzcrawl.h. packages/go/ffi.go (hand-written
+                    # packages/go/include/crawlberg.h. packages/go/ffi.go (hand-written
                     # platform split) additionally declares
                     # `#cgo CFLAGS: -I${SRCDIR}/internal/ffi` and
-                    # `#include "internal/ffi/kreuzcrawl.h"`, so the header is also needed
-                    # at packages/go/internal/ffi/kreuzcrawl.h. Stage to both paths.
+                    # `#include "internal/ffi/crawlberg.h"`, so the header is also needed
+                    # at packages/go/internal/ffi/crawlberg.h. Stage to both paths.
                     [ -e "$src" ] && cp "$src" packages/go/include/ || true
                     [ -e "$src" ] && cp "$src" packages/go/internal/ffi/ || true
                   done
-                  # The Makefile's `$(FFI_DIR)/include/kreuzcrawl.h: download_ffi.sh` rule
+                  # The Makefile's `$(FFI_DIR)/include/crawlberg.h: download_ffi.sh` rule
                   # re-downloads if the header is older than the script. Touch the staged
                   # header so make treats it as up-to-date and skips the (404-prone) download.
-                  [ -e e2e/c/ffi/include/kreuzcrawl.h ] && touch e2e/c/ffi/include/kreuzcrawl.h || true
+                  [ -e e2e/c/ffi/include/crawlberg.h ] && touch e2e/c/ffi/include/crawlberg.h || true
                   # e2e/c/Makefile's `all: download_ffi` rule is .PHONY, so
                   # `bash download_ffi.sh` runs unconditionally even after the header is
                   # staged. The script itself has an internal skip: when
@@ -229,18 +229,18 @@ jobs:
                   # short-circuits before hitting the v0.3.0-rc.<n> release URL — the
                   # publish workflow is dispatched manually after tag push, so the
                   # release asset is 404 until publish finishes.
-                  if [ -e e2e/c/ffi/include/kreuzcrawl.h ]; then
+                  if [ -e e2e/c/ffi/include/crawlberg.h ]; then
                     VERSION=$(awk -F'"' '/^version = "/ { print $2; exit }' Cargo.toml)
-                    echo "kreuzcrawl-ffi-v${VERSION}-aarch64-unknown-linux-gnu" > e2e/c/ffi/.alef-ffi-version
+                    echo "crawlberg-ffi-v${VERSION}-aarch64-unknown-linux-gnu" > e2e/c/ffi/.alef-ffi-version
                   fi
-                  for src in ffi-artifacts/target/release/kreuzcrawl ffi-artifacts/kreuzcrawl; do
+                  for src in ffi-artifacts/target/release/crawlberg ffi-artifacts/crawlberg; do
                     [ -e "$src" ] && cp "$src" target/release/ || true
                   done
                   for src in ffi-artifacts/e2e/rust/target/release/mock-server ffi-artifacts/mock-server; do
                     [ -e "$src" ] && cp "$src" e2e/rust/target/release/ || true
                   done
-                  chmod +x target/release/libkreuzcrawl_ffi.so 2>/dev/null || true
-                  chmod +x target/release/kreuzcrawl 2>/dev/null || true
+                  chmod +x target/release/libcrawlberg_ffi.so 2>/dev/null || true
+                  chmod +x target/release/crawlberg 2>/dev/null || true
                   chmod +x e2e/rust/target/release/mock-server 2>/dev/null || true
 
             - name: Setup OpenSSL
@@ -339,7 +339,7 @@ jobs:
                   matrix.lang == 'zig' || matrix.lang == 'dart'
               shell: bash
               run: |
-                  export PKG_CONFIG_PATH="${PWD}/crates/kreuzcrawl-ffi:${PKG_CONFIG_PATH}"
+                  export PKG_CONFIG_PATH="${PWD}/crates/crawlberg-ffi:${PKG_CONFIG_PATH}"
                   # Both target/release (release-built FFI/swift/zig/etc.) and
                   # target/debug (dart:build:dev / debug-built bindings) need to be
                   # on the load path; the runner doesn't know which mode each lang built.
@@ -368,7 +368,7 @@ jobs:
               shell: bash
               run: task ${{ matrix.lang }}:build:dev
 
-            # Zig's build.zig searches target/debug/ for kreuzcrawl_ffi by default.
+            # Zig's build.zig searches target/debug/ for crawlberg_ffi by default.
             # CI stages the prebuilt FFI artifact into target/release/, so mirror
             # it into target/debug/ for the zig matrix entry.
             - name: Stage FFI for zig (target/debug shim)
@@ -376,7 +376,7 @@ jobs:
               shell: bash
               run: |
                   mkdir -p target/debug
-                  for f in target/release/libkreuzcrawl_ffi.*; do
+                  for f in target/release/libcrawlberg_ffi.*; do
                     [ -e "$f" ] && ln -sf "$(pwd)/$f" "target/debug/$(basename "$f")"
                   done
 
@@ -387,8 +387,8 @@ jobs:
                   PKG_CONFIG_PATH: ${{ env.PKG_CONFIG_PATH }}
                   LD_LIBRARY_PATH: ${{ env.LD_LIBRARY_PATH }}
                   DYLD_LIBRARY_PATH: ${{ env.DYLD_LIBRARY_PATH || '' }}
-                  KREUZCRAWL_BUILD: "1"
-                  # NOTE: do NOT set KREUZCRAWL_ALLOW_PRIVATE_NETWORK here. Every
+                  CRAWLBERG_BUILD: "1"
+                  # NOTE: do NOT set CRAWLBERG_ALLOW_PRIVATE_NETWORK here. Every
                   # e2e harness applies the setdefault from [crates.e2e.env] in
                   # alef.toml (python conftest.py, node tests/*.test.ts via ??=,
                   # rust e2e/rust/.cargo/config.toml [env], go main_test.go,

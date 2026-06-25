@@ -1465,7 +1465,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl"
+name = "crawlberg"
 version = "0.3.0-rc.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac45fbdde1e1f172972e7d5acbbee504c68e600859047f3218e415d6a1900c02"
@@ -1507,11 +1507,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl-e2e-rust"
+name = "crawlberg-e2e-rust"
 version = "0.3.0-rc.84"
 dependencies = [
  "axum",
- "kreuzcrawl",
+ "crawlberg",
  "serde",
  "serde_json",
  "tokio",

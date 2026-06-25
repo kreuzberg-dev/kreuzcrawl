@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: crawl.</summary>
     public class CrawlTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // Skips image and video content types gracefully
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_binary_skip";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.WasSkipped);
 
         }
@@ -39,9 +39,9 @@ namespace Kreuzcrawl
         {
             // Encounters PDF link and skips or marks as document type
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_pdf_link_skip";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.WasSkipped);
 
         }
@@ -51,10 +51,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawl respects max_depth limit
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":3,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_CONCURRENT_DEPTH");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_concurrent_depth";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 3);
     Assert.True(result.StayedOnDomain);
 
@@ -65,10 +65,10 @@ namespace Kreuzcrawl
         {
             // Respects max concurrent requests limit during crawl
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":2,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_CONCURRENT_LIMIT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_concurrent_limit";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 5);
 
         }
@@ -78,10 +78,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawl respects max_pages budget
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":4,\"max_depth\":1,\"max_pages\":3,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_concurrent_max_pages";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count <= 3, "expected <= 3");
 
         }
@@ -91,10 +91,10 @@ namespace Kreuzcrawl
         {
             // Sends custom headers on all crawl requests
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"custom_headers\":{\"Accept-Language\":\"en-US\",\"X-Custom-Header\":\"test-value\"},\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_CUSTOM_HEADERS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_custom_headers";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -104,10 +104,10 @@ namespace Kreuzcrawl
         {
             // Follows links one level deep from start page
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_DEPTH_ONE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_depth_one";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 3);
     Assert.True(result.StayedOnDomain);
 
@@ -118,10 +118,10 @@ namespace Kreuzcrawl
         {
             // Crawls in breadth-first order, processing depth-0 pages before depth-1
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":2,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_DEPTH_PRIORITY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_depth_priority";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 4);
 
         }
@@ -131,10 +131,10 @@ namespace Kreuzcrawl
         {
             // Crawls 3 levels deep (depth 0, 1, 2)
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":2,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_DEPTH_TWO");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_depth_two";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 3);
     Assert.True(result.Pages.Count >= 3, "expected >= 3");
 
@@ -145,10 +145,10 @@ namespace Kreuzcrawl
         {
             // Depth=2 crawl follows a chain of links across three levels
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_depth_two_chain";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 3);
 
         }
@@ -158,10 +158,10 @@ namespace Kreuzcrawl
         {
             // Normalizes double slashes in URL paths (//page to /page)
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_double_slash_normalization";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -171,10 +171,10 @@ namespace Kreuzcrawl
         {
             // Crawl completes when child page has no outgoing links
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_empty_page_no_links";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -184,10 +184,10 @@ namespace Kreuzcrawl
         {
             // Skips URLs matching the exclude path pattern
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"exclude_paths\":[\"/admin/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_exclude_path_pattern";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -197,10 +197,10 @@ namespace Kreuzcrawl
         {
             // External links are discovered but not followed when stay_on_domain is true
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1,\"stay_on_domain\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_external_links_ignored";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
     Assert.True(result.StayedOnDomain);
 
@@ -211,10 +211,10 @@ namespace Kreuzcrawl
         {
             // Strips #fragment from URLs for deduplication
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_fragment_stripping";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -224,10 +224,10 @@ namespace Kreuzcrawl
         {
             // Only follows URLs matching the include path pattern
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"include_paths\":[\"/blog/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_include_path_pattern";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -237,10 +237,10 @@ namespace Kreuzcrawl
         {
             // max_depth=0 crawls only the seed page with no link following
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":0}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_max_depth_zero";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 1);
     Assert.True(result.Pages.Count <= 1, "expected <= 1");
 
@@ -251,10 +251,10 @@ namespace Kreuzcrawl
         {
             // Stops crawling at page budget limit
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_pages\":3,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_MAX_PAGES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_max_pages";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count <= 3, "expected <= 3");
 
         }
@@ -264,10 +264,10 @@ namespace Kreuzcrawl
         {
             // Crawl handles links to non-HTML content types gracefully
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_mixed_content_types";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
 
         }
@@ -277,10 +277,10 @@ namespace Kreuzcrawl
         {
             // Multiple linked pages with redirects are handled during crawl traversal
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_multiple_redirects_in_traversal";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 1, "expected >= 1");
 
         }
@@ -290,10 +290,10 @@ namespace Kreuzcrawl
         {
             // Deduplicates URLs with same query params in different order
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_query_param_dedup";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -303,10 +303,10 @@ namespace Kreuzcrawl
         {
             // Links that redirect are followed during crawl traversal
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_redirect_in_traversal";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 1, "expected >= 1");
 
         }
@@ -316,10 +316,10 @@ namespace Kreuzcrawl
         {
             // Page linking to itself does not cause infinite crawl loop
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_self_link_no_loop";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -329,9 +329,9 @@ namespace Kreuzcrawl
         {
             // Crawling a page with no links returns only the seed page
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_single_page_no_links";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 1);
 
         }
@@ -341,10 +341,10 @@ namespace Kreuzcrawl
         {
             // Does not follow external links when stay_on_domain is true
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_STAY_ON_DOMAIN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_stay_on_domain";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
     Assert.True(result.StayedOnDomain);
 
@@ -355,10 +355,10 @@ namespace Kreuzcrawl
         {
             // Stays on exact domain and skips subdomain links
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"allow_subdomains\":false,\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_subdomain_exclusion";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
     Assert.True(result.StayedOnDomain);
 
@@ -369,10 +369,10 @@ namespace Kreuzcrawl
         {
             // Crawls subdomains when allow_subdomains is enabled
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"allow_subdomains\":true,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_subdomain_inclusion";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
 
         }
@@ -382,10 +382,10 @@ namespace Kreuzcrawl
         {
             // Deduplicates /page and /page/ as the same URL
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_trailing_slash_dedup";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 2);
 
         }
@@ -395,10 +395,10 @@ namespace Kreuzcrawl
         {
             // Deduplicates URLs that differ only by fragment or query params
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_URL_DEDUPLICATION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_url_deduplication";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count <= 2, "expected <= 2");
 
         }

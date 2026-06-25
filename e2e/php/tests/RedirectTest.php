@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: redirect. */
 final class RedirectTest extends TestCase
@@ -21,9 +21,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_301_permanent(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_301_PERMANENT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_301_permanent';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/target", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -36,9 +36,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_302_found(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_302_FOUND') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_302_found';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/found-target", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -51,9 +51,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_303_see_other(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_303_SEE_OTHER') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_303_see_other';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/see-other", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -66,9 +66,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_307_temporary(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_307_TEMPORARY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_307_temporary';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/temp-target", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -81,9 +81,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_308_permanent(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_308_PERMANENT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_308_permanent';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/perm-target", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -96,9 +96,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_chain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_CHAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_chain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/step2", $result->finalUrl);
             $this->assertEquals(2, $result->redirectCount);
@@ -111,9 +111,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_cross_domain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_CROSS_DOMAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_cross_domain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/external-redirect", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -126,10 +126,10 @@ final class RedirectTest extends TestCase
     public function test_redirect_loop(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_LOOP') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_loop';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'is_error' not available on result type
 
@@ -140,10 +140,10 @@ final class RedirectTest extends TestCase
     public function test_redirect_max_exceeded(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxRedirects" => 2, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_MAX_EXCEEDED') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_max_exceeded';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'is_error' not available on result type
 
@@ -154,9 +154,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_meta_refresh(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_meta_refresh';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/target", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -169,9 +169,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_refresh_header(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_REFRESH_HEADER') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_refresh_header';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/refreshed", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);
@@ -184,9 +184,9 @@ final class RedirectTest extends TestCase
     public function test_redirect_to_404(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_REDIRECT_TO_404') ?: getenv('MOCK_SERVER_URL') . '/fixtures/redirect_to_404';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertStringContainsString("/gone", $result->finalUrl);
             $this->assertEquals(1, $result->redirectCount);

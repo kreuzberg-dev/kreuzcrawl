@@ -3,17 +3,17 @@
 // To regenerate: alef generate
 // To verify freshness: alef verify --exit-code
 
-// Package kreuzcrawl provides Go bindings for the kreuzcrawl library.
-package kreuzcrawl
+// Package crawlberg provides Go bindings for the crawlberg library.
+package crawlberg
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/include
-#cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/.lib/macos-arm64 -Wl,-rpath,${SRCDIR}/.lib/macos-arm64 -lkreuzcrawl_ffi
-#cgo darwin,amd64 LDFLAGS: -L${SRCDIR}/.lib/macos-x86_64 -Wl,-rpath,${SRCDIR}/.lib/macos-x86_64 -lkreuzcrawl_ffi
-#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/.lib/linux-x86_64 -Wl,-rpath,${SRCDIR}/.lib/linux-x86_64 -lkreuzcrawl_ffi
-#cgo linux,arm64 LDFLAGS: -L${SRCDIR}/.lib/linux-aarch64 -Wl,-rpath,${SRCDIR}/.lib/linux-aarch64 -lkreuzcrawl_ffi
-#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/.lib/windows-x86_64 -lkreuzcrawl_ffi
-#include "kreuzcrawl.h"
+#cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/.lib/macos-arm64 -Wl,-rpath,${SRCDIR}/.lib/macos-arm64 -lcrawlberg_ffi
+#cgo darwin,amd64 LDFLAGS: -L${SRCDIR}/.lib/macos-x86_64 -Wl,-rpath,${SRCDIR}/.lib/macos-x86_64 -lcrawlberg_ffi
+#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/.lib/linux-x86_64 -Wl,-rpath,${SRCDIR}/.lib/linux-x86_64 -lcrawlberg_ffi
+#cgo linux,arm64 LDFLAGS: -L${SRCDIR}/.lib/linux-aarch64 -Wl,-rpath,${SRCDIR}/.lib/linux-aarch64 -lcrawlberg_ffi
+#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/.lib/windows-x86_64 -lcrawlberg_ffi
+#include "crawlberg.h"
 */
 import "C"
 
@@ -26,11 +26,11 @@ import (
 
 // lastError retrieves the last error from the FFI layer.
 func lastError() error {
-	code := int32(C.kcrawl_last_error_code())
+	code := int32(C.cberg_last_error_code())
 	if code == 0 {
 		return nil
 	}
-	ctx := C.kcrawl_last_error_context()
+	ctx := C.cberg_last_error_context()
 	if ctx == nil {
 		return fmt.Errorf("[%d] native error", code)
 	}
@@ -173,7 +173,7 @@ type BrowserBackend string
 const (
 	// BrowserBackendChromiumoxide BrowserBackendChromiumoxide existing Chromium/CDP backend powered by chromiumoxide.
 	BrowserBackendChromiumoxide BrowserBackend = "chromiumoxide"
-	// BrowserBackendNative BrowserBackendNative kreuzcrawl-owned native browser backend derived from Obscura.
+	// BrowserBackendNative BrowserBackendNative crawlberg-owned native browser backend derived from Obscura.
 	BrowserBackendNative BrowserBackend = "native"
 )
 
@@ -802,7 +802,7 @@ type BrowserConfig struct {
 	// not include the script result in `InteractionResult`.
 	EvalScript *string `json:"eval_script,omitempty"`
 	// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
-	// (or kreuzcrawl's default) if unset. Native only.
+	// (or crawlberg's default) if unset. Native only.
 	RobotsUserAgent *string `json:"robots_user_agent,omitempty"`
 	// Capture the full network event stream into the result. Default false
 	// (only the document event is captured). Native only.
@@ -1503,7 +1503,7 @@ type CrawlEngineHandle struct {
 // Free releases the resources held by this handle.
 func (h *CrawlEngineHandle) Free() {
 	if h.ptr != nil {
-		C.kcrawl_crawl_engine_handle_free((*C.KCRAWLCrawlEngineHandle)(h.ptr))
+		C.cberg_crawl_engine_handle_free((*C.CBERGCrawlEngineHandle)(h.ptr))
 		h.ptr = nil
 	}
 }
@@ -1575,14 +1575,14 @@ func GenerateCitations(markdown string) *CitationResult {
 	cMarkdown := C.CString(markdown)
 	defer C.free(unsafe.Pointer(cMarkdown))
 
-	ptr := C.kcrawl_generate_citations(cMarkdown)
-	defer C.kcrawl_citation_result_free(ptr)
+	ptr := C.cberg_generate_citations(cMarkdown)
+	defer C.cberg_citation_result_free(ptr)
 	return func() *CitationResult {
-		jsonPtr := C.kcrawl_citation_result_to_json(ptr)
+		jsonPtr := C.cberg_citation_result_to_json(ptr)
 		if jsonPtr == nil {
 			return nil
 		}
-		defer C.kcrawl_free_string(jsonPtr)
+		defer C.cberg_free_string(jsonPtr)
 		var result CitationResult
 		if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 			return nil
@@ -1608,17 +1608,17 @@ func CreateEngine(config *CrawlConfig) (*CrawlEngineHandle, error) {
 		jsonBytescConfig = []byte("{}")
 	}
 	tmpStrcConfig := C.CString(string(jsonBytescConfig))
-	cConfig := C.kcrawl_crawl_config_from_json(tmpStrcConfig)
+	cConfig := C.cberg_crawl_config_from_json(tmpStrcConfig)
 	C.free(unsafe.Pointer(tmpStrcConfig))
 	if cConfig == nil {
-		return nil, fmt.Errorf("failed to create crawl_config: %s", C.GoString(C.kcrawl_last_error_context()))
+		return nil, fmt.Errorf("failed to create crawl_config: %s", C.GoString(C.cberg_last_error_context()))
 	}
-	defer C.kcrawl_crawl_config_free(cConfig)
+	defer C.cberg_crawl_config_free(cConfig)
 
-	ptr := C.kcrawl_create_engine(cConfig)
+	ptr := C.cberg_create_engine(cConfig)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_crawl_engine_handle_free(ptr)
+			C.cberg_crawl_engine_handle_free(ptr)
 		}
 		return nil, err
 	}
@@ -1627,24 +1627,24 @@ func CreateEngine(config *CrawlConfig) (*CrawlEngineHandle, error) {
 
 // Scrape a single URL, returning extracted page data.
 func Scrape(engine *CrawlEngineHandle, url string) (*ScrapeResult, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	curl := C.CString(url)
 	defer C.free(unsafe.Pointer(curl))
 
-	ptr := C.kcrawl_scrape(cEngine, curl)
+	ptr := C.cberg_scrape(cEngine, curl)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_scrape_result_free(ptr)
+			C.cberg_scrape_result_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_scrape_result_free(ptr)
-	jsonPtr := C.kcrawl_scrape_result_to_json(ptr)
+	defer C.cberg_scrape_result_free(ptr)
+	jsonPtr := C.cberg_scrape_result_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result ScrapeResult
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1654,24 +1654,24 @@ func Scrape(engine *CrawlEngineHandle, url string) (*ScrapeResult, error) {
 
 // Crawl a website starting from `url`, following links up to the configured depth.
 func Crawl(engine *CrawlEngineHandle, url string) (*CrawlResult, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	curl := C.CString(url)
 	defer C.free(unsafe.Pointer(curl))
 
-	ptr := C.kcrawl_crawl(cEngine, curl)
+	ptr := C.cberg_crawl(cEngine, curl)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_crawl_result_free(ptr)
+			C.cberg_crawl_result_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_crawl_result_free(ptr)
-	jsonPtr := C.kcrawl_crawl_result_to_json(ptr)
+	defer C.cberg_crawl_result_free(ptr)
+	jsonPtr := C.cberg_crawl_result_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result CrawlResult
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1681,24 +1681,24 @@ func Crawl(engine *CrawlEngineHandle, url string) (*CrawlResult, error) {
 
 // MapUrls discover all pages on a website by following links and sitemaps.
 func MapUrls(engine *CrawlEngineHandle, url string) (*MapResult, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	curl := C.CString(url)
 	defer C.free(unsafe.Pointer(curl))
 
-	ptr := C.kcrawl_map_urls(cEngine, curl)
+	ptr := C.cberg_map_urls(cEngine, curl)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_map_result_free(ptr)
+			C.cberg_map_result_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_map_result_free(ptr)
-	jsonPtr := C.kcrawl_map_result_to_json(ptr)
+	defer C.cberg_map_result_free(ptr)
+	jsonPtr := C.cberg_map_result_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result MapResult
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1708,7 +1708,7 @@ func MapUrls(engine *CrawlEngineHandle, url string) (*MapResult, error) {
 
 // Interact execute browser actions on a single page.
 func Interact(engine *CrawlEngineHandle, url string, actions []PageAction) (*InteractionResult, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	curl := C.CString(url)
 	defer C.free(unsafe.Pointer(curl))
@@ -1720,19 +1720,19 @@ func Interact(engine *CrawlEngineHandle, url string, actions []PageAction) (*Int
 	cActions := C.CString(string(jsonBytescActions))
 	defer C.free(unsafe.Pointer(cActions))
 
-	ptr := C.kcrawl_interact(cEngine, curl, cActions)
+	ptr := C.cberg_interact(cEngine, curl, cActions)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_interaction_result_free(ptr)
+			C.cberg_interaction_result_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_interaction_result_free(ptr)
-	jsonPtr := C.kcrawl_interaction_result_to_json(ptr)
+	defer C.cberg_interaction_result_free(ptr)
+	jsonPtr := C.cberg_interaction_result_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result InteractionResult
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1742,7 +1742,7 @@ func Interact(engine *CrawlEngineHandle, url string, actions []PageAction) (*Int
 
 // BatchScrape scrape multiple URLs concurrently.
 func BatchScrape(engine *CrawlEngineHandle, urls []string) (*BatchScrapeResults, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	jsonBytescUrls, err := json.Marshal(urls)
 	if err != nil {
@@ -1751,19 +1751,19 @@ func BatchScrape(engine *CrawlEngineHandle, urls []string) (*BatchScrapeResults,
 	cUrls := C.CString(string(jsonBytescUrls))
 	defer C.free(unsafe.Pointer(cUrls))
 
-	ptr := C.kcrawl_batch_scrape(cEngine, cUrls)
+	ptr := C.cberg_batch_scrape(cEngine, cUrls)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_batch_scrape_results_free(ptr)
+			C.cberg_batch_scrape_results_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_batch_scrape_results_free(ptr)
-	jsonPtr := C.kcrawl_batch_scrape_results_to_json(ptr)
+	defer C.cberg_batch_scrape_results_free(ptr)
+	jsonPtr := C.cberg_batch_scrape_results_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result BatchScrapeResults
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1773,7 +1773,7 @@ func BatchScrape(engine *CrawlEngineHandle, urls []string) (*BatchScrapeResults,
 
 // BatchCrawl crawl multiple seed URLs concurrently, each following links to configured depth.
 func BatchCrawl(engine *CrawlEngineHandle, urls []string) (*BatchCrawlResults, error) {
-	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.CBERGCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
 	jsonBytescUrls, err := json.Marshal(urls)
 	if err != nil {
@@ -1782,19 +1782,19 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) (*BatchCrawlResults, e
 	cUrls := C.CString(string(jsonBytescUrls))
 	defer C.free(unsafe.Pointer(cUrls))
 
-	ptr := C.kcrawl_batch_crawl(cEngine, cUrls)
+	ptr := C.cberg_batch_crawl(cEngine, cUrls)
 	if err := lastError(); err != nil {
 		if ptr != nil {
-			C.kcrawl_batch_crawl_results_free(ptr)
+			C.cberg_batch_crawl_results_free(ptr)
 		}
 		return nil, err
 	}
-	defer C.kcrawl_batch_crawl_results_free(ptr)
-	jsonPtr := C.kcrawl_batch_crawl_results_to_json(ptr)
+	defer C.cberg_batch_crawl_results_free(ptr)
+	jsonPtr := C.cberg_batch_crawl_results_to_json(ptr)
 	if jsonPtr == nil {
 		return nil, fmt.Errorf("failed to convert to JSON")
 	}
-	defer C.kcrawl_free_string(jsonPtr)
+	defer C.cberg_free_string(jsonPtr)
 	var result BatchCrawlResults
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal: %w", err)
@@ -1825,17 +1825,17 @@ func (r *CrawlConfig) Validate() error {
 		return fmt.Errorf("failed to marshal receiver: %w", err)
 	}
 	tmpStrRecv := C.CString(string(jsonBytesRecv))
-	cRecv := C.kcrawl_crawl_config_from_json(tmpStrRecv)
+	cRecv := C.cberg_crawl_config_from_json(tmpStrRecv)
 	C.free(unsafe.Pointer(tmpStrRecv))
 	if cRecv == nil {
-		return fmt.Errorf("failed to create receiver: %s", C.GoString(C.kcrawl_last_error_context()))
+		return fmt.Errorf("failed to create receiver: %s", C.GoString(C.cberg_last_error_context()))
 	}
-	defer C.kcrawl_crawl_config_free(cRecv)
-	C.kcrawl_crawl_config_validate(cRecv)
-	jsonPtrUpdated := C.kcrawl_crawl_config_to_json(cRecv)
+	defer C.cberg_crawl_config_free(cRecv)
+	C.cberg_crawl_config_validate(cRecv)
+	jsonPtrUpdated := C.cberg_crawl_config_to_json(cRecv)
 	if jsonPtrUpdated != nil {
 		_ = json.Unmarshal([]byte(C.GoString(jsonPtrUpdated)), r)
-		C.kcrawl_free_string(jsonPtrUpdated)
+		C.cberg_free_string(jsonPtrUpdated)
 	}
 	return lastError()
 }
@@ -1847,13 +1847,13 @@ func (r *CrawlResult) UniqueNormalizedUrls() (uint, error) {
 		return 0, fmt.Errorf("failed to marshal receiver: %w", err)
 	}
 	tmpStrRecv := C.CString(string(jsonBytesRecv))
-	cRecv := C.kcrawl_crawl_result_from_json(tmpStrRecv)
+	cRecv := C.cberg_crawl_result_from_json(tmpStrRecv)
 	C.free(unsafe.Pointer(tmpStrRecv))
 	if cRecv == nil {
-		return 0, fmt.Errorf("failed to create receiver: %s", C.GoString(C.kcrawl_last_error_context()))
+		return 0, fmt.Errorf("failed to create receiver: %s", C.GoString(C.cberg_last_error_context()))
 	}
-	defer C.kcrawl_crawl_result_free(cRecv)
-	ptr := C.kcrawl_crawl_result_unique_normalized_urls(cRecv)
+	defer C.cberg_crawl_result_free(cRecv)
+	ptr := C.cberg_crawl_result_unique_normalized_urls(cRecv)
 	return uint(ptr), nil
 }
 
@@ -1879,14 +1879,14 @@ func (h *CrawlEngineHandle) CrawlStream(req CrawlStreamRequest) (<-chan CrawlEve
 		jsonBytescReq = []byte("{}")
 	}
 	tmpStrcReq := C.CString(string(jsonBytescReq))
-	cReq := C.kcrawl_crawl_stream_request_from_json(tmpStrcReq)
+	cReq := C.cberg_crawl_stream_request_from_json(tmpStrcReq)
 	C.free(unsafe.Pointer(tmpStrcReq))
 	if cReq == nil {
-		return nil, fmt.Errorf("failed to create crawl_stream_request: %s", C.GoString(C.kcrawl_last_error_context()))
+		return nil, fmt.Errorf("failed to create crawl_stream_request: %s", C.GoString(C.cberg_last_error_context()))
 	}
-	defer C.kcrawl_crawl_stream_request_free(cReq)
+	defer C.cberg_crawl_stream_request_free(cReq)
 
-	handle := C.kcrawl_crawl_engine_handle_crawl_stream_start((*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(h.ptr)), cReq)
+	handle := C.cberg_crawl_engine_handle_crawl_stream_start((*C.CBERGCrawlEngineHandle)(unsafe.Pointer(h.ptr)), cReq)
 	if handle == nil {
 		if err := lastError(); err != nil {
 			return nil, err
@@ -1896,22 +1896,22 @@ func (h *CrawlEngineHandle) CrawlStream(req CrawlStreamRequest) (<-chan CrawlEve
 	ch := make(chan CrawlEvent)
 	go func() {
 		defer close(ch)
-		defer C.kcrawl_crawl_engine_handle_crawl_stream_free(handle)
+		defer C.cberg_crawl_engine_handle_crawl_stream_free(handle)
 		for {
-			chunkPtr := C.kcrawl_crawl_engine_handle_crawl_stream_next(handle)
+			chunkPtr := C.cberg_crawl_engine_handle_crawl_stream_next(handle)
 			if chunkPtr == nil {
 				// Null = clean end-of-stream (errno 0) or stream error (errno != 0).
 				// In either case there are no more chunks; close the channel.
 				return
 			}
-			jsonPtr := C.kcrawl_crawl_event_to_json(chunkPtr)
+			jsonPtr := C.cberg_crawl_event_to_json(chunkPtr)
 			if jsonPtr == nil {
-				C.kcrawl_crawl_event_free(chunkPtr)
+				C.cberg_crawl_event_free(chunkPtr)
 				return
 			}
 			chunk, unmarshalErr := UnmarshalCrawlEvent([]byte(C.GoString(jsonPtr)))
-			C.kcrawl_free_string(jsonPtr)
-			C.kcrawl_crawl_event_free(chunkPtr)
+			C.cberg_free_string(jsonPtr)
+			C.cberg_crawl_event_free(chunkPtr)
 			if unmarshalErr != nil {
 				return
 			}
@@ -1943,14 +1943,14 @@ func (h *CrawlEngineHandle) BatchCrawlStream(req BatchCrawlStreamRequest) (<-cha
 		jsonBytescReq = []byte("{}")
 	}
 	tmpStrcReq := C.CString(string(jsonBytescReq))
-	cReq := C.kcrawl_batch_crawl_stream_request_from_json(tmpStrcReq)
+	cReq := C.cberg_batch_crawl_stream_request_from_json(tmpStrcReq)
 	C.free(unsafe.Pointer(tmpStrcReq))
 	if cReq == nil {
-		return nil, fmt.Errorf("failed to create batch_crawl_stream_request: %s", C.GoString(C.kcrawl_last_error_context()))
+		return nil, fmt.Errorf("failed to create batch_crawl_stream_request: %s", C.GoString(C.cberg_last_error_context()))
 	}
-	defer C.kcrawl_batch_crawl_stream_request_free(cReq)
+	defer C.cberg_batch_crawl_stream_request_free(cReq)
 
-	handle := C.kcrawl_crawl_engine_handle_batch_crawl_stream_start((*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(h.ptr)), cReq)
+	handle := C.cberg_crawl_engine_handle_batch_crawl_stream_start((*C.CBERGCrawlEngineHandle)(unsafe.Pointer(h.ptr)), cReq)
 	if handle == nil {
 		if err := lastError(); err != nil {
 			return nil, err
@@ -1960,22 +1960,22 @@ func (h *CrawlEngineHandle) BatchCrawlStream(req BatchCrawlStreamRequest) (<-cha
 	ch := make(chan CrawlEvent)
 	go func() {
 		defer close(ch)
-		defer C.kcrawl_crawl_engine_handle_batch_crawl_stream_free(handle)
+		defer C.cberg_crawl_engine_handle_batch_crawl_stream_free(handle)
 		for {
-			chunkPtr := C.kcrawl_crawl_engine_handle_batch_crawl_stream_next(handle)
+			chunkPtr := C.cberg_crawl_engine_handle_batch_crawl_stream_next(handle)
 			if chunkPtr == nil {
 				// Null = clean end-of-stream (errno 0) or stream error (errno != 0).
 				// In either case there are no more chunks; close the channel.
 				return
 			}
-			jsonPtr := C.kcrawl_crawl_event_to_json(chunkPtr)
+			jsonPtr := C.cberg_crawl_event_to_json(chunkPtr)
 			if jsonPtr == nil {
-				C.kcrawl_crawl_event_free(chunkPtr)
+				C.cberg_crawl_event_free(chunkPtr)
 				return
 			}
 			chunk, unmarshalErr := UnmarshalCrawlEvent([]byte(C.GoString(jsonPtr)))
-			C.kcrawl_free_string(jsonPtr)
-			C.kcrawl_crawl_event_free(chunkPtr)
+			C.cberg_free_string(jsonPtr)
+			C.cberg_crawl_event_free(chunkPtr)
 			if unmarshalErr != nil {
 				return
 			}
@@ -1987,7 +1987,7 @@ func (h *CrawlEngineHandle) BatchCrawlStream(req BatchCrawlStreamRequest) (<-cha
 
 // FromEnv create a policy from environment variables.
 //
-// On native platforms, reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
+// On native platforms, reads `CRAWLBERG_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
 // (case-insensitive), sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
 //
 // On wasm32 targets (browser/Node.js), environment variables are not accessible to the
@@ -1996,14 +1996,14 @@ func (h *CrawlEngineHandle) BatchCrawlStream(req BatchCrawlStreamRequest) (<-cha
 // - Rust-side SSRF checking is unenforceable and redundant in a wasm32 context.
 // - For testing and localhost access, the host's network sandbox is the enforcing boundary.
 func SsrfPolicyFromEnv() *SsrfPolicy {
-	ptr := C.kcrawl_ssrf_policy_from_env()
-	defer C.kcrawl_ssrf_policy_free(ptr)
+	ptr := C.cberg_ssrf_policy_from_env()
+	defer C.cberg_ssrf_policy_free(ptr)
 	return func() *SsrfPolicy {
-		jsonPtr := C.kcrawl_ssrf_policy_to_json(ptr)
+		jsonPtr := C.cberg_ssrf_policy_to_json(ptr)
 		if jsonPtr == nil {
 			return nil
 		}
-		defer C.kcrawl_free_string(jsonPtr)
+		defer C.cberg_free_string(jsonPtr)
 		var result SsrfPolicy
 		if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil {
 			return nil

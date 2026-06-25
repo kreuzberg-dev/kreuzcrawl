@@ -1,5 +1,5 @@
 {
-	"name": "xberg-io/kreuzcrawl",
+	"name": "xberg-io/crawlberg",
 	"description": "High-performance web crawling engine",
 	"license": "Elastic-2.0",
 	"type": "php-ext",
@@ -13,7 +13,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Kreuzcrawl\\": "src/"
+			"Crawlberg\\": "src/"
 		}
 	},
 	"scripts": {
@@ -25,7 +25,7 @@
 		"lint:fix": "php vendor/bin/php-cs-fixer fix --quiet && php -d detect_unicode=0 vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M"
 	},
 	"php-ext": {
-		"extension-name": "kreuzcrawl",
+		"extension-name": "crawlberg",
 		"support-zts": true,
 		"support-nts": true,
 		"download-url-method": [
@@ -42,7 +42,7 @@
 	"extra": {
 		"pie": {
 			"binary": {
-				"url-template": "https://github.com/xberg-io/kreuzcrawl/releases/download/v{Version}/php_kreuzcrawl-{Version}_php{PhpVersion}-{Arch}-{OS}-{Libc}-{TSMode}.tgz"
+				"url-template": "https://github.com/xberg-io/crawlberg/releases/download/v{Version}/php_crawlberg-{Version}_php{PhpVersion}-{Arch}-{OS}-{Libc}-{TSMode}.tgz"
 			}
 		}
 	}

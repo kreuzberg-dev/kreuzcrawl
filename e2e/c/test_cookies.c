@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_cookies_per_domain(void) {
     /* Isolates cookies per domain during crawl */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_COOKIES_PER_DOMAIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,25 +30,25 @@ void test_cookies_per_domain(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/cookies_per_domain", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* cookies_json = kcrawl_crawl_result_cookies(result);
+    char* cookies_json = cberg_crawl_result_cookies(result);
     int cookies_length = alef_json_array_count(cookies_json);
-    char* cookies = kcrawl_crawl_result_cookies(result);
+    char* cookies = cberg_crawl_result_cookies(result);
     assert(cookies_length == 1 && "equals assertion failed");
     assert(cookies != NULL && strstr(cookies, "domain_cookie") != NULL && "expected to contain substring");
-    kcrawl_free_string(cookies);
-    kcrawl_free_string(cookies_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(cookies);
+    cberg_free_string(cookies_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_cookies_persistence(void) {
     /* Maintains cookies across multiple crawl requests */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_COOKIES_PERSISTENCE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -59,21 +59,21 @@ void test_cookies_persistence(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/cookies_persistence", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* cookies = kcrawl_crawl_result_cookies(result);
+    char* cookies = cberg_crawl_result_cookies(result);
     assert(cookies != NULL && strstr(cookies, "session") != NULL && "expected to contain substring");
-    kcrawl_free_string(cookies);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(cookies);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_cookies_set_cookie_response(void) {
     /* Respects Set-Cookie header from server responses */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -84,11 +84,11 @@ void test_cookies_set_cookie_response(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/cookies_set_cookie_response", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* cookies = kcrawl_crawl_result_cookies(result);
+    char* cookies = cberg_crawl_result_cookies(result);
     assert(cookies != NULL && strstr(cookies, "tracking") != NULL && "expected to contain substring");
-    kcrawl_free_string(cookies);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(cookies);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

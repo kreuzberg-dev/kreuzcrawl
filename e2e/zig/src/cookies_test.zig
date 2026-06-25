@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "cookies_per_domain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_COOKIES_PER_DOMAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/cookies_per_domain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -51,7 +51,7 @@ test "cookies_persistence" {
 
     const url = if (std.c.getenv("MOCK_SERVER_COOKIES_PERSISTENCE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/cookies_persistence", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -73,7 +73,7 @@ test "cookies_set_cookie_response" {
 
     const url = if (std.c.getenv("MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/cookies_set_cookie_response", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

@@ -35,23 +35,23 @@ echo ""
 echo "=== pkg-config ==="
 echo "PKG_CONFIG_PATH: ${PKG_CONFIG_PATH:-<not set>}"
 if verify_pkg_config; then
-  echo "✓ pkg-config can find kreuzcrawl-ffi"
+  echo "✓ pkg-config can find crawlberg-ffi"
 else
-  echo "⚠ pkg-config cannot find kreuzcrawl-ffi (build may not be complete yet)"
+  echo "⚠ pkg-config cannot find crawlberg-ffi (build may not be complete yet)"
 fi
 echo ""
 echo "=== FFI Library Files ==="
 if [[ "${RUNNER_OS:-}" == "Windows" ]]; then
-  if ls target/x86_64-pc-windows-gnu/release/libkreuzcrawl_ffi.* 2>/dev/null; then
-    ls -lh target/x86_64-pc-windows-gnu/release/libkreuzcrawl_ffi.*
-  elif ls target/release/libkreuzcrawl_ffi.* 2>/dev/null; then
-    ls -lh target/release/libkreuzcrawl_ffi.*
+  if ls target/x86_64-pc-windows-gnu/release/libcrawlberg_ffi.* 2>/dev/null; then
+    ls -lh target/x86_64-pc-windows-gnu/release/libcrawlberg_ffi.*
+  elif ls target/release/libcrawlberg_ffi.* 2>/dev/null; then
+    ls -lh target/release/libcrawlberg_ffi.*
   else
     echo "✗ No FFI library found"
   fi
 else
-  if ls target/release/libkreuzcrawl_ffi.* 2>/dev/null; then
-    ls -lh target/release/libkreuzcrawl_ffi.*
+  if ls target/release/libcrawlberg_ffi.* 2>/dev/null; then
+    ls -lh target/release/libcrawlberg_ffi.*
   else
     echo "✗ No FFI library found"
   fi

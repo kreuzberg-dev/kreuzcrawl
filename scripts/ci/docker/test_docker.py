@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Docker image test script for kreuzcrawl CLI."""
+"""Docker image test script for crawlberg CLI."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def run(image: str, *args: str, check: bool = True) -> subprocess.CompletedProce
 
 def test_version(image: str) -> bool:
     result = run(image, "--version", check=False)
-    ok = result.returncode == 0 and "kreuzcrawl" in result.stdout
+    ok = result.returncode == 0 and "crawlberg" in result.stdout
     print(f"  {'PASS' if ok else 'FAIL'}: --version → {result.stdout.strip()}")
     return ok
 
@@ -76,8 +76,8 @@ def test_invalid_url(image: str) -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Test kreuzcrawl Docker image")
-    parser.add_argument("--image", default="kreuzcrawl:latest", help="Docker image to test")
+    parser = argparse.ArgumentParser(description="Test crawlberg Docker image")
+    parser.add_argument("--image", default="crawlberg:latest", help="Docker image to test")
     parser.add_argument("--variant", default="cli", help="Image variant (unused, kept for compat)")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
     args = parser.parse_args()

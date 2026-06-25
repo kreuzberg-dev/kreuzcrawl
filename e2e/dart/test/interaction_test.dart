@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -125,7 +125,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -202,10 +202,10 @@ void main() {
 
   test('Execute a sequence of multiple actions (click, type, click) and verify all succeed with correct indices', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_action_sequence");
     final actions = (jsonDecode(r'[{"selector":"#open","type":"click"},{"selector":"#field","text":"test_data","type":"type"},{"selector":"#submit","type":"click"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].actionIndex, equals(0));
     expect(result.actionResults[0].actionType.toString().trim(), equals('click'.toString().trim()));
     expect(result.actionResults[0].success, equals(true));
@@ -219,10 +219,10 @@ void main() {
 
   test('Click a button element and verify success', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_click_element");
     final actions = (jsonDecode(r'[{"selector":"#submit","type":"click"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('click'.toString().trim()));
     expect(result.actionResults[0].actionIndex, equals(0));
@@ -230,10 +230,10 @@ void main() {
 
   test('Execute JavaScript that returns document.title and verify success with data', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_execute_js");
     final actions = (jsonDecode(r'[{"script":"document.title","type":"executeJs"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('executeJs'.toString().trim()));
     expect(result.actionResults[0].data, contains('JS Test Page'));
@@ -241,10 +241,10 @@ void main() {
 
   test('Click on a non-existent selector and verify error in action_results', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_invalid_selector");
     final actions = (jsonDecode(r'[{"selector":"#nonexistent","type":"click"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(false));
     expect(result.actionResults[0].actionType.toString().trim(), equals('click'.toString().trim()));
     expect(result.actionResults[0].error, contains('find click target'));
@@ -253,19 +253,19 @@ void main() {
   test('Submit 101 actions (exceeds MAX_ACTIONS=100) and verify validation error', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-      final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+      final engine = await CrawlbergBridge.createEngine(config: engineConfig);
       final url = _fixtureUrl("interact_max_actions_exceeded");
       final actions = (jsonDecode(r'[{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"},{"selector":"#btn","type":"click"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-      return KreuzcrawlBridge.interact(engine, url, actions);
+      return CrawlbergBridge.interact(engine, url, actions);
     }(), throwsA(anything));
   });
 
   test('Press a keyboard key (Enter) and verify success', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_press_key");
     final actions = (jsonDecode(r'[{"selector":"#searchbox","type":"click"},{"selector":"#searchbox","text":"test","type":"type"},{"key":"Enter","type":"press"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[2].success, equals(true));
     expect(result.actionResults[2].actionType.toString().trim(), equals('press'.toString().trim()));
     expect(result.actionResults[2].actionIndex, equals(2));
@@ -273,10 +273,10 @@ void main() {
 
   test('Execute default Scrape action and verify extracted content', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_scrape_default");
     final actions = (jsonDecode(r'[{"type":"scrape"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('scrape'.toString().trim()));
     expect(result.actionResults[0].data, isNotNull);
@@ -284,10 +284,10 @@ void main() {
 
   test('Screenshot a specific element via selector and verify image data', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_screenshot");
     final actions = (jsonDecode(r'[{"full_page":false,"type":"screenshot"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('screenshot'.toString().trim()));
     expect(result.actionResults[0].data, isNotNull);
@@ -295,10 +295,10 @@ void main() {
 
   test('Screenshot full page and verify image data', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_screenshot_full_page");
     final actions = (jsonDecode(r'[{"full_page":true,"type":"screenshot"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('screenshot'.toString().trim()));
     expect(result.actionResults[0].data, isNotNull);
@@ -306,10 +306,10 @@ void main() {
 
   test('Scroll down on the page and verify success', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_scroll_down");
     final actions = (jsonDecode(r'[{"amount":500,"direction":"down","type":"scroll"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('scroll'.toString().trim()));
     expect(result.actionResults[0].actionIndex, equals(0));
@@ -317,10 +317,10 @@ void main() {
 
   test('Type text into an input field and verify success', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_type_input");
     final actions = (jsonDecode(r'[{"selector":"#username","text":"john_doe","type":"type"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('type'.toString().trim()));
     expect(result.actionResults[0].actionIndex, equals(0));
@@ -328,10 +328,10 @@ void main() {
 
   test('Wait for a CSS selector that exists on the page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("interact_wait_selector");
     final actions = (jsonDecode(r'[{"selector":"#content","type":"wait"}]') as List<dynamic>).map((e) => _parsePageAction(e as Map<String, dynamic>)).toList();
-    final result = await KreuzcrawlBridge.interact(engine, url, actions);
+    final result = await CrawlbergBridge.interact(engine, url, actions);
     expect(result.actionResults[0].success, equals(true));
     expect(result.actionResults[0].actionType.toString().trim(), equals('wait'.toString().trim()));
     expect(result.actionResults[0].actionIndex, equals(0));

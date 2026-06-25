@@ -34,13 +34,13 @@ if [ -f "${REPO_ROOT}/.mock-server.env" ]; then
   echo "✓ Mock server URL: $MOCK_SERVER_URL"
 fi
 
-# KREUZCRAWL_ALLOW_PRIVATE_NETWORK is set at the task level (csharp:e2e:test)
+# CRAWLBERG_ALLOW_PRIVATE_NETWORK is set at the task level (csharp:e2e:test)
 # and inherited by this script. It must be set in the OS process environment
 # (libc environ) BEFORE dotnet starts, not via managed Environment.SetEnvironmentVariable()
 # in TestSetup.cs, because the P/Invoke'd Rust FFI reads via std::env::var().
-export KREUZCRAWL_ALLOW_PRIVATE_NETWORK="${KREUZCRAWL_ALLOW_PRIVATE_NETWORK:-true}"
+export CRAWLBERG_ALLOW_PRIVATE_NETWORK="${CRAWLBERG_ALLOW_PRIVATE_NETWORK:-true}"
 
-dotnet test Kreuzcrawl.E2eTests.csproj \
+dotnet test Crawlberg.E2eTests.csproj \
   -c Release \
   --logger "console;verbosity=diagnostic" \
   --logger "trx;LogFileName=csharp-e2e.trx" \

@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "validation_browser_endpoint_invalid" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_BROWSER_ENDPOINT_INVALID")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_browser_endpoint_invalid", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"browser\":{\"endpoint\":\"http://not-websocket:3000\",\"mode\":\"always\"}}", url) catch {
+    const _result_json = crawlberg.scrape("{\"browser\":{\"endpoint\":\"http://not-websocket:3000\",\"mode\":\"always\"}}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -44,7 +44,7 @@ test "validation_invalid_auth_config" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_INVALID_AUTH_CONFIG")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_invalid_auth_config", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"auth\":{\"password\":\"secret\",\"type\":\"basic\",\"username\":\"\"}}", url) catch {
+    const _result_json = crawlberg.scrape("{\"auth\":{\"password\":\"secret\",\"type\":\"basic\",\"username\":\"\"}}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -60,7 +60,7 @@ test "validation_invalid_exclude_regex" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_INVALID_EXCLUDE_REGEX")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_invalid_exclude_regex", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"exclude_paths\":[\"(unclosed\"]}", url) catch {
+    const _result_json = crawlberg.scrape("{\"exclude_paths\":[\"(unclosed\"]}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -76,7 +76,7 @@ test "validation_invalid_include_regex" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_INVALID_INCLUDE_REGEX")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_invalid_include_regex", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"include_paths\":[\"[invalid\"]}", url) catch {
+    const _result_json = crawlberg.scrape("{\"include_paths\":[\"[invalid\"]}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -92,7 +92,7 @@ test "validation_invalid_proxy_url" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_INVALID_PROXY_URL")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_invalid_proxy_url", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"proxy\":{\"url\":\"not-a-url\"}}", url) catch {
+    const _result_json = crawlberg.scrape("{\"proxy\":{\"url\":\"not-a-url\"}}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -108,7 +108,7 @@ test "validation_invalid_retry_code" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_INVALID_RETRY_CODE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_invalid_retry_code", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"retry_codes\":[999]}", url) catch {
+    const _result_json = crawlberg.scrape("{\"retry_codes\":[999]}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -124,7 +124,7 @@ test "validation_max_concurrent_zero" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_MAX_CONCURRENT_ZERO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_max_concurrent_zero", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"max_concurrent\":0}", url) catch {
+    const _result_json = crawlberg.scrape("{\"max_concurrent\":0}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -140,7 +140,7 @@ test "validation_max_depth_too_high" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_MAX_DEPTH_TOO_HIGH")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_max_depth_too_high", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"max_depth\":200}", url) catch {
+    const _result_json = crawlberg.scrape("{\"max_depth\":200}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -156,7 +156,7 @@ test "validation_max_pages_zero" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_MAX_PAGES_ZERO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_max_pages_zero", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"max_pages\":0}", url) catch {
+    const _result_json = crawlberg.scrape("{\"max_pages\":0}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -172,7 +172,7 @@ test "validation_max_redirects_too_high" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_MAX_REDIRECTS_TOO_HIGH")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_max_redirects_too_high", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"max_redirects\":200}", url) catch {
+    const _result_json = crawlberg.scrape("{\"max_redirects\":200}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -188,7 +188,7 @@ test "validation_negative_body_size" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_NEGATIVE_BODY_SIZE")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_negative_body_size", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"max_body_size\":0}", url) catch {
+    const _result_json = crawlberg.scrape("{\"max_body_size\":0}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };
@@ -204,7 +204,7 @@ test "validation_timeout_zero" {
 
     const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_TIMEOUT_ZERO")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_timeout_zero", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{\"request_timeout\":0}", url) catch {
+    const _result_json = crawlberg.scrape("{\"request_timeout\":0}", url) catch {
         try testing.expect(true); // Error occurred as expected
         return;
     };

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: error. */
 final class ErrorTest extends TestCase
@@ -20,9 +20,9 @@ final class ErrorTest extends TestCase
     /** Handles 401 Unauthorized response correctly */
     public function test_error_401_unauthorized(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_401_unauthorized';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -30,54 +30,54 @@ final class ErrorTest extends TestCase
     public function test_error_403_forbidden(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_403_forbidden';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 404 response correctly */
     public function test_error_404_page(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_404_page';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 408 Request Timeout response correctly */
     public function test_error_408_request_timeout(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_408_request_timeout';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 410 Gone response correctly */
     public function test_error_410_gone(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_410_gone';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 500 server error */
     public function test_error_500_server(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_500_server';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 502 Bad Gateway response correctly */
     public function test_error_502_bad_gateway(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_502_bad_gateway';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -85,9 +85,9 @@ final class ErrorTest extends TestCase
     public function test_error_browser_launch_failure(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always", "timeout" => 1]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_browser_launch_failure';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -95,54 +95,54 @@ final class ErrorTest extends TestCase
     public function test_error_browser_page_timeout(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always", "timeout" => 1]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_browser_page_timeout';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles connection refused error gracefully */
     public function test_error_connection_refused(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_connection_refused';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Content-Length mismatch causes data loss error */
     public function test_error_data_loss_truncated(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_data_loss_truncated';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles DNS resolution failure gracefully */
     public function test_error_dns_resolution(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_dns_resolution';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Scraping a URL that cannot be found returns an error containing the URL path */
     public function test_error_empty_batch_urls(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_empty_batch_urls';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 200 with completely empty body gracefully */
     public function test_error_empty_response(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_empty_response';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEmpty($result->html);
 
@@ -154,54 +154,54 @@ final class ErrorTest extends TestCase
     public function test_error_invalid_proxy(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["proxy" => ["url" => "http://127.0.0.1:1"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_invalid_proxy';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles incomplete or truncated HTTP response */
     public function test_error_partial_response(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_partial_response';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles 429 rate limiting with Retry-After */
     public function test_error_rate_limited(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_rate_limited';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Retries request on 503 Service Unavailable response */
     public function test_error_retry_503(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_503';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Implements exponential backoff when retrying failed requests */
     public function test_error_retry_backoff(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_backoff';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Handles SSL certificate validation error */
     public function test_error_ssl_invalid_cert(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_ssl_invalid_cert';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -209,18 +209,18 @@ final class ErrorTest extends TestCase
     public function test_error_timeout(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["requestTimeout" => 500]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_timeout';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
     /** Unsupported URL scheme (gopher) is rejected */
     public function test_error_unsupported_scheme(): void
     {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
+        $this->expectException(\Exception::class);        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_unsupported_scheme';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -228,9 +228,9 @@ final class ErrorTest extends TestCase
     public function test_error_waf_akamai(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_waf_akamai';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -238,9 +238,9 @@ final class ErrorTest extends TestCase
     public function test_error_waf_blocked(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_waf_blocked';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -248,9 +248,9 @@ final class ErrorTest extends TestCase
     public function test_error_waf_false_403(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_waf_false_403';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 
@@ -258,9 +258,9 @@ final class ErrorTest extends TestCase
     public function test_error_waf_imperva(): void
     {
         $this->expectException(\Exception::class);        $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_waf_imperva';
-        Kreuzcrawl::scrape($engine, $url);
+        Crawlberg::scrape($engine, $url);
     }
 
 }

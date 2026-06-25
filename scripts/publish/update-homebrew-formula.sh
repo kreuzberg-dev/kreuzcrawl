@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Update the kreuzcrawl Homebrew formula's source URL + sha256 to the new
+# Update the crawlberg Homebrew formula's source URL + sha256 to the new
 # release tag. The bottle DSL is rewritten separately by
 # homebrew-merge-bottles@v1 after the matrix bottle builds complete.
 #
@@ -14,7 +14,7 @@ tag="${TAG:?TAG is required (e.g. v0.3.0-rc.25)}"
 version="${VERSION:?VERSION is required (e.g. 0.3.0-rc.25)}"
 tap_dir="${TAP_DIR:?TAP_DIR is required (path to homebrew-tap checkout)}"
 
-formula="${tap_dir}/Formula/kreuzcrawl.rb"
+formula="${tap_dir}/Formula/crawlberg.rb"
 
 [[ -f "$formula" ]] || {
   echo "Missing $formula" >&2
@@ -24,7 +24,7 @@ formula="${tap_dir}/Formula/kreuzcrawl.rb"
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 
-source_url="https://github.com/xberg-io/kreuzcrawl/archive/${tag}.tar.gz"
+source_url="https://github.com/xberg-io/crawlberg/archive/${tag}.tar.gz"
 echo "Downloading source archive from $source_url..." >&2
 curl -fsSL "$source_url" -o "$work_dir/source.tar.gz"
 source_sha="$(shasum -a 256 "$work_dir/source.tar.gz" | awk '{print $1}')"

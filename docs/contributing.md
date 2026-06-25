@@ -5,12 +5,12 @@
 Rust 1.95 is pinned in `rust-toolchain.toml`. Clone and build:
 
 ```bash
-git clone https://github.com/xberg-io/kreuzcrawl
-cd kreuzcrawl
+git clone https://github.com/xberg-io/crawlberg
+cd crawlberg
 cargo build
 ```
 
-`rustup` will fetch 1.95 on first run if you don't have it. Most Rust work is under `crates/kreuzcrawl/`.
+`rustup` will fetch 1.95 on first run if you don't have it. Most Rust work is under `crates/crawlberg/`.
 
 ### Pre-commit
 
@@ -86,7 +86,7 @@ Formatting is configured in `rustfmt.toml`. `cargo fmt` (or the pre-commit hook)
 Four things that aren't obvious from the code:
 
 - Async runtime is `tokio`. Don't introduce `async-std` or `smol`.
-- Public API types belong in `crates/kreuzcrawl/src/types/`. Internal types live next to the code that uses them.
+- Public API types belong in `crates/crawlberg/src/types/`. Internal types live next to the code that uses them.
 - `defaults/` is `pub(crate)`. Don't re-export from it at the crate root without a discussion — the narrow public surface is intentional.
 - Error types go in `error.rs` with `thiserror`. No `anyhow` in library code.
 
@@ -121,4 +121,4 @@ CI runs the full binding test suite on each PR. You don't need Ruby, Java, PHP, 
 
 ## License
 
-Kreuzcrawl is under the [Elastic License 2.0](../LICENSE). Contributing means your changes are covered by it.
+Crawlberg is under the [Elastic License 2.0](../LICENSE). Contributing means your changes are covered by it.

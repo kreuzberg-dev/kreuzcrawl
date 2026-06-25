@@ -11,13 +11,13 @@ import (
 	"os"
 	"testing"
 
-	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/crawlberg/packages/go"
 )
 
 func Test_WarcBasicOutput(t *testing.T) {
 	// Scrape single page with WARC output enabled writes to file
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_test.warc"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_test.warc"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)
@@ -42,7 +42,7 @@ func Test_WarcBasicOutput(t *testing.T) {
 func Test_WarcMultiPageCrawl(t *testing.T) {
 	// Crawl multiple pages with depth=1 and WARC output enabled
 	var engineConfig pkg.CrawlConfig
-	if err := json.Unmarshal([]byte(`{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_crawl.warc"}`), &engineConfig); err != nil {
+	if err := json.Unmarshal([]byte(`{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_crawl.warc"}`), &engineConfig); err != nil {
 		t.Fatalf("config parse failed: %v", err)
 	}
 	engine, createErr := pkg.CreateEngine(&engineConfig)

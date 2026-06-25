@@ -8,8 +8,8 @@ set -euo pipefail
 
 # Suite-level environment defaults from [e2e.env]. Each entry
 # uses setdefault semantics: only applied when not already set.
-: "${KREUZCRAWL_ALLOW_PRIVATE_NETWORK:=true}"
-export KREUZCRAWL_ALLOW_PRIVATE_NETWORK
+: "${CRAWLBERG_ALLOW_PRIVATE_NETWORK:=true}"
+export CRAWLBERG_ALLOW_PRIVATE_NETWORK
 
 # Auto-spawn mock-server if MOCK_SERVER_URL is not pre-set.
 # Mirrors the C test_app Makefile's run_with_mock_server macro: builds the
@@ -60,9 +60,9 @@ if ! command -v jq &>/dev/null; then
 fi
 
 # Verify the brew-installed CLI is on PATH.
-if ! command -v kreuzcrawl &>/dev/null; then
+if ! command -v crawlberg &>/dev/null; then
   echo 'error: brew test_app requires the Homebrew formula to be installed' >&2
-  echo '       run: brew install kreuzcrawl' >&2
+  echo '       run: brew install crawlberg' >&2
   exit 1
 fi
 

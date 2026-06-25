@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: stealth.</summary>
     public class StealthTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // User-agent rotation config is accepted and crawl succeeds
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_config";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }
@@ -39,10 +39,10 @@ namespace Kreuzcrawl
         {
             // User-agent rotation cycles through multiple agents across multiple requests
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_round_robin";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
 
         }
@@ -52,9 +52,9 @@ namespace Kreuzcrawl
         {
             // Custom user-agent string is applied for single domain crawl
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_single_domain";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages[0].StatusCode == 200);
     Assert.True(result.Pages.Count == 1);
 

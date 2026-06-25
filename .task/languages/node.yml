@@ -11,7 +11,7 @@ includes:
 tasks:
     install:
         desc: Install Node/TypeScript dependencies
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         cmds:
             - corepack enable
             - pnpm install -r
@@ -23,19 +23,19 @@ tasks:
 
     build:
         desc: Build Node/TypeScript native bindings (uses {{.BUILD_PROFILE}})
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         cmds:
             - task: build:{{.BUILD_PROFILE | default "release"}}
 
     build:dev:
         desc: Build Node/TypeScript native bindings in debug mode
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         cmds:
             - pnpm exec napi build --platform
 
     build:release:
         desc: Build Node/TypeScript native bindings in release mode (optimized)
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         cmds:
             - pnpm exec napi build --platform --release --strip
 
@@ -43,7 +43,7 @@ tasks:
         desc: Build Node/TypeScript native bindings in CI mode (with debug info)
         cmds:
             - cmd: |
-                  cd crates/kreuzcrawl-node
+                  cd crates/crawlberg-node
                   corepack enable
                   pnpm install -r
                   pnpm exec napi build --platform --release
@@ -56,7 +56,7 @@ tasks:
 
     test:
         desc: Run Node/TypeScript tests
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         env:
             ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
         cmds:
@@ -64,16 +64,16 @@ tasks:
 
     test:ci:
         desc: Run Node/TypeScript tests in CI mode
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         env:
             ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
         cmds:
             - pnpm test
 
     clippy:
-        desc: Run clippy on kreuzcrawl-node crate
+        desc: Run clippy on crawlberg-node crate
         cmds:
-            - cargo clippy -p kreuzcrawl-node -- -D warnings
+            - cargo clippy -p crawlberg-node -- -D warnings
 
     lint:
         desc: Auto-fix Node/TypeScript code linting (oxlint)
@@ -97,7 +97,7 @@ tasks:
 
     clean:
         desc: Clean Node/TypeScript build artifacts
-        dir: crates/kreuzcrawl-node
+        dir: crates/crawlberg-node
         cmds:
             - python -c "import shutil; [shutil.rmtree(d, ignore_errors=True) for d in ['dist', 'build', 'node_modules']]"
             - python -c "import shutil, os; [shutil.rmtree(os.path.join(r, d), ignore_errors=True) for r, dirs, _ in os.walk('.') for d in dirs if d == '.turbo']"

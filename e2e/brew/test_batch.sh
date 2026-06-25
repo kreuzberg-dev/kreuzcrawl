@@ -9,7 +9,7 @@ set -euo pipefail
 test_batch_crawl_basic() {
   # Batch crawl of 2 seed URLs with links to discover
   local output
-  output=$(kreuzcrawl batch-crawl "${MOCK_SERVER_BATCH_CRAWL_BASIC:-${MOCK_SERVER_URL}/fixtures/batch_crawl_basic}/seed1" "${MOCK_SERVER_BATCH_CRAWL_BASIC:-${MOCK_SERVER_URL}/fixtures/batch_crawl_basic}/seed2" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg batch-crawl "${MOCK_SERVER_BATCH_CRAWL_BASIC:-${MOCK_SERVER_URL}/fixtures/batch_crawl_basic}/seed1" "${MOCK_SERVER_BATCH_CRAWL_BASIC:-${MOCK_SERVER_URL}/fixtures/batch_crawl_basic}/seed2" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -25,7 +25,7 @@ test_batch_crawl_basic() {
 test_batch_crawl_partial_failure() {
   # Batch crawl where one seed URL returns 404 error
   local output
-  output=$(kreuzcrawl batch-crawl "${MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/batch_crawl_partial_failure}/good_seed" "${MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/batch_crawl_partial_failure}/bad_seed" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg batch-crawl "${MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/batch_crawl_partial_failure}/good_seed" "${MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/batch_crawl_partial_failure}/bad_seed" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -41,7 +41,7 @@ test_batch_crawl_partial_failure() {
 test_batch_crawl_with_config() {
   # Batch crawl with max_depth=1 config verifying pages are discovered
   local output
-  output=$(kreuzcrawl batch-crawl "${MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_crawl_with_config}/seed1" "${MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_crawl_with_config}/seed2" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg batch-crawl "${MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_crawl_with_config}/seed1" "${MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_crawl_with_config}/seed2" --config '{"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -53,7 +53,7 @@ test_batch_crawl_with_config() {
 
 test_batch_scrape_empty_urls_error() {
   # Batch scrape with empty batch_urls array returns error
-  if kreuzcrawl batch-scrape --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg batch-scrape --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -62,7 +62,7 @@ test_batch_scrape_empty_urls_error() {
 test_batch_scrape_with_config() {
   # Batch scrape with aggressive preprocessing configuration
   local output
-  output=$(kreuzcrawl batch-scrape "${MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_scrape_with_config}/article1" "${MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_scrape_with_config}/article2" --config '{"content":{"preprocessing_preset":"aggressive"}}' --format json --browser-mode never)
+  output=$(crawlberg batch-scrape "${MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_scrape_with_config}/article1" "${MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG:-${MOCK_SERVER_URL}/fixtures/batch_scrape_with_config}/article2" --config '{"content":{"preprocessing_preset":"aggressive"}}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -78,7 +78,7 @@ test_batch_scrape_with_config() {
 test_scrape_batch_basic() {
   # Batch scrape of multiple URLs all succeeding
   local output
-  output=$(kreuzcrawl batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page1" "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page2" "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page3" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page1" "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page2" "${MOCK_SERVER_SCRAPE_BATCH_BASIC:-${MOCK_SERVER_URL}/fixtures/scrape_batch_basic}/page3" --config '{}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -94,7 +94,7 @@ test_scrape_batch_basic() {
 test_scrape_batch_partial_failure() {
   # Batch scrape with one URL failing returns partial results
   local output
-  output=$(kreuzcrawl batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/good1" "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/bad" "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/good2" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/good1" "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/bad" "${MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE:-${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure}/good2" --config '{}' --format json --browser-mode never)
 
   local val_completed_count
   val_completed_count=$(echo "$output" | jq -r '.completed_count')
@@ -110,7 +110,7 @@ test_scrape_batch_partial_failure() {
 test_scrape_batch_progress() {
   # Batch scrape of 2 URLs completes with 2 results
   local output
-  output=$(kreuzcrawl batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_PROGRESS:-${MOCK_SERVER_URL}/fixtures/scrape_batch_progress}/target" "${MOCK_SERVER_SCRAPE_BATCH_PROGRESS:-${MOCK_SERVER_URL}/fixtures/scrape_batch_progress}/other" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg batch-scrape "${MOCK_SERVER_SCRAPE_BATCH_PROGRESS:-${MOCK_SERVER_URL}/fixtures/scrape_batch_progress}/target" "${MOCK_SERVER_SCRAPE_BATCH_PROGRESS:-${MOCK_SERVER_URL}/fixtures/scrape_batch_progress}/other" --config '{}' --format json --browser-mode never)
 
   local val_total_count
   val_total_count=$(echo "$output" | jq -r '.total_count')

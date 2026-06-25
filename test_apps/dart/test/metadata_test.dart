@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,9 +165,9 @@ void main() {
   });
 
   test('Extracts article:published_time, modified_time, author, section, and tags', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_article_times");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     // skipped: field 'article.published_time' not available on dart result type
     // skipped: field 'article.modified_time' not available on dart result type
@@ -177,18 +177,18 @@ void main() {
   });
 
   test('Extracts favicon link tags including apple-touch-icon', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_favicons");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     // skipped: field 'favicons.length' not available on dart result type
     // skipped: field 'favicons[].apple_touch' not available on dart result type
   });
 
   test('Extracts heading hierarchy (h1-h6) from HTML page', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_headings");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     // skipped: field 'headings.h1.length' not available on dart result type
     // skipped: field 'headings.h1[0].text' not available on dart result type
@@ -196,18 +196,18 @@ void main() {
   });
 
   test('Extracts hreflang alternate link tags', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_hreflang");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     // skipped: field 'hreflang.length' not available on dart result type
     // skipped: field 'hreflang[].lang' not available on dart result type
   });
 
   test('Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_keywords_author");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.title.toString().trim(), equals('Comprehensive Metadata Test Page'.toString().trim()));
     expect(result.metadata.canonicalUrl, isNotNull);
@@ -215,7 +215,7 @@ void main() {
     expect(result.metadata.keywords, contains('rust'));
     expect(result.metadata.author.toString().trim(), equals('Jane Developer'.toString().trim()));
     expect(result.metadata.viewport, isNotNull);
-    expect(result.metadata.generator.toString().trim(), equals('kreuzcrawl/1.0'.toString().trim()));
+    expect(result.metadata.generator.toString().trim(), equals('crawlberg/1.0'.toString().trim()));
     expect(result.metadata.themeColor.toString().trim(), equals('#ff6600'.toString().trim()));
     expect(result.metadata.robots.toString().trim(), equals('index, follow'.toString().trim()));
     expect(result.metadata.htmlLang.toString().trim(), equals('en'.toString().trim()));
@@ -223,9 +223,9 @@ void main() {
   });
 
   test('Extracts og:video, og:audio, and og:locale:alternate metadata', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_og_video_audio");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.ogVideo.toString().trim(), equals('https://example.com/video.mp4'.toString().trim()));
     expect(result.metadata.ogAudio.toString().trim(), equals('https://example.com/audio.mp3'.toString().trim()));
@@ -233,9 +233,9 @@ void main() {
   });
 
   test('Extracts response metadata from HTTP headers (etag, server, content-language)', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_response_headers");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     // skipped: field 'response_headers.etag' not available on dart result type
     // skipped: field 'response_headers.last_modified' not available on dart result type
@@ -244,9 +244,9 @@ void main() {
   });
 
   test('Computes word count from visible page text', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("metadata_word_count");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.wordCount, greaterThan(99));
     expect(result.metadata.wordCount, lessThan(301));

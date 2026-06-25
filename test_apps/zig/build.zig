@@ -7,16 +7,16 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
 
     // Fetch the published Zig package from the registry.
-    const kreuzcrawl_dep = b.dependency("kreuzcrawl", .{
+    const crawlberg_dep = b.dependency("crawlberg", .{
         .target = target,
         .optimize = optimize,
     });
-    const kreuzcrawl_module = kreuzcrawl_dep.module("kreuzcrawl");
-    const kreuzcrawl_lib_path = kreuzcrawl_dep.path("lib");
-    const kreuzcrawl_include_path = kreuzcrawl_dep.path("include");
-    kreuzcrawl_module.addLibraryPath(kreuzcrawl_lib_path);
-    kreuzcrawl_module.addIncludePath(kreuzcrawl_include_path);
-    kreuzcrawl_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
+    const crawlberg_module = crawlberg_dep.module("crawlberg");
+    const crawlberg_lib_path = crawlberg_dep.path("lib");
+    const crawlberg_include_path = crawlberg_dep.path("include");
+    crawlberg_module.addLibraryPath(crawlberg_lib_path);
+    crawlberg_module.addIncludePath(crawlberg_include_path);
+    crawlberg_module.linkSystemLibrary("crawlberg_ffi", .{});
 
     const _alloc = b.allocator;
     var mock_server_url: ?[]const u8 = b.graph.environ_map.get("MOCK_SERVER_URL");
@@ -84,14 +84,14 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    markdown_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    markdown_module.addImport("crawlberg", crawlberg_module);
     const markdown_tests = b.addTest(.{
         .name = "markdown_test",
         .root_module = markdown_module,
         .use_llvm = true,
     });
     const markdown_run = b.addRunArtifact(markdown_tests);
-    markdown_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    markdown_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         markdown_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -112,14 +112,14 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    metadata_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    metadata_module.addImport("crawlberg", crawlberg_module);
     const metadata_tests = b.addTest(.{
         .name = "metadata_test",
         .root_module = metadata_module,
         .use_llvm = true,
     });
     const metadata_run = b.addRunArtifact(metadata_tests);
-    metadata_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    metadata_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         metadata_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -141,14 +141,14 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    scrape_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    scrape_module.addImport("crawlberg", crawlberg_module);
     const scrape_tests = b.addTest(.{
         .name = "scrape_test",
         .root_module = scrape_module,
         .use_llvm = true,
     });
     const scrape_run = b.addRunArtifact(scrape_tests);
-    scrape_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    scrape_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         scrape_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }

@@ -1,65 +1,65 @@
-# kreuzcrawl
+# crawlberg
 
 <div align="center" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px 0;">
   <a href="https://github.com/xberg-io/alef">
     <img src="https://img.shields.io/badge/Bindings-alef%20%D7%90-007ec6" alt="Bindings">
   </a>
   <!-- Language Bindings -->
-  <a href="https://crates.io/crates/kreuzcrawl">
-    <img src="https://img.shields.io/crates/v/kreuzcrawl?label=Rust&color=007ec6" alt="Rust">
+  <a href="https://crates.io/crates/crawlberg">
+    <img src="https://img.shields.io/crates/v/crawlberg?label=Rust&color=007ec6" alt="Rust">
   </a>
-  <a href="https://pypi.org/project/kreuzcrawl/">
-    <img src="https://img.shields.io/pypi/v/kreuzcrawl?label=Python&color=007ec6" alt="Python">
+  <a href="https://pypi.org/project/crawlberg/">
+    <img src="https://img.shields.io/pypi/v/crawlberg?label=Python&color=007ec6" alt="Python">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/kreuzcrawl">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl?label=Node.js&color=007ec6" alt="Node.js">
+  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg">
+    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl-wasm?label=WASM&color=007ec6" alt="WASM">
+  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg-wasm">
+    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.kreuzcrawl/kreuzcrawl?label=Java&color=007ec6" alt="Java">
+  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg/crawlberg">
+    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
   </a>
-  <a href="https://pkg.go.dev/github.com/xberg-io/kreuzcrawl/packages/go">
-    <img src="https://img.shields.io/github/v/tag/xberg-io/kreuzcrawl?label=Go&color=007ec6" alt="Go">
+  <a href="https://pkg.go.dev/github.com/xberg-io/crawlberg/packages/go">
+    <img src="https://img.shields.io/github/v/tag/xberg-io/crawlberg?label=Go&color=007ec6" alt="Go">
   </a>
-  <a href="https://www.nuget.org/packages/Kreuzcrawl/">
-    <img src="https://img.shields.io/nuget/v/Kreuzcrawl?label=C%23&color=007ec6" alt="C#">
+  <a href="https://www.nuget.org/packages/Crawlberg/">
+    <img src="https://img.shields.io/nuget/v/Crawlberg?label=C%23&color=007ec6" alt="C#">
   </a>
-  <a href="https://packagist.org/packages/xberg-io/kreuzcrawl">
-    <img src="https://img.shields.io/packagist/v/xberg-io/kreuzcrawl?label=PHP&color=007ec6" alt="PHP">
+  <a href="https://packagist.org/packages/xberg-io/crawlberg">
+    <img src="https://img.shields.io/packagist/v/xberg-io/crawlberg?label=PHP&color=007ec6" alt="PHP">
   </a>
-  <a href="https://rubygems.org/gems/kreuzcrawl">
-    <img src="https://img.shields.io/gem/v/kreuzcrawl?label=Ruby&color=007ec6" alt="Ruby">
+  <a href="https://rubygems.org/gems/crawlberg">
+    <img src="https://img.shields.io/gem/v/crawlberg?label=Ruby&color=007ec6" alt="Ruby">
   </a>
-  <a href="https://hex.pm/packages/kreuzcrawl">
-    <img src="https://img.shields.io/hexpm/v/kreuzcrawl?label=Elixir&color=007ec6" alt="Elixir">
+  <a href="https://hex.pm/packages/crawlberg">
+    <img src="https://img.shields.io/hexpm/v/crawlberg?label=Elixir&color=007ec6" alt="Elixir">
   </a>
-  <a href="https://pub.dev/packages/kreuzcrawl">
-    <img src="https://img.shields.io/pub/v/kreuzcrawl?label=Dart&color=007ec6" alt="Dart">
+  <a href="https://pub.dev/packages/crawlberg">
+    <img src="https://img.shields.io/pub/v/crawlberg?label=Dart&color=007ec6" alt="Dart">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl.android/kreuzcrawl-android">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.kreuzcrawl.android/kreuzcrawl-android?label=Kotlin&color=007ec6" alt="Kotlin">
+  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg.android/crawlberg-android">
+    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
   </a>
-  <a href="https://github.com/xberg-io/kreuzcrawl/tree/main/packages/swift">
+  <a href="https://github.com/xberg-io/crawlberg/tree/main/packages/swift">
     <img src="https://img.shields.io/badge/Swift-SPM-007ec6" alt="Swift">
   </a>
-  <a href="https://github.com/xberg-io/kreuzcrawl/tree/main/packages/zig">
+  <a href="https://github.com/xberg-io/crawlberg/tree/main/packages/zig">
     <img src="https://img.shields.io/badge/Zig-package-007ec6" alt="Zig">
   </a>
-  <a href="https://github.com/xberg-io/kreuzcrawl/releases">
+  <a href="https://github.com/xberg-io/crawlberg/releases">
     <img src="https://img.shields.io/badge/C-FFI-007ec6" alt="C FFI">
   </a>
-  <a href="https://github.com/xberg-io/kreuzcrawl/pkgs/container/kreuzcrawl">
+  <a href="https://github.com/xberg-io/crawlberg/pkgs/container/crawlberg">
     <img src="https://img.shields.io/badge/Docker-ghcr.io-007ec6?logo=docker&logoColor=white" alt="Docker">
   </a>
 
   <!-- Project Info -->
-  <a href="https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE">
+  <a href="https://github.com/xberg-io/crawlberg/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
   </a>
-  <a href="https://docs.kreuzcrawl.xberg.io">
-    <img src="https://img.shields.io/badge/Docs-kreuzcrawl-007ec6" alt="Documentation">
+  <a href="https://docs.crawlberg.xberg.io">
+    <img src="https://img.shields.io/badge/Docs-crawlberg-007ec6" alt="Documentation">
   </a>
 </div>
 
@@ -69,7 +69,7 @@
   </a>
 </div>
 
-Java bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses the
+Java bindings for **crawlberg** — a high-performance Rust web crawling engine. Uses the
 Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 
 ## What This Package Provides
@@ -84,8 +84,8 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 
 ```bash
 <dependency>
-    <groupId>dev.kreuzberg.kreuzcrawl</groupId>
-    <artifactId>kreuzcrawl</artifactId>
+    <groupId>dev.kreuzberg.crawlberg</groupId>
+    <artifactId>crawlberg</artifactId>
     <version>0.3.0</version>
 </dependency>
 
@@ -93,11 +93,11 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 
 ## Agent plugin
 
-The `kreuzcrawl` plugin is available via the `xberg-io/plugins` marketplace.
+The `crawlberg` plugin is available via the `xberg-io/plugins` marketplace.
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install kreuzcrawl@kreuzberg
+/plugin install crawlberg@kreuzberg
 ```
 
 Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot CLI, and opencode. See [the marketplace README](https://github.com/xberg-io/plugins) for harness-specific install instructions.
@@ -107,19 +107,19 @@ Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot
 ```java title="Java"
 import java.util.Optional;
 
-import dev.kreuzberg.kreuzcrawl.CrawlConfig;
-import dev.kreuzberg.kreuzcrawl.CrawlEngineHandle;
-import dev.kreuzberg.kreuzcrawl.CrawlResult;
-import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
-import dev.kreuzberg.kreuzcrawl.ScrapeResult;
+import dev.kreuzberg.crawlberg.CrawlConfig;
+import dev.kreuzberg.crawlberg.CrawlEngineHandle;
+import dev.kreuzberg.crawlberg.CrawlResult;
+import dev.kreuzberg.crawlberg.Crawlberg;
+import dev.kreuzberg.crawlberg.ScrapeResult;
 
 public final class BasicUsage {
     private BasicUsage() { }
 
     public static void main(final String[] args) throws Exception {
         // Simplest case: scrape a single page with default settings.
-        CrawlEngineHandle engine = Kreuzcrawl.createEngine();
-        ScrapeResult result = Kreuzcrawl.scrape(engine, "https://example.com/");
+        CrawlEngineHandle engine = Crawlberg.createEngine();
+        ScrapeResult result = Crawlberg.scrape(engine, "https://example.com/");
         System.out.println("Title: " + result.metadata().title());
         System.out.println("Status: " + result.statusCode());
         System.out.println("Links found: " + result.links().size());
@@ -129,8 +129,8 @@ public final class BasicUsage {
             .withMaxDepth(Optional.of(1L))
             .withMaxPages(Optional.of(5L))
             .build();
-        CrawlEngineHandle crawlEngine = Kreuzcrawl.createEngine(config);
-        CrawlResult crawlResult = Kreuzcrawl.crawl(
+        CrawlEngineHandle crawlEngine = Crawlberg.createEngine(config);
+        CrawlResult crawlResult = Crawlberg.crawl(
             crawlEngine,
             "https://en.wikipedia.org/wiki/Web_scraping"
         );
@@ -141,7 +141,7 @@ public final class BasicUsage {
 
 ## API Reference
 
-Full API documentation is available at [docs.kreuzcrawl.xberg.io](https://docs.kreuzcrawl.xberg.io).
+Full API documentation is available at [docs.crawlberg.xberg.io](https://docs.crawlberg.xberg.io).
 
 Key functions:
 
@@ -154,13 +154,13 @@ Key functions:
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](https://github.com/xberg-io/kreuzcrawl/blob/main/CONTRIBUTING.md) for details.
+Contributions are welcome! Please see our [Contributing Guide](https://github.com/xberg-io/crawlberg/blob/main/CONTRIBUTING.md) for details.
 
 ## Part of Kreuzberg.dev
 
 - [Kreuzberg](https://github.com/xberg-io/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Xberg Enterprise](https://github.com/xberg-io/xberg-enterprise) — managed extraction API with SDKs, dashboards, and observability.
-- [kreuzcrawl](https://github.com/xberg-io/kreuzcrawl) — web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
+- [crawlberg](https://github.com/xberg-io/crawlberg) — web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 - [html-to-markdown](https://github.com/xberg-io/html-to-markdown) — fast, lossless HTML→Markdown engine.
 - [liter-llm](https://github.com/xberg-io/liter-llm) — universal LLM API client with native bindings for 14 languages and 143 providers.
 - [tree-sitter-language-pack](https://github.com/xberg-io/tree-sitter-language-pack) — tree-sitter grammars and code-intelligence primitives.
@@ -169,10 +169,10 @@ Contributions are welcome! Please see our [Contributing Guide](https://github.co
 
 ## License
 
-This project is licensed under [Elastic License 2.0](https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE).
+This project is licensed under [Elastic License 2.0](https://github.com/xberg-io/crawlberg/blob/main/LICENSE).
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.xberg.io)
-- [GitHub Repository](https://github.com/xberg-io/kreuzcrawl)
-- [Issue Tracker](https://github.com/xberg-io/kreuzcrawl/issues)
+- [Documentation](https://docs.crawlberg.xberg.io)
+- [GitHub Repository](https://github.com/xberg-io/crawlberg)
+- [Issue Tracker](https://github.com/xberg-io/crawlberg/issues)

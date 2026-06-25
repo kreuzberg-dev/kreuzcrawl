@@ -33,19 +33,19 @@ tasks:
     build:dev:
         desc: Build PHP extension in debug mode
         cmds:
-            - cmd: cargo build --package kreuzcrawl-php
+            - cmd: cargo build --package crawlberg-php
               platforms: [linux, darwin, windows]
 
     build:release:
         desc: Build PHP extension in release mode (optimized)
         cmds:
-            - cmd: cargo build --release --package kreuzcrawl-php
+            - cmd: cargo build --release --package crawlberg-php
               platforms: [linux, darwin, windows]
 
     build:ci:
         desc: Build PHP extension in CI mode (with debug info)
         cmds:
-            - cmd: cargo build --release --package kreuzcrawl-php
+            - cmd: cargo build --release --package crawlberg-php
               platforms: [linux, darwin, windows]
               env:
                   RUSTFLAGS: '{{.RUSTFLAGS | default ""}} -C debuginfo=2'
@@ -64,7 +64,7 @@ tasks:
         cmds:
             - cmd: bash ../../scripts/ci/php/create-ci-php-ini.sh
               platforms: [linux, darwin, windows]
-            - cmd: php -c ../../php-kreuzcrawl.ini vendor/bin/phpunit
+            - cmd: php -c ../../php-crawlberg.ini vendor/bin/phpunit
               platforms: [linux, darwin, windows]
 
     test:quick:
@@ -189,9 +189,9 @@ tasks:
             # codegen fix, accept those as risky-not-failing.
             - cmd: sed -i.bak 's/failOnRisky="true"/failOnRisky="false"/' phpunit.xml && rm -f phpunit.xml.bak
               platforms: [linux, darwin, windows]
-            - cmd: php -c php-kreuzcrawl.ini vendor/bin/phpunit
+            - cmd: php -c php-crawlberg.ini vendor/bin/phpunit
               platforms: [linux, darwin]
-            - cmd: php -c php-kreuzcrawl.ini vendor\bin\phpunit.bat
+            - cmd: php -c php-crawlberg.ini vendor\bin\phpunit.bat
               platforms: [windows]
 
     e2e:verify:

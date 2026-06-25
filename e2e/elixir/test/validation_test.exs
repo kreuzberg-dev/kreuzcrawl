@@ -9,7 +9,7 @@ defmodule E2e.ValidationTest do
   describe "validation_browser_endpoint_invalid" do
     test "validation_browser_endpoint_invalid" do
       engine_config = "{\"browser\":{\"endpoint\":\"http://not-websocket:3000\",\"mode\":\"always\"}}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_browser_endpoint_invalid"
     end
   end
@@ -17,7 +17,7 @@ defmodule E2e.ValidationTest do
   describe "validation_invalid_auth_config" do
     test "validation_invalid_auth_config" do
       engine_config = "{\"auth\":{\"password\":\"secret\",\"type\":\"basic\",\"username\":\"\"}}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_invalid_auth_config"
     end
   end
@@ -25,7 +25,7 @@ defmodule E2e.ValidationTest do
   describe "validation_invalid_exclude_regex" do
     test "validation_invalid_exclude_regex" do
       engine_config = "{\"exclude_paths\":[\"(unclosed\"]}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_invalid_exclude_regex"
     end
   end
@@ -33,7 +33,7 @@ defmodule E2e.ValidationTest do
   describe "validation_invalid_include_regex" do
     test "validation_invalid_include_regex" do
       engine_config = "{\"include_paths\":[\"[invalid\"]}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_invalid_include_regex"
     end
   end
@@ -41,7 +41,7 @@ defmodule E2e.ValidationTest do
   describe "validation_invalid_proxy_url" do
     test "validation_invalid_proxy_url" do
       engine_config = "{\"proxy\":{\"url\":\"not-a-url\"}}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_invalid_proxy_url"
     end
   end
@@ -49,7 +49,7 @@ defmodule E2e.ValidationTest do
   describe "validation_invalid_retry_code" do
     test "validation_invalid_retry_code" do
       engine_config = "{\"retry_codes\":[999]}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_invalid_retry_code"
     end
   end
@@ -57,7 +57,7 @@ defmodule E2e.ValidationTest do
   describe "validation_max_concurrent_zero" do
     test "validation_max_concurrent_zero" do
       engine_config = "{\"max_concurrent\":0}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_max_concurrent_zero"
     end
   end
@@ -65,7 +65,7 @@ defmodule E2e.ValidationTest do
   describe "validation_max_depth_too_high" do
     test "validation_max_depth_too_high" do
       engine_config = "{\"max_depth\":200}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_max_depth_too_high"
     end
   end
@@ -73,7 +73,7 @@ defmodule E2e.ValidationTest do
   describe "validation_max_pages_zero" do
     test "validation_max_pages_zero" do
       engine_config = "{\"max_pages\":0}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_max_pages_zero"
     end
   end
@@ -81,7 +81,7 @@ defmodule E2e.ValidationTest do
   describe "validation_max_redirects_too_high" do
     test "validation_max_redirects_too_high" do
       engine_config = "{\"max_redirects\":200}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_max_redirects_too_high"
     end
   end
@@ -89,7 +89,7 @@ defmodule E2e.ValidationTest do
   describe "validation_negative_body_size" do
     test "validation_negative_body_size" do
       engine_config = "{\"max_body_size\":0}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_negative_body_size"
     end
   end
@@ -97,7 +97,7 @@ defmodule E2e.ValidationTest do
   describe "validation_timeout_zero" do
     test "validation_timeout_zero" do
       engine_config = "{\"request_timeout\":0}"
-      assert {:error, _} = Kreuzcrawl.create_engine(engine_config)
+      assert {:error, _} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_timeout_zero"
     end
   end

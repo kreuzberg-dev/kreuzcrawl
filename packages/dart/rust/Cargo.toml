@@ -1,5 +1,5 @@
 [package]
-name = "kreuzcrawl-dart"
+name = "crawlberg-dart"
 version = "0.3.0"
 edition = "2024"
 license = "Elastic-2.0"
@@ -7,14 +7,14 @@ license = "Elastic-2.0"
 [package.metadata.cargo-machete]
 # Umbrella + sibling crates are pulled in so flutter_rust_bridge can resolve
 # every referenced type, but the generated Rust wrapper only `use`s a subset.
-ignored = ["kreuzcrawl"]
+ignored = ["crawlberg"]
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
 [dependencies]
+crawlberg = { path = "../../../crates/crawlberg", features = ["interact", "browser-chromiumoxide"] }
 flutter_rust_bridge = "=2.12.0"
 futures-util = "0.3"
-kreuzcrawl = { path = "../../../crates/kreuzcrawl", features = ["interact", "browser-chromiumoxide"] }
 serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "sync"] }
 

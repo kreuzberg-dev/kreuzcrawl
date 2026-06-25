@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_proxy_authenticated(void) {
     /* Proxy with username and password credentials authenticates successfully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_PROXY_AUTHENTICATED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,22 +30,22 @@ void test_proxy_authenticated(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/proxy_authenticated", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 0 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_proxy_basic_success(void) {
     /* Configure proxy URL and successfully crawl through it */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_PROXY_BASIC_SUCCESS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -56,12 +56,12 @@ void test_proxy_basic_success(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/proxy_basic_success", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 0 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

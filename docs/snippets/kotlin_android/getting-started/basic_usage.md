@@ -2,14 +2,14 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import dev.kreuzberg.kreuzcrawl.android.CrawlConfig
-import dev.kreuzberg.kreuzcrawl.android.Kreuzcrawl
+import dev.kreuzberg.crawlberg.android.CrawlConfig
+import dev.kreuzberg.crawlberg.android.Crawlberg
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
     // Simplest case: scrape a single page with default settings.
-    val engine = Kreuzcrawl.createEngine()
-    val result = Kreuzcrawl.scrapeAsync(engine, "https://example.com/")
+    val engine = Crawlberg.createEngine()
+    val result = Crawlberg.scrapeAsync(engine, "https://example.com/")
     println("Title: ${result.metadata.title}")
     println("Status: ${result.statusCode}")
     println("Links found: ${result.links.size}")
@@ -22,8 +22,8 @@ fun main() = runBlocking {
         "{\"max_depth\":1,\"max_pages\":5}",
         CrawlConfig::class.java,
     )
-    val crawlEngine = Kreuzcrawl.createEngine(config)
-    val crawlResult = Kreuzcrawl.crawlAsync(
+    val crawlEngine = Crawlberg.createEngine(config)
+    val crawlResult = Crawlberg.crawlAsync(
         crawlEngine,
         "https://en.wikipedia.org/wiki/Web_scraping",
     )

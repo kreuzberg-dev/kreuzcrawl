@@ -5,7 +5,7 @@
 #   docker build -f docker/Dockerfile.musl-ffi \
 #     --output type=local,dest=./dist .
 #
-# Produces libkreuzcrawl_ffi.so at dist/libkreuzcrawl_ffi.so
+# Produces libcrawlberg_ffi.so at dist/libcrawlberg_ffi.so
 # =============================================================================
 FROM alpine:3.21 AS builder
 
@@ -31,30 +31,30 @@ ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 # Copy workspace manifests and only the required crates
 COPY Cargo.toml Cargo.lock ./
-COPY crates/kreuzcrawl/ crates/kreuzcrawl/
-COPY crates/kreuzcrawl-ffi/ crates/kreuzcrawl-ffi/
-COPY crates/kreuzcrawl-bindings-common/ crates/kreuzcrawl-bindings-common/
-COPY crates/kreuzcrawl-browser/ crates/kreuzcrawl-browser/
+COPY crates/crawlberg/ crates/crawlberg/
+COPY crates/crawlberg-ffi/ crates/crawlberg-ffi/
+COPY crates/crawlberg-bindings-common/ crates/crawlberg-bindings-common/
+COPY crates/crawlberg-browser/ crates/crawlberg-browser/
 
 # Replace workspace members with only the crates we have.
 # Use sed -z (null-terminated mode) so the regex spans newlines: the workspace
 # members list in Cargo.toml is multi-line.
-RUN sed -i -z 's|members = \[[^]]*\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-ffi", "crates/kreuzcrawl-bindings-common", "crates/kreuzcrawl-browser"]|' \
+RUN sed -i -z 's|members = \[[^]]*\]|members = ["crates/crawlberg", "crates/crawlberg-ffi", "crates/crawlberg-bindings-common", "crates/crawlberg-browser"]|' \
     Cargo.toml
 
 # Build the FFI shared library
 RUN . "$HOME/.cargo/env" && \
-    cargo build --release --package kreuzcrawl-ffi && \
-    cp target/release/libkreuzcrawl_ffi.so /build/libkreuzcrawl_ffi.so && \
-    strip /build/libkreuzcrawl_ffi.so
+    cargo build --release --package crawlberg-ffi && \
+    cp target/release/libcrawlberg_ffi.so /build/libcrawlberg_ffi.so && \
+    strip /build/libcrawlberg_ffi.so
 
 # Verify the library
-RUN file /build/libkreuzcrawl_ffi.so && \
+RUN file /build/libcrawlberg_ffi.so && \
     echo "=== Dynamic dependencies ===" && \
-    readelf -d /build/libkreuzcrawl_ffi.so 2>/dev/null | grep NEEDED || echo "No dynamic dependencies (fully static)"
+    readelf -d /build/libcrawlberg_ffi.so 2>/dev/null | grep NEEDED || echo "No dynamic dependencies (fully static)"
 
 # =============================================================================
 # Output stage — just the shared library
 # =============================================================================
 FROM scratch
-COPY --from=builder /build/libkreuzcrawl_ffi.so /libkreuzcrawl_ffi.so
+COPY --from=builder /build/libcrawlberg_ffi.so /libcrawlberg_ffi.so

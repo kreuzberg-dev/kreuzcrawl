@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_scrape_asset_dedup(void) {
     /* Same asset linked twice results in one download with one unique hash */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"download_assets\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"download_assets\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_ASSET_DEDUP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,27 +30,27 @@ void test_scrape_asset_dedup(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_asset_dedup", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* assets_json = kcrawl_scrape_result_assets(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* assets_json = cberg_scrape_result_assets(result);
     int assets_length = alef_json_array_count(assets_json);
     char* assets__content_hash = alef_json_get_string(assets_json, "content_hash");
     assert(status_code == 200 && "equals assertion failed");
     assert(assets_length == 2 && "equals assertion failed");
     assert(assets__content_hash != NULL && strlen(assets__content_hash) > 0 && "expected non-empty value");
     free(assets__content_hash);
-    kcrawl_free_string(assets_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(assets_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_asset_max_size(void) {
     /* Skips assets exceeding max_asset_size limit */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"download_assets\":true,\"max_asset_size\":150}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"download_assets\":true,\"max_asset_size\":150}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_ASSET_MAX_SIZE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -61,24 +61,24 @@ void test_scrape_asset_max_size(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_asset_max_size", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* assets_json = kcrawl_scrape_result_assets(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* assets_json = cberg_scrape_result_assets(result);
     int assets_length = alef_json_array_count(assets_json);
     assert(status_code == 200 && "equals assertion failed");
     assert(assets_length == 2 && "equals assertion failed");
-    kcrawl_free_string(assets_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(assets_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_asset_type_filter(void) {
     /* Only downloads image assets when asset_types filter is set */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"asset_types\":[\"image\"],\"download_assets\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"asset_types\":[\"image\"],\"download_assets\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_ASSET_TYPE_FILTER");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -89,27 +89,27 @@ void test_scrape_asset_type_filter(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_asset_type_filter", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* assets_json = kcrawl_scrape_result_assets(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* assets_json = cberg_scrape_result_assets(result);
     int assets_length = alef_json_array_count(assets_json);
     char* assets__category = alef_json_get_string(assets_json, "asset_category");
     assert(status_code == 200 && "equals assertion failed");
     assert(assets_length == 1 && "equals assertion failed");
     assert(assets__category != NULL && strstr(assets__category, "image") != NULL && "expected to contain substring");
     free(assets__category);
-    kcrawl_free_string(assets_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(assets_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_basic_html_page(void) {
     /* Scrapes a simple HTML page and extracts title, description, and links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":0,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":0,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_BASIC_HTML_PAGE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -120,22 +120,22 @@ void test_scrape_basic_html_page(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_basic_html_page", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* content_type = kcrawl_scrape_result_content_type(result);
-    char* html = kcrawl_scrape_result_html(result);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* content_type = cberg_scrape_result_content_type(result);
+    char* html = cberg_scrape_result_html(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* metadata_title = kcrawl_page_metadata_title(metadata_handle);
-    char* metadata_description = kcrawl_page_metadata_description(metadata_handle);
-    char* metadata_canonical_url = kcrawl_page_metadata_canonical_url(metadata_handle);
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* metadata_title = cberg_page_metadata_title(metadata_handle);
+    char* metadata_description = cberg_page_metadata_description(metadata_handle);
+    char* metadata_canonical_url = cberg_page_metadata_canonical_url(metadata_handle);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__link_type = alef_json_get_string(links_json, "link_type");
-    char* images_json = kcrawl_scrape_result_images(result);
+    char* images_json = cberg_scrape_result_images(result);
     int images_length = alef_json_array_count(images_json);
-    char* og_title = kcrawl_page_metadata_og_title(metadata_handle);
+    char* og_title = cberg_page_metadata_og_title(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(str_trim_eq(content_type, "text/html") == 0 && "equals assertion failed");
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
@@ -146,26 +146,26 @@ void test_scrape_basic_html_page(void) {
     assert(links__link_type != NULL && strstr(links__link_type, "external") != NULL && "expected to contain substring");
     assert(images_length == 0 && "equals assertion failed");
     assert((og_title == NULL || strlen(og_title) == 0) && "expected empty value");
-    kcrawl_free_string(content_type);
-    kcrawl_free_string(html);
-    kcrawl_free_string(metadata_title);
-    kcrawl_free_string(metadata_description);
-    kcrawl_free_string(metadata_canonical_url);
+    cberg_free_string(content_type);
+    cberg_free_string(html);
+    cberg_free_string(metadata_title);
+    cberg_free_string(metadata_description);
+    cberg_free_string(metadata_canonical_url);
     free(links__link_type);
-    kcrawl_free_string(og_title);
-    kcrawl_free_string(images_json);
-    kcrawl_free_string(links_json);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(og_title);
+    cberg_free_string(images_json);
+    cberg_free_string(links_json);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_complex_links(void) {
     /* Classifies links by type: internal, external, anchor, document, image */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_COMPLEX_LINKS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -176,27 +176,27 @@ void test_scrape_complex_links(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_complex_links", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* links_json = kcrawl_scrape_result_links(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     char* links__url = alef_json_get_string(links_json, "url");
     assert(status_code == 200 && "equals assertion failed");
     assert(links_length > 9 && "expected greater than");
     assert(links__url != NULL && strlen(links__url) > 0 && "expected non-empty value");
     free(links__url);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_download_assets(void) {
     /* Downloads CSS, JS, and image assets from page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"download_assets\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"download_assets\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_DOWNLOAD_ASSETS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -207,24 +207,24 @@ void test_scrape_download_assets(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_download_assets", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* assets_json = kcrawl_scrape_result_assets(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* assets_json = cberg_scrape_result_assets(result);
     int assets_length = alef_json_array_count(assets_json);
     assert(status_code == 200 && "equals assertion failed");
     assert(assets_length > 2 && "expected greater than");
-    kcrawl_free_string(assets_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(assets_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_dublin_core(void) {
     /* Extracts Dublin Core metadata from a page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_DUBLIN_CORE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -235,30 +235,30 @@ void test_scrape_dublin_core(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_dublin_core", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* dublin_core_title = kcrawl_page_metadata_dc_title(metadata_handle);
-    char* dublin_core_creator = kcrawl_page_metadata_dc_creator(metadata_handle);
+    char* dublin_core_title = cberg_page_metadata_dc_title(metadata_handle);
+    char* dublin_core_creator = cberg_page_metadata_dc_creator(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(dublin_core_title != NULL && strlen(dublin_core_title) > 0 && "expected non-empty value");
     assert(str_trim_eq(dublin_core_title, "Effects of Climate Change on Marine Biodiversity") == 0 && "equals assertion failed");
     assert(str_trim_eq(dublin_core_creator, "Dr. Jane Smith") == 0 && "equals assertion failed");
-    kcrawl_free_string(dublin_core_title);
-    kcrawl_free_string(dublin_core_creator);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(dublin_core_title);
+    cberg_free_string(dublin_core_creator);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_empty_page(void) {
     /* Handles an empty HTML document without errors */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_EMPTY_PAGE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -269,28 +269,28 @@ void test_scrape_empty_page(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_empty_page", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* links_json = kcrawl_scrape_result_links(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
-    char* images_json = kcrawl_scrape_result_images(result);
+    char* images_json = cberg_scrape_result_images(result);
     int images_length = alef_json_array_count(images_json);
     assert(status_code == 200 && "equals assertion failed");
     assert(links_length > -1 && "expected greater than");
     assert(images_length == 0 && "equals assertion failed");
-    kcrawl_free_string(images_json);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(images_json);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_feed_discovery(void) {
     /* Discovers RSS, Atom, and JSON feed links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_FEED_DISCOVERY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -301,24 +301,24 @@ void test_scrape_feed_discovery(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_feed_discovery", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* feeds_json = kcrawl_scrape_result_feeds(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* feeds_json = cberg_scrape_result_feeds(result);
     int feeds_length = alef_json_array_count(feeds_json);
     assert(status_code == 200 && "equals assertion failed");
     assert(feeds_length >= 3 && "expected greater than or equal");
-    kcrawl_free_string(feeds_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(feeds_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_image_sources(void) {
     /* Extracts images from img, picture, og:image, twitter:image */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_IMAGE_SOURCES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -329,30 +329,30 @@ void test_scrape_image_sources(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_image_sources", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* images_json = kcrawl_scrape_result_images(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* images_json = cberg_scrape_result_images(result);
     int images_length = alef_json_array_count(images_json);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* og_image = kcrawl_page_metadata_og_image(metadata_handle);
+    char* og_image = cberg_page_metadata_og_image(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(images_length > 4 && "expected greater than");
     assert(str_trim_eq(og_image, "https://example.com/images/og-hero.jpg") == 0 && "equals assertion failed");
-    kcrawl_free_string(og_image);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_free_string(images_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(og_image);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_free_string(images_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_js_heavy_spa(void) {
     /* Handles SPA page with JavaScript-only content (no server-rendered HTML) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_JS_HEAVY_SPA");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -363,21 +363,21 @@ void test_scrape_js_heavy_spa(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_js_heavy_spa", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
+    char* html = cberg_scrape_result_html(result);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_json_ld(void) {
     /* Extracts JSON-LD structured data from a page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_JSON_LD");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -388,11 +388,11 @@ void test_scrape_json_ld(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_json_ld", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* json_ld = kcrawl_scrape_result_json_ld(result);
-    char* json_ld_json = kcrawl_scrape_result_json_ld(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* json_ld = cberg_scrape_result_json_ld(result);
+    char* json_ld_json = cberg_scrape_result_json_ld(result);
     assert(json_ld_json != NULL);
     char* json_ld_type = alef_json_get_string(json_ld_json, "schema_type");
     char* json_ld_name = alef_json_get_string(json_ld_json, "name");
@@ -400,20 +400,20 @@ void test_scrape_json_ld(void) {
     assert(json_ld != NULL && strlen(json_ld) > 0 && "expected non-empty value");
     assert(str_trim_eq(json_ld_type, "Recipe") == 0 && "equals assertion failed");
     assert(str_trim_eq(json_ld_name, "Best Chocolate Cake") == 0 && "equals assertion failed");
-    kcrawl_free_string(json_ld);
+    cberg_free_string(json_ld);
     free(json_ld_type);
     free(json_ld_name);
-    kcrawl_free_string(json_ld_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(json_ld_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_malformed_html(void) {
     /* Gracefully handles broken HTML without crashing */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_MALFORMED_HTML");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -424,29 +424,29 @@ void test_scrape_malformed_html(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_malformed_html", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* html = kcrawl_scrape_result_html(result);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* html = cberg_scrape_result_html(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* metadata_description = kcrawl_page_metadata_description(metadata_handle);
+    char* metadata_description = cberg_page_metadata_description(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
     assert(metadata_description != NULL && strstr(metadata_description, "broken HTML") != NULL && "expected to contain substring");
-    kcrawl_free_string(html);
-    kcrawl_free_string(metadata_description);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_free_string(metadata_description);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_og_metadata(void) {
     /* Extracts full Open Graph metadata from a page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_OG_METADATA");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -457,16 +457,16 @@ void test_scrape_og_metadata(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_og_metadata", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* og_title = kcrawl_page_metadata_og_title(metadata_handle);
-    char* og_type = kcrawl_page_metadata_og_type(metadata_handle);
-    char* og_image = kcrawl_page_metadata_og_image(metadata_handle);
-    char* og_description = kcrawl_page_metadata_og_description(metadata_handle);
-    char* metadata_title = kcrawl_page_metadata_title(metadata_handle);
+    char* og_title = cberg_page_metadata_og_title(metadata_handle);
+    char* og_type = cberg_page_metadata_og_type(metadata_handle);
+    char* og_image = cberg_page_metadata_og_image(metadata_handle);
+    char* og_description = cberg_page_metadata_og_description(metadata_handle);
+    char* metadata_title = cberg_page_metadata_title(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(og_title != NULL && strlen(og_title) > 0 && "expected non-empty value");
     assert(str_trim_eq(og_title, "Article Title") == 0 && "equals assertion failed");
@@ -474,22 +474,22 @@ void test_scrape_og_metadata(void) {
     assert(str_trim_eq(og_image, "https://example.com/images/article-hero.jpg") == 0 && "equals assertion failed");
     assert(og_description != NULL && strlen(og_description) > 0 && "expected non-empty value");
     assert(str_trim_eq(metadata_title, "Article Title - Example Blog") == 0 && "equals assertion failed");
-    kcrawl_free_string(og_title);
-    kcrawl_free_string(og_type);
-    kcrawl_free_string(og_image);
-    kcrawl_free_string(og_description);
-    kcrawl_free_string(metadata_title);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(og_title);
+    cberg_free_string(og_type);
+    cberg_free_string(og_image);
+    cberg_free_string(og_description);
+    cberg_free_string(metadata_title);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_scrape_twitter_card(void) {
     /* Extracts Twitter Card metadata from a page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SCRAPE_TWITTER_CARD");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -500,22 +500,22 @@ void test_scrape_twitter_card(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/scrape_twitter_card", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    KCRAWLPageMetadata* metadata_handle = kcrawl_scrape_result_metadata(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    CBERGPageMetadata* metadata_handle = cberg_scrape_result_metadata(result);
     assert(metadata_handle != NULL);
-    char* twitter_card = kcrawl_page_metadata_twitter_card(metadata_handle);
-    char* twitter_card_type = kcrawl_page_metadata_twitter_card(metadata_handle);
-    char* twitter_title = kcrawl_page_metadata_twitter_title(metadata_handle);
+    char* twitter_card = cberg_page_metadata_twitter_card(metadata_handle);
+    char* twitter_card_type = cberg_page_metadata_twitter_card(metadata_handle);
+    char* twitter_title = cberg_page_metadata_twitter_title(metadata_handle);
     assert(status_code == 200 && "equals assertion failed");
     assert(twitter_card != NULL && strlen(twitter_card) > 0 && "expected non-empty value");
     assert(str_trim_eq(twitter_card_type, "summary_large_image") == 0 && "equals assertion failed");
     assert(str_trim_eq(twitter_title, "New Product Launch") == 0 && "equals assertion failed");
-    kcrawl_free_string(twitter_card);
-    kcrawl_free_string(twitter_card_type);
-    kcrawl_free_string(twitter_title);
-    kcrawl_page_metadata_free(metadata_handle);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(twitter_card);
+    cberg_free_string(twitter_card_type);
+    cberg_free_string(twitter_title);
+    cberg_page_metadata_free(metadata_handle);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

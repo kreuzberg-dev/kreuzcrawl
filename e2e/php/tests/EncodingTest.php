@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: encoding. */
 final class EncodingTest extends TestCase
@@ -20,9 +20,9 @@ final class EncodingTest extends TestCase
     /** Handles double-encoded URL characters (%25C3%25B6) */
     public function test_encoding_double_encoded(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_ENCODING_DOUBLE_ENCODED') ?: getenv('MOCK_SERVER_URL') . '/fixtures/encoding_double_encoded';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
             $this->assertGreaterThanOrEqual(1, count($result->getLinks()));
@@ -34,9 +34,9 @@ final class EncodingTest extends TestCase
     /** Handles charset mismatch between HTTP header and HTML meta tag */
     public function test_encoding_mixed_charset_page(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_mixed_charset_page';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
 
@@ -47,9 +47,9 @@ final class EncodingTest extends TestCase
     /** Handles percent-encoded spaces and characters in URL paths */
     public function test_encoding_percent_encoded_path(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH') ?: getenv('MOCK_SERVER_URL') . '/fixtures/encoding_percent_encoded_path';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
             $this->assertGreaterThanOrEqual(2, count($result->getLinks()));
@@ -61,9 +61,9 @@ final class EncodingTest extends TestCase
     /** Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic) */
     public function test_encoding_unicode_url(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_unicode_url';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
 

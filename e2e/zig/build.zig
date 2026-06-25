@@ -5,20 +5,20 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const test_step = b.step("test", "Run tests");
-    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/release";
-    const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/kreuzcrawl-ffi/include";
+    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libcrawlberg_ffi") orelse "../../target/release";
+    const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/crawlberg-ffi/include";
     const ffi_path_abs = b.pathFromRoot(ffi_path);
 
-    const kreuzcrawl_module = b.addModule("kreuzcrawl", .{
-        .root_source_file = b.path("../../packages/zig/src/kreuzcrawl.zig"),
+    const crawlberg_module = b.addModule("crawlberg", .{
+        .root_source_file = b.path("../../packages/zig/src/crawlberg.zig"),
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
-    kreuzcrawl_module.addLibraryPath(.{ .cwd_relative = ffi_path });
-    kreuzcrawl_module.addIncludePath(.{ .cwd_relative = ffi_include });
-    kreuzcrawl_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
-    kreuzcrawl_module.addRPath(.{ .cwd_relative = ffi_path_abs });
+    crawlberg_module.addLibraryPath(.{ .cwd_relative = ffi_path });
+    crawlberg_module.addIncludePath(.{ .cwd_relative = ffi_include });
+    crawlberg_module.linkSystemLibrary("crawlberg_ffi", .{});
+    crawlberg_module.addRPath(.{ .cwd_relative = ffi_path_abs });
 
     const _alloc = b.allocator;
     var mock_server_url: ?[]const u8 = b.graph.environ_map.get("MOCK_SERVER_URL");
@@ -86,7 +86,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    auth_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    auth_module.addImport("crawlberg", crawlberg_module);
     const auth_tests = b.addTest(.{
         .name = "auth_test",
         .root_module = auth_module,
@@ -94,7 +94,7 @@ pub fn build(b: *std.Build) void {
     });
     auth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const auth_run = b.addRunArtifact(auth_tests);
-    auth_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    auth_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         auth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -115,7 +115,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    browser_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    browser_module.addImport("crawlberg", crawlberg_module);
     const browser_tests = b.addTest(.{
         .name = "browser_test",
         .root_module = browser_module,
@@ -123,7 +123,7 @@ pub fn build(b: *std.Build) void {
     });
     browser_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const browser_run = b.addRunArtifact(browser_tests);
-    browser_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    browser_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         browser_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -145,7 +145,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    cache_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    cache_module.addImport("crawlberg", crawlberg_module);
     const cache_tests = b.addTest(.{
         .name = "cache_test",
         .root_module = cache_module,
@@ -153,7 +153,7 @@ pub fn build(b: *std.Build) void {
     });
     cache_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cache_run = b.addRunArtifact(cache_tests);
-    cache_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    cache_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         cache_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -175,7 +175,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    concurrent_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    concurrent_module.addImport("crawlberg", crawlberg_module);
     const concurrent_tests = b.addTest(.{
         .name = "concurrent_test",
         .root_module = concurrent_module,
@@ -183,7 +183,7 @@ pub fn build(b: *std.Build) void {
     });
     concurrent_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const concurrent_run = b.addRunArtifact(concurrent_tests);
-    concurrent_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    concurrent_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         concurrent_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -205,7 +205,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    content_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    content_module.addImport("crawlberg", crawlberg_module);
     const content_tests = b.addTest(.{
         .name = "content_test",
         .root_module = content_module,
@@ -213,7 +213,7 @@ pub fn build(b: *std.Build) void {
     });
     content_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const content_run = b.addRunArtifact(content_tests);
-    content_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    content_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         content_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -235,7 +235,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    cookies_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    cookies_module.addImport("crawlberg", crawlberg_module);
     const cookies_tests = b.addTest(.{
         .name = "cookies_test",
         .root_module = cookies_module,
@@ -243,7 +243,7 @@ pub fn build(b: *std.Build) void {
     });
     cookies_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cookies_run = b.addRunArtifact(cookies_tests);
-    cookies_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    cookies_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         cookies_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -265,7 +265,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    crawl_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    crawl_module.addImport("crawlberg", crawlberg_module);
     const crawl_tests = b.addTest(.{
         .name = "crawl_test",
         .root_module = crawl_module,
@@ -273,7 +273,7 @@ pub fn build(b: *std.Build) void {
     });
     crawl_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const crawl_run = b.addRunArtifact(crawl_tests);
-    crawl_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    crawl_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         crawl_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -295,7 +295,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    download_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    download_module.addImport("crawlberg", crawlberg_module);
     const download_tests = b.addTest(.{
         .name = "download_test",
         .root_module = download_module,
@@ -303,7 +303,7 @@ pub fn build(b: *std.Build) void {
     });
     download_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const download_run = b.addRunArtifact(download_tests);
-    download_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    download_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         download_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -325,7 +325,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    encoding_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    encoding_module.addImport("crawlberg", crawlberg_module);
     const encoding_tests = b.addTest(.{
         .name = "encoding_test",
         .root_module = encoding_module,
@@ -333,7 +333,7 @@ pub fn build(b: *std.Build) void {
     });
     encoding_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const encoding_run = b.addRunArtifact(encoding_tests);
-    encoding_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    encoding_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         encoding_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -355,7 +355,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    engine_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    engine_module.addImport("crawlberg", crawlberg_module);
     const engine_tests = b.addTest(.{
         .name = "engine_test",
         .root_module = engine_module,
@@ -363,7 +363,7 @@ pub fn build(b: *std.Build) void {
     });
     engine_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const engine_run = b.addRunArtifact(engine_tests);
-    engine_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    engine_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         engine_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -385,7 +385,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    error_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    error_module.addImport("crawlberg", crawlberg_module);
     const error_tests = b.addTest(.{
         .name = "error_test",
         .root_module = error_module,
@@ -393,7 +393,7 @@ pub fn build(b: *std.Build) void {
     });
     error_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const error_run = b.addRunArtifact(error_tests);
-    error_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    error_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         error_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -415,7 +415,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    filter_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    filter_module.addImport("crawlberg", crawlberg_module);
     const filter_tests = b.addTest(.{
         .name = "filter_test",
         .root_module = filter_module,
@@ -423,7 +423,7 @@ pub fn build(b: *std.Build) void {
     });
     filter_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const filter_run = b.addRunArtifact(filter_tests);
-    filter_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    filter_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         filter_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -445,7 +445,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    interaction_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    interaction_module.addImport("crawlberg", crawlberg_module);
     const interaction_tests = b.addTest(.{
         .name = "interaction_test",
         .root_module = interaction_module,
@@ -453,7 +453,7 @@ pub fn build(b: *std.Build) void {
     });
     interaction_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const interaction_run = b.addRunArtifact(interaction_tests);
-    interaction_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    interaction_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         interaction_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -475,7 +475,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    links_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    links_module.addImport("crawlberg", crawlberg_module);
     const links_tests = b.addTest(.{
         .name = "links_test",
         .root_module = links_module,
@@ -483,7 +483,7 @@ pub fn build(b: *std.Build) void {
     });
     links_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const links_run = b.addRunArtifact(links_tests);
-    links_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    links_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         links_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -505,7 +505,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    map_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    map_module.addImport("crawlberg", crawlberg_module);
     const map_tests = b.addTest(.{
         .name = "map_test",
         .root_module = map_module,
@@ -513,7 +513,7 @@ pub fn build(b: *std.Build) void {
     });
     map_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const map_run = b.addRunArtifact(map_tests);
-    map_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    map_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         map_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -535,7 +535,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    markdown_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    markdown_module.addImport("crawlberg", crawlberg_module);
     const markdown_tests = b.addTest(.{
         .name = "markdown_test",
         .root_module = markdown_module,
@@ -543,7 +543,7 @@ pub fn build(b: *std.Build) void {
     });
     markdown_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const markdown_run = b.addRunArtifact(markdown_tests);
-    markdown_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    markdown_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         markdown_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -565,7 +565,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    metadata_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    metadata_module.addImport("crawlberg", crawlberg_module);
     const metadata_tests = b.addTest(.{
         .name = "metadata_test",
         .root_module = metadata_module,
@@ -573,7 +573,7 @@ pub fn build(b: *std.Build) void {
     });
     metadata_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const metadata_run = b.addRunArtifact(metadata_tests);
-    metadata_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    metadata_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         metadata_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -595,7 +595,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    proxy_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    proxy_module.addImport("crawlberg", crawlberg_module);
     const proxy_tests = b.addTest(.{
         .name = "proxy_test",
         .root_module = proxy_module,
@@ -603,7 +603,7 @@ pub fn build(b: *std.Build) void {
     });
     proxy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const proxy_run = b.addRunArtifact(proxy_tests);
-    proxy_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    proxy_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         proxy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -625,7 +625,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    rate_limit_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    rate_limit_module.addImport("crawlberg", crawlberg_module);
     const rate_limit_tests = b.addTest(.{
         .name = "rate_limit_test",
         .root_module = rate_limit_module,
@@ -633,7 +633,7 @@ pub fn build(b: *std.Build) void {
     });
     rate_limit_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const rate_limit_run = b.addRunArtifact(rate_limit_tests);
-    rate_limit_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    rate_limit_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         rate_limit_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -655,7 +655,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    redirect_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    redirect_module.addImport("crawlberg", crawlberg_module);
     const redirect_tests = b.addTest(.{
         .name = "redirect_test",
         .root_module = redirect_module,
@@ -663,7 +663,7 @@ pub fn build(b: *std.Build) void {
     });
     redirect_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const redirect_run = b.addRunArtifact(redirect_tests);
-    redirect_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    redirect_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         redirect_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -685,7 +685,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    robots_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    robots_module.addImport("crawlberg", crawlberg_module);
     const robots_tests = b.addTest(.{
         .name = "robots_test",
         .root_module = robots_module,
@@ -693,7 +693,7 @@ pub fn build(b: *std.Build) void {
     });
     robots_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const robots_run = b.addRunArtifact(robots_tests);
-    robots_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    robots_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         robots_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -715,7 +715,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    scrape_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    scrape_module.addImport("crawlberg", crawlberg_module);
     const scrape_tests = b.addTest(.{
         .name = "scrape_test",
         .root_module = scrape_module,
@@ -723,7 +723,7 @@ pub fn build(b: *std.Build) void {
     });
     scrape_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const scrape_run = b.addRunArtifact(scrape_tests);
-    scrape_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    scrape_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         scrape_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -745,7 +745,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    sitemap_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    sitemap_module.addImport("crawlberg", crawlberg_module);
     const sitemap_tests = b.addTest(.{
         .name = "sitemap_test",
         .root_module = sitemap_module,
@@ -753,7 +753,7 @@ pub fn build(b: *std.Build) void {
     });
     sitemap_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const sitemap_run = b.addRunArtifact(sitemap_tests);
-    sitemap_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    sitemap_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         sitemap_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -775,7 +775,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    stealth_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    stealth_module.addImport("crawlberg", crawlberg_module);
     const stealth_tests = b.addTest(.{
         .name = "stealth_test",
         .root_module = stealth_module,
@@ -783,7 +783,7 @@ pub fn build(b: *std.Build) void {
     });
     stealth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const stealth_run = b.addRunArtifact(stealth_tests);
-    stealth_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    stealth_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         stealth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -805,7 +805,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    strategy_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    strategy_module.addImport("crawlberg", crawlberg_module);
     const strategy_tests = b.addTest(.{
         .name = "strategy_test",
         .root_module = strategy_module,
@@ -813,7 +813,7 @@ pub fn build(b: *std.Build) void {
     });
     strategy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const strategy_run = b.addRunArtifact(strategy_tests);
-    strategy_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    strategy_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         strategy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -835,7 +835,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    validation_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    validation_module.addImport("crawlberg", crawlberg_module);
     const validation_tests = b.addTest(.{
         .name = "validation_test",
         .root_module = validation_module,
@@ -843,7 +843,7 @@ pub fn build(b: *std.Build) void {
     });
     validation_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const validation_run = b.addRunArtifact(validation_tests);
-    validation_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    validation_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         validation_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -865,7 +865,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    warc_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    warc_module.addImport("crawlberg", crawlberg_module);
     const warc_tests = b.addTest(.{
         .name = "warc_test",
         .root_module = warc_module,
@@ -873,7 +873,7 @@ pub fn build(b: *std.Build) void {
     });
     warc_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const warc_run = b.addRunArtifact(warc_tests);
-    warc_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+    warc_run.setEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         warc_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }

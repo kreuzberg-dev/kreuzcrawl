@@ -1408,7 +1408,7 @@ pub fn __alef_phantom_vec_scroll_direction() -> Vec<ScrollDirection> {
     Vec::new()
 }
 
-pub struct ExtractionMeta(pub kreuzcrawl::ExtractionMeta);
+pub struct ExtractionMeta(pub crawlberg::ExtractionMeta);
 impl ExtractionMeta {
     pub fn new(
         cost: Option<f64>,
@@ -1417,7 +1417,7 @@ impl ExtractionMeta {
         model: Option<String>,
         chunks_processed: usize,
     ) -> ExtractionMeta {
-        let mut __target: kreuzcrawl::ExtractionMeta = ::std::default::Default::default();
+        let mut __target: crawlberg::ExtractionMeta = ::std::default::Default::default();
         __target.cost = cost;
         __target.prompt_tokens = prompt_tokens;
         __target.completion_tokens = completion_tokens;
@@ -1466,10 +1466,10 @@ impl ExtractionMeta {
     }
 }
 
-pub struct ProxyConfig(pub kreuzcrawl::ProxyConfig);
+pub struct ProxyConfig(pub crawlberg::ProxyConfig);
 impl ProxyConfig {
     pub fn new(url: String, username: Option<String>, password: Option<String>) -> ProxyConfig {
-        let mut __target: kreuzcrawl::ProxyConfig = ::std::default::Default::default();
+        let mut __target: crawlberg::ProxyConfig = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -1514,7 +1514,7 @@ impl ProxyConfig {
     }
 }
 
-pub struct ContentConfig(pub kreuzcrawl::ContentConfig);
+pub struct ContentConfig(pub crawlberg::ContentConfig);
 impl ContentConfig {
     pub fn new(
         output_format: String,
@@ -1530,7 +1530,7 @@ impl ContentConfig {
         wrap_width: usize,
         include_document_structure: bool,
     ) -> ContentConfig {
-        let mut __target: kreuzcrawl::ContentConfig = ::std::default::Default::default();
+        let mut __target: crawlberg::ContentConfig = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -1646,7 +1646,7 @@ impl ContentConfig {
     }
 }
 
-pub struct BrowserConfig(pub kreuzcrawl::BrowserConfig);
+pub struct BrowserConfig(pub crawlberg::BrowserConfig);
 impl BrowserConfig {
     pub fn new(
         mode: BrowserMode,
@@ -1663,7 +1663,7 @@ impl BrowserConfig {
         capture_network_events: bool,
         session_affinity: bool,
     ) -> BrowserConfig {
-        let mut __target: kreuzcrawl::BrowserConfig = ::std::default::Default::default();
+        let mut __target: crawlberg::BrowserConfig = ::std::default::Default::default();
         // alef: mode (BrowserMode) is an enum; reverse From not generated — left at default
         // alef: backend (BrowserBackend) is an enum; reverse From not generated — left at default
         if let Some(s) = endpoint {
@@ -1771,7 +1771,7 @@ impl BrowserConfig {
     }
 }
 
-pub struct CrawlConfig(pub kreuzcrawl::CrawlConfig);
+pub struct CrawlConfig(pub crawlberg::CrawlConfig);
 impl CrawlConfig {
     pub fn new(
         max_depth: Option<usize>,
@@ -1814,7 +1814,7 @@ impl CrawlConfig {
         save_browser_profile: bool,
         ssrf: SsrfPolicy,
     ) -> CrawlConfig {
-        let mut __target: kreuzcrawl::CrawlConfig = ::std::default::Default::default();
+        let mut __target: crawlberg::CrawlConfig = ::std::default::Default::default();
         __target.max_depth = max_depth;
         __target.max_pages = max_pages;
         __target.max_concurrent = max_concurrent;
@@ -2135,14 +2135,14 @@ impl CrawlConfig {
     }
 }
 
-pub struct BrowserExtras(pub kreuzcrawl::BrowserExtras);
+pub struct BrowserExtras(pub crawlberg::BrowserExtras);
 impl BrowserExtras {
     pub fn new(
         eval_result: Option<String>,
         network_events: Vec<ResponseMeta>,
         cookies: Vec<CookieInfo>,
     ) -> BrowserExtras {
-        let mut __target: kreuzcrawl::BrowserExtras = ::std::default::Default::default();
+        let mut __target: crawlberg::BrowserExtras = ::std::default::Default::default();
         if let Some(s) = eval_result {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -2172,7 +2172,7 @@ impl BrowserExtras {
     }
 }
 
-pub struct DownloadedDocument(pub kreuzcrawl::DownloadedDocument);
+pub struct DownloadedDocument(pub crawlberg::DownloadedDocument);
 impl DownloadedDocument {
     pub fn new(
         url: String,
@@ -2182,7 +2182,7 @@ impl DownloadedDocument {
         content_hash: String,
         headers: String,
     ) -> DownloadedDocument {
-        let mut __target: kreuzcrawl::DownloadedDocument = ::std::default::Default::default();
+        let mut __target: crawlberg::DownloadedDocument = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -2257,10 +2257,10 @@ impl DownloadedDocument {
     }
 }
 
-pub struct InteractionResult(pub kreuzcrawl::InteractionResult);
+pub struct InteractionResult(pub crawlberg::InteractionResult);
 impl InteractionResult {
     pub fn new(action_results: Vec<ActionResult>, final_html: String, final_url: String) -> InteractionResult {
-        let mut __target: kreuzcrawl::InteractionResult = ::std::default::Default::default();
+        let mut __target: crawlberg::InteractionResult = ::std::default::Default::default();
         __target.action_results = action_results.into_iter().map(|w| w.0).collect();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -2301,7 +2301,7 @@ impl InteractionResult {
     }
 }
 
-pub struct ActionResult(pub kreuzcrawl::ActionResult);
+pub struct ActionResult(pub crawlberg::ActionResult);
 impl ActionResult {
     pub fn new(
         action_index: usize,
@@ -2310,7 +2310,7 @@ impl ActionResult {
         data: Option<String>,
         error: Option<String>,
     ) -> ActionResult {
-        let mut __target: kreuzcrawl::ActionResult = ::std::default::Default::default();
+        let mut __target: crawlberg::ActionResult = ::std::default::Default::default();
         __target.action_index = action_index;
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -2369,7 +2369,7 @@ impl ActionResult {
     }
 }
 
-pub struct ScrapeResult(pub kreuzcrawl::ScrapeResult);
+pub struct ScrapeResult(pub crawlberg::ScrapeResult);
 impl ScrapeResult {
     pub fn new(
         status_code: u16,
@@ -2401,7 +2401,7 @@ impl ScrapeResult {
         downloaded_document: Option<DownloadedDocument>,
         browser: Option<BrowserExtras>,
     ) -> ScrapeResult {
-        let mut __target: kreuzcrawl::ScrapeResult = ::std::default::Default::default();
+        let mut __target: crawlberg::ScrapeResult = ::std::default::Default::default();
         __target.status_code = status_code;
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -2622,7 +2622,7 @@ impl ScrapeResult {
     }
 }
 
-pub struct CrawlPageResult(pub kreuzcrawl::CrawlPageResult);
+pub struct CrawlPageResult(pub crawlberg::CrawlPageResult);
 impl CrawlPageResult {
     pub fn new(
         url: String,
@@ -2647,7 +2647,7 @@ impl CrawlPageResult {
         downloaded_document: Option<DownloadedDocument>,
         browser_used: bool,
     ) -> CrawlPageResult {
-        let mut __target: kreuzcrawl::CrawlPageResult = ::std::default::Default::default();
+        let mut __target: crawlberg::CrawlPageResult = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -2824,7 +2824,7 @@ impl CrawlPageResult {
     }
 }
 
-pub struct CrawlResult(pub kreuzcrawl::CrawlResult);
+pub struct CrawlResult(pub crawlberg::CrawlResult);
 impl CrawlResult {
     pub fn new(
         pages: Vec<CrawlPageResult>,
@@ -2836,7 +2836,7 @@ impl CrawlResult {
         stayed_on_domain: bool,
         browser_used: bool,
     ) -> CrawlResult {
-        let mut __target: kreuzcrawl::CrawlResult = ::std::default::Default::default();
+        let mut __target: crawlberg::CrawlResult = ::std::default::Default::default();
         __target.pages = pages.into_iter().map(|w| w.0).collect();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -2904,7 +2904,7 @@ impl CrawlResult {
     }
 }
 
-pub struct SitemapUrl(pub kreuzcrawl::SitemapUrl);
+pub struct SitemapUrl(pub crawlberg::SitemapUrl);
 impl SitemapUrl {
     pub fn new(
         url: String,
@@ -2912,7 +2912,7 @@ impl SitemapUrl {
         changefreq: Option<String>,
         priority: Option<String>,
     ) -> SitemapUrl {
-        let mut __target: kreuzcrawl::SitemapUrl = ::std::default::Default::default();
+        let mut __target: crawlberg::SitemapUrl = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -2970,10 +2970,10 @@ impl SitemapUrl {
     }
 }
 
-pub struct MapResult(pub kreuzcrawl::MapResult);
+pub struct MapResult(pub crawlberg::MapResult);
 impl MapResult {
     pub fn new(urls: Vec<SitemapUrl>) -> MapResult {
-        let mut __target: kreuzcrawl::MapResult = ::std::default::Default::default();
+        let mut __target: crawlberg::MapResult = ::std::default::Default::default();
         __target.urls = urls.into_iter().map(|w| w.0).collect();
         MapResult(__target)
     }
@@ -2982,7 +2982,7 @@ impl MapResult {
     }
 }
 
-pub struct MarkdownResult(pub kreuzcrawl::MarkdownResult);
+pub struct MarkdownResult(pub crawlberg::MarkdownResult);
 impl MarkdownResult {
     pub fn new(
         content: String,
@@ -2992,7 +2992,7 @@ impl MarkdownResult {
         citations: bool,
         fit_content: Option<String>,
     ) -> MarkdownResult {
-        let mut __target: kreuzcrawl::MarkdownResult = ::std::default::Default::default();
+        let mut __target: crawlberg::MarkdownResult = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3069,10 +3069,10 @@ impl MarkdownResult {
     }
 }
 
-pub struct LinkInfo(pub kreuzcrawl::LinkInfo);
+pub struct LinkInfo(pub crawlberg::LinkInfo);
 impl LinkInfo {
     pub fn new(url: String, text: String, link_type: LinkType, rel: Option<String>, nofollow: bool) -> LinkInfo {
-        let mut __target: kreuzcrawl::LinkInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::LinkInfo = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3129,7 +3129,7 @@ impl LinkInfo {
     }
 }
 
-pub struct ImageInfo(pub kreuzcrawl::ImageInfo);
+pub struct ImageInfo(pub crawlberg::ImageInfo);
 impl ImageInfo {
     pub fn new(
         url: String,
@@ -3138,7 +3138,7 @@ impl ImageInfo {
         height: Option<u32>,
         source: ImageSource,
     ) -> ImageInfo {
-        let mut __target: kreuzcrawl::ImageInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::ImageInfo = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3190,10 +3190,10 @@ impl ImageInfo {
     }
 }
 
-pub struct FeedInfo(pub kreuzcrawl::FeedInfo);
+pub struct FeedInfo(pub crawlberg::FeedInfo);
 impl FeedInfo {
     pub fn new(url: String, title: Option<String>, feed_type: FeedType) -> FeedInfo {
-        let mut __target: kreuzcrawl::FeedInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::FeedInfo = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3229,10 +3229,10 @@ impl FeedInfo {
     }
 }
 
-pub struct JsonLdEntry(pub kreuzcrawl::JsonLdEntry);
+pub struct JsonLdEntry(pub crawlberg::JsonLdEntry);
 impl JsonLdEntry {
     pub fn new(schema_type: String, name: Option<String>, raw: String) -> JsonLdEntry {
-        let mut __target: kreuzcrawl::JsonLdEntry = ::std::default::Default::default();
+        let mut __target: crawlberg::JsonLdEntry = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3278,10 +3278,10 @@ impl JsonLdEntry {
     }
 }
 
-pub struct CookieInfo(pub kreuzcrawl::CookieInfo);
+pub struct CookieInfo(pub crawlberg::CookieInfo);
 impl CookieInfo {
     pub fn new(name: String, value: String, domain: Option<String>, path: Option<String>) -> CookieInfo {
-        let mut __target: kreuzcrawl::CookieInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::CookieInfo = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3340,7 +3340,7 @@ impl CookieInfo {
     }
 }
 
-pub struct DownloadedAsset(pub kreuzcrawl::DownloadedAsset);
+pub struct DownloadedAsset(pub crawlberg::DownloadedAsset);
 impl DownloadedAsset {
     pub fn new(
         url: String,
@@ -3350,7 +3350,7 @@ impl DownloadedAsset {
         asset_category: AssetCategory,
         html_tag: Option<String>,
     ) -> DownloadedAsset {
-        let mut __target: kreuzcrawl::DownloadedAsset = ::std::default::Default::default();
+        let mut __target: crawlberg::DownloadedAsset = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3420,7 +3420,7 @@ impl DownloadedAsset {
     }
 }
 
-pub struct ArticleMetadata(pub kreuzcrawl::ArticleMetadata);
+pub struct ArticleMetadata(pub crawlberg::ArticleMetadata);
 impl ArticleMetadata {
     pub fn new(
         published_time: Option<String>,
@@ -3429,7 +3429,7 @@ impl ArticleMetadata {
         section: Option<String>,
         tags: Vec<String>,
     ) -> ArticleMetadata {
-        let mut __target: kreuzcrawl::ArticleMetadata = ::std::default::Default::default();
+        let mut __target: crawlberg::ArticleMetadata = ::std::default::Default::default();
         if let Some(s) = published_time {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3497,10 +3497,10 @@ impl ArticleMetadata {
     }
 }
 
-pub struct HreflangEntry(pub kreuzcrawl::HreflangEntry);
+pub struct HreflangEntry(pub crawlberg::HreflangEntry);
 impl HreflangEntry {
     pub fn new(lang: String, url: String) -> HreflangEntry {
-        let mut __target: kreuzcrawl::HreflangEntry = ::std::default::Default::default();
+        let mut __target: crawlberg::HreflangEntry = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3533,10 +3533,10 @@ impl HreflangEntry {
     }
 }
 
-pub struct FaviconInfo(pub kreuzcrawl::FaviconInfo);
+pub struct FaviconInfo(pub crawlberg::FaviconInfo);
 impl FaviconInfo {
     pub fn new(url: String, rel: String, sizes: Option<String>, mime_type: Option<String>) -> FaviconInfo {
-        let mut __target: kreuzcrawl::FaviconInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::FaviconInfo = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3595,10 +3595,10 @@ impl FaviconInfo {
     }
 }
 
-pub struct HeadingInfo(pub kreuzcrawl::HeadingInfo);
+pub struct HeadingInfo(pub crawlberg::HeadingInfo);
 impl HeadingInfo {
     pub fn new(level: u8, text: String) -> HeadingInfo {
-        let mut __target: kreuzcrawl::HeadingInfo = ::std::default::Default::default();
+        let mut __target: crawlberg::HeadingInfo = ::std::default::Default::default();
         __target.level = level;
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -3624,7 +3624,7 @@ impl HeadingInfo {
     }
 }
 
-pub struct ResponseMeta(pub kreuzcrawl::ResponseMeta);
+pub struct ResponseMeta(pub crawlberg::ResponseMeta);
 impl ResponseMeta {
     pub fn new(
         etag: Option<String>,
@@ -3635,7 +3635,7 @@ impl ResponseMeta {
         content_language: Option<String>,
         content_encoding: Option<String>,
     ) -> ResponseMeta {
-        let mut __target: kreuzcrawl::ResponseMeta = ::std::default::Default::default();
+        let mut __target: crawlberg::ResponseMeta = ::std::default::Default::default();
         if let Some(s) = etag {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -3731,7 +3731,7 @@ impl ResponseMeta {
     }
 }
 
-pub struct PageMetadata(pub kreuzcrawl::PageMetadata);
+pub struct PageMetadata(pub crawlberg::PageMetadata);
 impl PageMetadata {
     pub fn new(
         title: Option<String>,
@@ -3778,7 +3778,7 @@ impl PageMetadata {
         headings: Option<Vec<HeadingInfo>>,
         word_count: Option<usize>,
     ) -> PageMetadata {
-        let mut __target: kreuzcrawl::PageMetadata = ::std::default::Default::default();
+        let mut __target: crawlberg::PageMetadata = ::std::default::Default::default();
         if let Some(s) = title {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -4318,11 +4318,11 @@ impl PageMetadata {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-pub struct CrawlStreamRequest(pub kreuzcrawl::CrawlStreamRequest);
+pub struct CrawlStreamRequest(pub crawlberg::CrawlStreamRequest);
 #[cfg(not(target_arch = "wasm32"))]
 impl CrawlStreamRequest {
     pub fn new(url: String) -> CrawlStreamRequest {
-        let mut __target: kreuzcrawl::CrawlStreamRequest = ::std::default::Default::default();
+        let mut __target: crawlberg::CrawlStreamRequest = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -4342,11 +4342,11 @@ impl CrawlStreamRequest {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-pub struct BatchCrawlStreamRequest(pub kreuzcrawl::BatchCrawlStreamRequest);
+pub struct BatchCrawlStreamRequest(pub crawlberg::BatchCrawlStreamRequest);
 #[cfg(not(target_arch = "wasm32"))]
 impl BatchCrawlStreamRequest {
     pub fn new(urls: Vec<String>) -> BatchCrawlStreamRequest {
-        let mut __target: kreuzcrawl::BatchCrawlStreamRequest = ::std::default::Default::default();
+        let mut __target: crawlberg::BatchCrawlStreamRequest = ::std::default::Default::default();
         if let Ok(__v) = ::serde_json::to_value(urls) {
             if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.urls = t;
@@ -4362,10 +4362,10 @@ impl BatchCrawlStreamRequest {
     }
 }
 
-pub struct CitationResult(pub kreuzcrawl::CitationResult);
+pub struct CitationResult(pub crawlberg::CitationResult);
 impl CitationResult {
     pub fn new(content: String, references: Vec<CitationReference>) -> CitationResult {
-        let mut __target: kreuzcrawl::CitationResult = ::std::default::Default::default();
+        let mut __target: crawlberg::CitationResult = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -4392,10 +4392,10 @@ impl CitationResult {
     }
 }
 
-pub struct CitationReference(pub kreuzcrawl::CitationReference);
+pub struct CitationReference(pub crawlberg::CitationReference);
 impl CitationReference {
     pub fn new(index: usize, url: String, text: String) -> CitationReference {
-        let mut __target: kreuzcrawl::CitationReference = ::std::default::Default::default();
+        let mut __target: crawlberg::CitationReference = ::std::default::Default::default();
         __target.index = index;
         {
             // Try JSON parse first (handles enum/object values); on parse failure
@@ -4435,12 +4435,12 @@ impl CitationReference {
     }
 }
 
-pub struct CrawlEngineHandle(pub kreuzcrawl::CrawlEngineHandle);
+pub struct CrawlEngineHandle(pub crawlberg::CrawlEngineHandle);
 
-pub struct BatchScrapeResult(pub kreuzcrawl::BatchScrapeResult);
+pub struct BatchScrapeResult(pub crawlberg::BatchScrapeResult);
 impl BatchScrapeResult {
     pub fn new(url: String, result: Option<ScrapeResult>, error: Option<String>) -> BatchScrapeResult {
-        let mut __target: kreuzcrawl::BatchScrapeResult = ::std::default::Default::default();
+        let mut __target: crawlberg::BatchScrapeResult = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -4478,10 +4478,10 @@ impl BatchScrapeResult {
     }
 }
 
-pub struct BatchCrawlResult(pub kreuzcrawl::BatchCrawlResult);
+pub struct BatchCrawlResult(pub crawlberg::BatchCrawlResult);
 impl BatchCrawlResult {
     pub fn new(url: String, result: Option<CrawlResult>, error: Option<String>) -> BatchCrawlResult {
-        let mut __target: kreuzcrawl::BatchCrawlResult = ::std::default::Default::default();
+        let mut __target: crawlberg::BatchCrawlResult = ::std::default::Default::default();
         {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -4519,7 +4519,7 @@ impl BatchCrawlResult {
     }
 }
 
-pub struct BatchScrapeResults(pub kreuzcrawl::BatchScrapeResults);
+pub struct BatchScrapeResults(pub crawlberg::BatchScrapeResults);
 impl BatchScrapeResults {
     pub fn new(
         results: Vec<BatchScrapeResult>,
@@ -4527,7 +4527,7 @@ impl BatchScrapeResults {
         completed_count: usize,
         failed_count: usize,
     ) -> BatchScrapeResults {
-        let mut __target: kreuzcrawl::BatchScrapeResults = ::std::default::Default::default();
+        let mut __target: crawlberg::BatchScrapeResults = ::std::default::Default::default();
         __target.results = results.into_iter().map(|w| w.0).collect();
         __target.total_count = total_count;
         __target.completed_count = completed_count;
@@ -4561,7 +4561,7 @@ impl BatchScrapeResults {
     }
 }
 
-pub struct BatchCrawlResults(pub kreuzcrawl::BatchCrawlResults);
+pub struct BatchCrawlResults(pub crawlberg::BatchCrawlResults);
 impl BatchCrawlResults {
     pub fn new(
         results: Vec<BatchCrawlResult>,
@@ -4569,7 +4569,7 @@ impl BatchCrawlResults {
         completed_count: usize,
         failed_count: usize,
     ) -> BatchCrawlResults {
-        let mut __target: kreuzcrawl::BatchCrawlResults = ::std::default::Default::default();
+        let mut __target: crawlberg::BatchCrawlResults = ::std::default::Default::default();
         __target.results = results.into_iter().map(|w| w.0).collect();
         __target.total_count = total_count;
         __target.completed_count = completed_count;
@@ -4603,10 +4603,10 @@ impl BatchCrawlResults {
     }
 }
 
-pub struct SsrfPolicy(pub kreuzcrawl::SsrfPolicy);
+pub struct SsrfPolicy(pub crawlberg::SsrfPolicy);
 impl SsrfPolicy {
     pub fn new(deny_private: bool, max_redirects: u8) -> SsrfPolicy {
-        SsrfPolicy(kreuzcrawl::SsrfPolicy {
+        SsrfPolicy(crawlberg::SsrfPolicy {
             deny_private,
             allowlist: ::std::default::Default::default(),
             max_redirects,
@@ -4638,13 +4638,13 @@ pub enum BrowserMode {
     Stealth,
 }
 
-impl From<kreuzcrawl::BrowserMode> for BrowserMode {
-    fn from(val: kreuzcrawl::BrowserMode) -> Self {
+impl From<crawlberg::BrowserMode> for BrowserMode {
+    fn from(val: crawlberg::BrowserMode) -> Self {
         match val {
-            kreuzcrawl::BrowserMode::Auto => Self::Auto,
-            kreuzcrawl::BrowserMode::Always => Self::Always,
-            kreuzcrawl::BrowserMode::Never => Self::Never,
-            kreuzcrawl::BrowserMode::Stealth => Self::Stealth,
+            crawlberg::BrowserMode::Auto => Self::Auto,
+            crawlberg::BrowserMode::Always => Self::Always,
+            crawlberg::BrowserMode::Never => Self::Never,
+            crawlberg::BrowserMode::Stealth => Self::Stealth,
         }
     }
 }
@@ -4666,12 +4666,12 @@ pub enum BrowserWait {
     Fixed,
 }
 
-impl From<kreuzcrawl::BrowserWait> for BrowserWait {
-    fn from(val: kreuzcrawl::BrowserWait) -> Self {
+impl From<crawlberg::BrowserWait> for BrowserWait {
+    fn from(val: crawlberg::BrowserWait) -> Self {
         match val {
-            kreuzcrawl::BrowserWait::NetworkIdle => Self::NetworkIdle,
-            kreuzcrawl::BrowserWait::Selector => Self::Selector,
-            kreuzcrawl::BrowserWait::Fixed => Self::Fixed,
+            crawlberg::BrowserWait::NetworkIdle => Self::NetworkIdle,
+            crawlberg::BrowserWait::Selector => Self::Selector,
+            crawlberg::BrowserWait::Fixed => Self::Fixed,
         }
     }
 }
@@ -4691,11 +4691,11 @@ pub enum BrowserBackend {
     Native,
 }
 
-impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
-    fn from(val: kreuzcrawl::BrowserBackend) -> Self {
+impl From<crawlberg::BrowserBackend> for BrowserBackend {
+    fn from(val: crawlberg::BrowserBackend) -> Self {
         match val {
-            kreuzcrawl::BrowserBackend::Chromiumoxide => Self::Chromiumoxide,
-            kreuzcrawl::BrowserBackend::Native => Self::Native,
+            crawlberg::BrowserBackend::Chromiumoxide => Self::Chromiumoxide,
+            crawlberg::BrowserBackend::Native => Self::Native,
         }
     }
 }
@@ -4715,12 +4715,12 @@ pub enum AuthConfig {
     Header,
 }
 
-impl From<kreuzcrawl::AuthConfig> for AuthConfig {
-    fn from(val: kreuzcrawl::AuthConfig) -> Self {
+impl From<crawlberg::AuthConfig> for AuthConfig {
+    fn from(val: crawlberg::AuthConfig) -> Self {
         match val {
-            kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
-            kreuzcrawl::AuthConfig::Bearer { .. } => Self::Bearer,
-            kreuzcrawl::AuthConfig::Header { .. } => Self::Header,
+            crawlberg::AuthConfig::Basic { .. } => Self::Basic,
+            crawlberg::AuthConfig::Bearer { .. } => Self::Bearer,
+            crawlberg::AuthConfig::Header { .. } => Self::Header,
         }
     }
 }
@@ -4742,13 +4742,13 @@ pub enum LinkType {
     Document,
 }
 
-impl From<kreuzcrawl::LinkType> for LinkType {
-    fn from(val: kreuzcrawl::LinkType) -> Self {
+impl From<crawlberg::LinkType> for LinkType {
+    fn from(val: crawlberg::LinkType) -> Self {
         match val {
-            kreuzcrawl::LinkType::Internal => Self::Internal,
-            kreuzcrawl::LinkType::External => Self::External,
-            kreuzcrawl::LinkType::Anchor => Self::Anchor,
-            kreuzcrawl::LinkType::Document => Self::Document,
+            crawlberg::LinkType::Internal => Self::Internal,
+            crawlberg::LinkType::External => Self::External,
+            crawlberg::LinkType::Anchor => Self::Anchor,
+            crawlberg::LinkType::Document => Self::Document,
         }
     }
 }
@@ -4771,13 +4771,13 @@ pub enum ImageSource {
     TwitterImage,
 }
 
-impl From<kreuzcrawl::ImageSource> for ImageSource {
-    fn from(val: kreuzcrawl::ImageSource) -> Self {
+impl From<crawlberg::ImageSource> for ImageSource {
+    fn from(val: crawlberg::ImageSource) -> Self {
         match val {
-            kreuzcrawl::ImageSource::Img => Self::Img,
-            kreuzcrawl::ImageSource::PictureSource => Self::PictureSource,
-            kreuzcrawl::ImageSource::OgImage => Self::OgImage,
-            kreuzcrawl::ImageSource::TwitterImage => Self::TwitterImage,
+            crawlberg::ImageSource::Img => Self::Img,
+            crawlberg::ImageSource::PictureSource => Self::PictureSource,
+            crawlberg::ImageSource::OgImage => Self::OgImage,
+            crawlberg::ImageSource::TwitterImage => Self::TwitterImage,
         }
     }
 }
@@ -4799,12 +4799,12 @@ pub enum FeedType {
     JsonFeed,
 }
 
-impl From<kreuzcrawl::FeedType> for FeedType {
-    fn from(val: kreuzcrawl::FeedType) -> Self {
+impl From<crawlberg::FeedType> for FeedType {
+    fn from(val: crawlberg::FeedType) -> Self {
         match val {
-            kreuzcrawl::FeedType::Rss => Self::Rss,
-            kreuzcrawl::FeedType::Atom => Self::Atom,
-            kreuzcrawl::FeedType::JsonFeed => Self::JsonFeed,
+            crawlberg::FeedType::Rss => Self::Rss,
+            crawlberg::FeedType::Atom => Self::Atom,
+            crawlberg::FeedType::JsonFeed => Self::JsonFeed,
         }
     }
 }
@@ -4832,19 +4832,19 @@ pub enum AssetCategory {
     Other,
 }
 
-impl From<kreuzcrawl::AssetCategory> for AssetCategory {
-    fn from(val: kreuzcrawl::AssetCategory) -> Self {
+impl From<crawlberg::AssetCategory> for AssetCategory {
+    fn from(val: crawlberg::AssetCategory) -> Self {
         match val {
-            kreuzcrawl::AssetCategory::Document => Self::Document,
-            kreuzcrawl::AssetCategory::Image => Self::Image,
-            kreuzcrawl::AssetCategory::Audio => Self::Audio,
-            kreuzcrawl::AssetCategory::Video => Self::Video,
-            kreuzcrawl::AssetCategory::Font => Self::Font,
-            kreuzcrawl::AssetCategory::Stylesheet => Self::Stylesheet,
-            kreuzcrawl::AssetCategory::Script => Self::Script,
-            kreuzcrawl::AssetCategory::Archive => Self::Archive,
-            kreuzcrawl::AssetCategory::Data => Self::Data,
-            kreuzcrawl::AssetCategory::Other => Self::Other,
+            crawlberg::AssetCategory::Document => Self::Document,
+            crawlberg::AssetCategory::Image => Self::Image,
+            crawlberg::AssetCategory::Audio => Self::Audio,
+            crawlberg::AssetCategory::Video => Self::Video,
+            crawlberg::AssetCategory::Font => Self::Font,
+            crawlberg::AssetCategory::Stylesheet => Self::Stylesheet,
+            crawlberg::AssetCategory::Script => Self::Script,
+            crawlberg::AssetCategory::Archive => Self::Archive,
+            crawlberg::AssetCategory::Data => Self::Data,
+            crawlberg::AssetCategory::Other => Self::Other,
         }
     }
 }
@@ -4872,12 +4872,12 @@ pub enum CrawlEvent {
     Complete,
 }
 
-impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
+impl From<crawlberg::CrawlEvent> for CrawlEvent {
+    fn from(val: crawlberg::CrawlEvent) -> Self {
         match val {
-            kreuzcrawl::CrawlEvent::Page { .. } => Self::Page,
-            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
-            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
+            crawlberg::CrawlEvent::Page { .. } => Self::Page,
+            crawlberg::CrawlEvent::Error { .. } => Self::Error,
+            crawlberg::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }
@@ -4903,17 +4903,17 @@ pub enum PageAction {
     Scrape,
 }
 
-impl From<kreuzcrawl::PageAction> for PageAction {
-    fn from(val: kreuzcrawl::PageAction) -> Self {
+impl From<crawlberg::PageAction> for PageAction {
+    fn from(val: crawlberg::PageAction) -> Self {
         match val {
-            kreuzcrawl::PageAction::Click { .. } => Self::Click,
-            kreuzcrawl::PageAction::TypeText { .. } => Self::TypeText,
-            kreuzcrawl::PageAction::Press { .. } => Self::Press,
-            kreuzcrawl::PageAction::Scroll { .. } => Self::Scroll,
-            kreuzcrawl::PageAction::Wait { .. } => Self::Wait,
-            kreuzcrawl::PageAction::Screenshot { .. } => Self::Screenshot,
-            kreuzcrawl::PageAction::ExecuteJs { .. } => Self::ExecuteJs,
-            kreuzcrawl::PageAction::Scrape => Self::Scrape,
+            crawlberg::PageAction::Click { .. } => Self::Click,
+            crawlberg::PageAction::TypeText { .. } => Self::TypeText,
+            crawlberg::PageAction::Press { .. } => Self::Press,
+            crawlberg::PageAction::Scroll { .. } => Self::Scroll,
+            crawlberg::PageAction::Wait { .. } => Self::Wait,
+            crawlberg::PageAction::Screenshot { .. } => Self::Screenshot,
+            crawlberg::PageAction::ExecuteJs { .. } => Self::ExecuteJs,
+            crawlberg::PageAction::Scrape => Self::Scrape,
         }
     }
 }
@@ -4938,11 +4938,11 @@ pub enum ScrollDirection {
     Down,
 }
 
-impl From<kreuzcrawl::ScrollDirection> for ScrollDirection {
-    fn from(val: kreuzcrawl::ScrollDirection) -> Self {
+impl From<crawlberg::ScrollDirection> for ScrollDirection {
+    fn from(val: crawlberg::ScrollDirection) -> Self {
         match val {
-            kreuzcrawl::ScrollDirection::Up => Self::Up,
-            kreuzcrawl::ScrollDirection::Down => Self::Down,
+            crawlberg::ScrollDirection::Up => Self::Up,
+            crawlberg::ScrollDirection::Down => Self::Down,
         }
     }
 }
@@ -4957,18 +4957,18 @@ impl ScrollDirection {
 }
 
 pub fn generate_citations(markdown: String) -> CitationResult {
-    CitationResult(kreuzcrawl::generate_citations(&markdown))
+    CitationResult(crawlberg::generate_citations(&markdown))
 }
 
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, String> {
-    kreuzcrawl::create_engine(config.map(|w| w.0))
+    crawlberg::create_engine(config.map(|w| w.0))
         .map_err(|e| e.to_string())
         .map(CrawlEngineHandle)
 }
 
 pub fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::scrape(&engine.0, &url)
+        crawlberg::scrape(&engine.0, &url)
             .await
             .map_err(|e| e.to_string())
             .map(ScrapeResult)
@@ -4977,7 +4977,7 @@ pub fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, St
 
 pub fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::crawl(&engine.0, &url)
+        crawlberg::crawl(&engine.0, &url)
             .await
             .map_err(|e| e.to_string())
             .map(CrawlResult)
@@ -4986,7 +4986,7 @@ pub fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, Stri
 
 pub fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::map_urls(&engine.0, &url)
+        crawlberg::map_urls(&engine.0, &url)
             .await
             .map_err(|e| e.to_string())
             .map(MapResult)
@@ -4995,11 +4995,11 @@ pub fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, Str
 
 pub fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) -> Result<InteractionResult, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::interact(&engine.0, &url, {
+        crawlberg::interact(&engine.0, &url, {
             let values = actions;
             values
                 .into_iter()
-                .map(|s| ::serde_json::from_str::<kreuzcrawl::PageAction>(&s).expect("valid JSON for actions element"))
+                .map(|s| ::serde_json::from_str::<crawlberg::PageAction>(&s).expect("valid JSON for actions element"))
                 .collect::<Vec<_>>()
         })
         .await
@@ -5010,7 +5010,7 @@ pub fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) ->
 
 pub fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::batch_scrape(&engine.0, urls)
+        crawlberg::batch_scrape(&engine.0, urls)
             .await
             .map_err(|e| e.to_string())
             .map(BatchScrapeResults)
@@ -5019,7 +5019,7 @@ pub fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Batc
 
 pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, String> {
     crate::__alef_tokio_runtime().block_on(async {
-        kreuzcrawl::batch_crawl(&engine.0, urls)
+        crawlberg::batch_crawl(&engine.0, urls)
             .await
             .map_err(|e| e.to_string())
             .map(BatchCrawlResults)
@@ -5044,7 +5044,7 @@ pub struct CrawlEngineHandleCrawlStreamStreamHandle {
         Option<
             ::futures_util::stream::BoxStream<
                 'static,
-                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+                Result<crawlberg::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
             >,
         >,
     >,
@@ -5062,7 +5062,7 @@ pub fn crawl_engine_handle_crawl_stream_start(
     let raw = rt.block_on(async { client.0.crawl_stream(req.0.clone()).await.map_err(|e| e.to_string()) })?;
     let erased: ::futures_util::stream::BoxStream<
         'static,
-        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+        Result<crawlberg::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
     > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
     Ok(CrawlEngineHandleCrawlStreamStreamHandle {
         _rt: rt.handle().clone(),
@@ -5114,7 +5114,7 @@ pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
         Option<
             ::futures_util::stream::BoxStream<
                 'static,
-                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+                Result<crawlberg::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
             >,
         >,
     >,
@@ -5138,7 +5138,7 @@ pub fn crawl_engine_handle_batch_crawl_stream_start(
     })?;
     let erased: ::futures_util::stream::BoxStream<
         'static,
-        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+        Result<crawlberg::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
     > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
     Ok(CrawlEngineHandleBatchCrawlStreamStreamHandle {
         _rt: rt.handle().clone(),
@@ -5173,237 +5173,237 @@ impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
     }
 }
 pub fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
-    serde_json::from_str::<kreuzcrawl::CrawlConfig>(&json)
+    serde_json::from_str::<crawlberg::CrawlConfig>(&json)
         .map(CrawlConfig)
         .map_err(|e| e.to_string())
 }
 pub fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
-    serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
+    serde_json::from_str::<crawlberg::CrawlStreamRequest>(&json)
         .map(CrawlStreamRequest)
         .map_err(|e| e.to_string())
 }
 pub fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
-    serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
+    serde_json::from_str::<crawlberg::BatchCrawlStreamRequest>(&json)
         .map(BatchCrawlStreamRequest)
         .map_err(|e| e.to_string())
 }
 pub fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String> {
-    serde_json::from_str::<kreuzcrawl::ExtractionMeta>(&json)
+    serde_json::from_str::<crawlberg::ExtractionMeta>(&json)
         .map(ExtractionMeta)
         .map_err(|e| e.to_string())
 }
 pub fn proxy_config_from_json(json: String) -> Result<ProxyConfig, String> {
-    serde_json::from_str::<kreuzcrawl::ProxyConfig>(&json)
+    serde_json::from_str::<crawlberg::ProxyConfig>(&json)
         .map(ProxyConfig)
         .map_err(|e| e.to_string())
 }
 pub fn content_config_from_json(json: String) -> Result<ContentConfig, String> {
-    serde_json::from_str::<kreuzcrawl::ContentConfig>(&json)
+    serde_json::from_str::<crawlberg::ContentConfig>(&json)
         .map(ContentConfig)
         .map_err(|e| e.to_string())
 }
 pub fn browser_config_from_json(json: String) -> Result<BrowserConfig, String> {
-    serde_json::from_str::<kreuzcrawl::BrowserConfig>(&json)
+    serde_json::from_str::<crawlberg::BrowserConfig>(&json)
         .map(BrowserConfig)
         .map_err(|e| e.to_string())
 }
 pub fn browser_extras_from_json(json: String) -> Result<BrowserExtras, String> {
-    serde_json::from_str::<kreuzcrawl::BrowserExtras>(&json)
+    serde_json::from_str::<crawlberg::BrowserExtras>(&json)
         .map(BrowserExtras)
         .map_err(|e| e.to_string())
 }
 pub fn downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String> {
-    serde_json::from_str::<kreuzcrawl::DownloadedDocument>(&json)
+    serde_json::from_str::<crawlberg::DownloadedDocument>(&json)
         .map(DownloadedDocument)
         .map_err(|e| e.to_string())
 }
 pub fn interaction_result_from_json(json: String) -> Result<InteractionResult, String> {
-    serde_json::from_str::<kreuzcrawl::InteractionResult>(&json)
+    serde_json::from_str::<crawlberg::InteractionResult>(&json)
         .map(InteractionResult)
         .map_err(|e| e.to_string())
 }
 pub fn action_result_from_json(json: String) -> Result<ActionResult, String> {
-    serde_json::from_str::<kreuzcrawl::ActionResult>(&json)
+    serde_json::from_str::<crawlberg::ActionResult>(&json)
         .map(ActionResult)
         .map_err(|e| e.to_string())
 }
 pub fn scrape_result_from_json(json: String) -> Result<ScrapeResult, String> {
-    serde_json::from_str::<kreuzcrawl::ScrapeResult>(&json)
+    serde_json::from_str::<crawlberg::ScrapeResult>(&json)
         .map(ScrapeResult)
         .map_err(|e| e.to_string())
 }
 pub fn crawl_page_result_from_json(json: String) -> Result<CrawlPageResult, String> {
-    serde_json::from_str::<kreuzcrawl::CrawlPageResult>(&json)
+    serde_json::from_str::<crawlberg::CrawlPageResult>(&json)
         .map(CrawlPageResult)
         .map_err(|e| e.to_string())
 }
 pub fn crawl_result_from_json(json: String) -> Result<CrawlResult, String> {
-    serde_json::from_str::<kreuzcrawl::CrawlResult>(&json)
+    serde_json::from_str::<crawlberg::CrawlResult>(&json)
         .map(CrawlResult)
         .map_err(|e| e.to_string())
 }
 pub fn sitemap_url_from_json(json: String) -> Result<SitemapUrl, String> {
-    serde_json::from_str::<kreuzcrawl::SitemapUrl>(&json)
+    serde_json::from_str::<crawlberg::SitemapUrl>(&json)
         .map(SitemapUrl)
         .map_err(|e| e.to_string())
 }
 pub fn map_result_from_json(json: String) -> Result<MapResult, String> {
-    serde_json::from_str::<kreuzcrawl::MapResult>(&json)
+    serde_json::from_str::<crawlberg::MapResult>(&json)
         .map(MapResult)
         .map_err(|e| e.to_string())
 }
 pub fn markdown_result_from_json(json: String) -> Result<MarkdownResult, String> {
-    serde_json::from_str::<kreuzcrawl::MarkdownResult>(&json)
+    serde_json::from_str::<crawlberg::MarkdownResult>(&json)
         .map(MarkdownResult)
         .map_err(|e| e.to_string())
 }
 pub fn link_info_from_json(json: String) -> Result<LinkInfo, String> {
-    serde_json::from_str::<kreuzcrawl::LinkInfo>(&json)
+    serde_json::from_str::<crawlberg::LinkInfo>(&json)
         .map(LinkInfo)
         .map_err(|e| e.to_string())
 }
 pub fn image_info_from_json(json: String) -> Result<ImageInfo, String> {
-    serde_json::from_str::<kreuzcrawl::ImageInfo>(&json)
+    serde_json::from_str::<crawlberg::ImageInfo>(&json)
         .map(ImageInfo)
         .map_err(|e| e.to_string())
 }
 pub fn feed_info_from_json(json: String) -> Result<FeedInfo, String> {
-    serde_json::from_str::<kreuzcrawl::FeedInfo>(&json)
+    serde_json::from_str::<crawlberg::FeedInfo>(&json)
         .map(FeedInfo)
         .map_err(|e| e.to_string())
 }
 pub fn json_ld_entry_from_json(json: String) -> Result<JsonLdEntry, String> {
-    serde_json::from_str::<kreuzcrawl::JsonLdEntry>(&json)
+    serde_json::from_str::<crawlberg::JsonLdEntry>(&json)
         .map(JsonLdEntry)
         .map_err(|e| e.to_string())
 }
 pub fn cookie_info_from_json(json: String) -> Result<CookieInfo, String> {
-    serde_json::from_str::<kreuzcrawl::CookieInfo>(&json)
+    serde_json::from_str::<crawlberg::CookieInfo>(&json)
         .map(CookieInfo)
         .map_err(|e| e.to_string())
 }
 pub fn downloaded_asset_from_json(json: String) -> Result<DownloadedAsset, String> {
-    serde_json::from_str::<kreuzcrawl::DownloadedAsset>(&json)
+    serde_json::from_str::<crawlberg::DownloadedAsset>(&json)
         .map(DownloadedAsset)
         .map_err(|e| e.to_string())
 }
 pub fn article_metadata_from_json(json: String) -> Result<ArticleMetadata, String> {
-    serde_json::from_str::<kreuzcrawl::ArticleMetadata>(&json)
+    serde_json::from_str::<crawlberg::ArticleMetadata>(&json)
         .map(ArticleMetadata)
         .map_err(|e| e.to_string())
 }
 pub fn hreflang_entry_from_json(json: String) -> Result<HreflangEntry, String> {
-    serde_json::from_str::<kreuzcrawl::HreflangEntry>(&json)
+    serde_json::from_str::<crawlberg::HreflangEntry>(&json)
         .map(HreflangEntry)
         .map_err(|e| e.to_string())
 }
 pub fn favicon_info_from_json(json: String) -> Result<FaviconInfo, String> {
-    serde_json::from_str::<kreuzcrawl::FaviconInfo>(&json)
+    serde_json::from_str::<crawlberg::FaviconInfo>(&json)
         .map(FaviconInfo)
         .map_err(|e| e.to_string())
 }
 pub fn heading_info_from_json(json: String) -> Result<HeadingInfo, String> {
-    serde_json::from_str::<kreuzcrawl::HeadingInfo>(&json)
+    serde_json::from_str::<crawlberg::HeadingInfo>(&json)
         .map(HeadingInfo)
         .map_err(|e| e.to_string())
 }
 pub fn response_meta_from_json(json: String) -> Result<ResponseMeta, String> {
-    serde_json::from_str::<kreuzcrawl::ResponseMeta>(&json)
+    serde_json::from_str::<crawlberg::ResponseMeta>(&json)
         .map(ResponseMeta)
         .map_err(|e| e.to_string())
 }
 pub fn page_metadata_from_json(json: String) -> Result<PageMetadata, String> {
-    serde_json::from_str::<kreuzcrawl::PageMetadata>(&json)
+    serde_json::from_str::<crawlberg::PageMetadata>(&json)
         .map(PageMetadata)
         .map_err(|e| e.to_string())
 }
 pub fn citation_result_from_json(json: String) -> Result<CitationResult, String> {
-    serde_json::from_str::<kreuzcrawl::CitationResult>(&json)
+    serde_json::from_str::<crawlberg::CitationResult>(&json)
         .map(CitationResult)
         .map_err(|e| e.to_string())
 }
 pub fn citation_reference_from_json(json: String) -> Result<CitationReference, String> {
-    serde_json::from_str::<kreuzcrawl::CitationReference>(&json)
+    serde_json::from_str::<crawlberg::CitationReference>(&json)
         .map(CitationReference)
         .map_err(|e| e.to_string())
 }
 pub fn batch_scrape_result_from_json(json: String) -> Result<BatchScrapeResult, String> {
-    serde_json::from_str::<kreuzcrawl::BatchScrapeResult>(&json)
+    serde_json::from_str::<crawlberg::BatchScrapeResult>(&json)
         .map(BatchScrapeResult)
         .map_err(|e| e.to_string())
 }
 pub fn batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String> {
-    serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(&json)
+    serde_json::from_str::<crawlberg::BatchCrawlResult>(&json)
         .map(BatchCrawlResult)
         .map_err(|e| e.to_string())
 }
 pub fn batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String> {
-    serde_json::from_str::<kreuzcrawl::BatchScrapeResults>(&json)
+    serde_json::from_str::<crawlberg::BatchScrapeResults>(&json)
         .map(BatchScrapeResults)
         .map_err(|e| e.to_string())
 }
 pub fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String> {
-    serde_json::from_str::<kreuzcrawl::BatchCrawlResults>(&json)
+    serde_json::from_str::<crawlberg::BatchCrawlResults>(&json)
         .map(BatchCrawlResults)
         .map_err(|e| e.to_string())
 }
 pub fn ssrf_policy_from_json(json: String) -> Result<SsrfPolicy, String> {
-    serde_json::from_str::<kreuzcrawl::SsrfPolicy>(&json)
+    serde_json::from_str::<crawlberg::SsrfPolicy>(&json)
         .map(SsrfPolicy)
         .map_err(|e| e.to_string())
 }
 pub fn browser_mode_from_json(json: String) -> Result<BrowserMode, String> {
-    serde_json::from_str::<kreuzcrawl::BrowserMode>(&json)
+    serde_json::from_str::<crawlberg::BrowserMode>(&json)
         .map(BrowserMode::from)
         .map_err(|e| e.to_string())
 }
 pub fn browser_wait_from_json(json: String) -> Result<BrowserWait, String> {
-    serde_json::from_str::<kreuzcrawl::BrowserWait>(&json)
+    serde_json::from_str::<crawlberg::BrowserWait>(&json)
         .map(BrowserWait::from)
         .map_err(|e| e.to_string())
 }
 pub fn browser_backend_from_json(json: String) -> Result<BrowserBackend, String> {
-    serde_json::from_str::<kreuzcrawl::BrowserBackend>(&json)
+    serde_json::from_str::<crawlberg::BrowserBackend>(&json)
         .map(BrowserBackend::from)
         .map_err(|e| e.to_string())
 }
 pub fn auth_config_from_json(json: String) -> Result<AuthConfig, String> {
-    serde_json::from_str::<kreuzcrawl::AuthConfig>(&json)
+    serde_json::from_str::<crawlberg::AuthConfig>(&json)
         .map(AuthConfig::from)
         .map_err(|e| e.to_string())
 }
 pub fn link_type_from_json(json: String) -> Result<LinkType, String> {
-    serde_json::from_str::<kreuzcrawl::LinkType>(&json)
+    serde_json::from_str::<crawlberg::LinkType>(&json)
         .map(LinkType::from)
         .map_err(|e| e.to_string())
 }
 pub fn image_source_from_json(json: String) -> Result<ImageSource, String> {
-    serde_json::from_str::<kreuzcrawl::ImageSource>(&json)
+    serde_json::from_str::<crawlberg::ImageSource>(&json)
         .map(ImageSource::from)
         .map_err(|e| e.to_string())
 }
 pub fn feed_type_from_json(json: String) -> Result<FeedType, String> {
-    serde_json::from_str::<kreuzcrawl::FeedType>(&json)
+    serde_json::from_str::<crawlberg::FeedType>(&json)
         .map(FeedType::from)
         .map_err(|e| e.to_string())
 }
 pub fn asset_category_from_json(json: String) -> Result<AssetCategory, String> {
-    serde_json::from_str::<kreuzcrawl::AssetCategory>(&json)
+    serde_json::from_str::<crawlberg::AssetCategory>(&json)
         .map(AssetCategory::from)
         .map_err(|e| e.to_string())
 }
 pub fn crawl_event_from_json(json: String) -> Result<CrawlEvent, String> {
-    serde_json::from_str::<kreuzcrawl::CrawlEvent>(&json)
+    serde_json::from_str::<crawlberg::CrawlEvent>(&json)
         .map(CrawlEvent::from)
         .map_err(|e| e.to_string())
 }
 pub fn page_action_from_json(json: String) -> Result<PageAction, String> {
-    serde_json::from_str::<kreuzcrawl::PageAction>(&json)
+    serde_json::from_str::<crawlberg::PageAction>(&json)
         .map(PageAction::from)
         .map_err(|e| e.to_string())
 }
 pub fn scroll_direction_from_json(json: String) -> Result<ScrollDirection, String> {
-    serde_json::from_str::<kreuzcrawl::ScrollDirection>(&json)
+    serde_json::from_str::<crawlberg::ScrollDirection>(&json)
         .map(ScrollDirection::from)
         .map_err(|e| e.to_string())
 }

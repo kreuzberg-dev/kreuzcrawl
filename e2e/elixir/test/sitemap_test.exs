@@ -8,9 +8,9 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_basic" do
     test "sitemap_basic" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_basic"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 4
     end
   end
@@ -18,18 +18,18 @@ defmodule E2e.SitemapTest do
   describe "sitemap_compressed_gzip" do
     test "sitemap_compressed_gzip" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_compressed_gzip"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 3
     end
   end
 
   describe "sitemap_empty" do
     test "sitemap_empty" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_empty"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 0
     end
   end
@@ -37,18 +37,18 @@ defmodule E2e.SitemapTest do
   describe "sitemap_from_robots_txt" do
     test "sitemap_from_robots_txt" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_from_robots_txt"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 4
     end
   end
 
   describe "sitemap_index" do
     test "sitemap_index" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_SITEMAP_INDEX") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_index"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 3
     end
   end
@@ -56,9 +56,9 @@ defmodule E2e.SitemapTest do
   describe "sitemap_lastmod_filter" do
     test "sitemap_lastmod_filter" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_lastmod_filter"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 4
     end
   end
@@ -66,9 +66,9 @@ defmodule E2e.SitemapTest do
   describe "sitemap_only_mode" do
     test "sitemap_only_mode" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_only_mode"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 4
     end
   end
@@ -76,9 +76,9 @@ defmodule E2e.SitemapTest do
   describe "sitemap_xhtml_links" do
     test "sitemap_xhtml_links" do
       engine_config = "{\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/sitemap_xhtml_links"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       assert length(result.urls) == 2
     end
   end

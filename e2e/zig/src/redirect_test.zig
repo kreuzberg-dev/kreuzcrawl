@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "redirect_301_permanent" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_301_PERMANENT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_301_permanent", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -51,7 +51,7 @@ test "redirect_302_found" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_302_FOUND")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_302_found", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -74,7 +74,7 @@ test "redirect_303_see_other" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_303_SEE_OTHER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_303_see_other", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -97,7 +97,7 @@ test "redirect_307_temporary" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_307_TEMPORARY")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_307_temporary", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -120,7 +120,7 @@ test "redirect_308_permanent" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_308_PERMANENT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_308_permanent", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -143,7 +143,7 @@ test "redirect_chain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_CHAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_chain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -166,7 +166,7 @@ test "redirect_cross_domain" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_CROSS_DOMAIN")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_cross_domain", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -189,7 +189,7 @@ test "redirect_loop" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_LOOP")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_loop", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -202,7 +202,7 @@ test "redirect_max_exceeded" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_MAX_EXCEEDED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_max_exceeded", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_redirects\":2,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"max_redirects\":2,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
 }
 
@@ -215,7 +215,7 @@ test "redirect_meta_refresh" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_META_REFRESH")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_meta_refresh", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -238,7 +238,7 @@ test "redirect_refresh_header" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_REFRESH_HEADER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_refresh_header", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -261,7 +261,7 @@ test "redirect_to_404" {
 
     const url = if (std.c.getenv("MOCK_SERVER_REDIRECT_TO_404")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/redirect_to_404", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.crawl("{\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

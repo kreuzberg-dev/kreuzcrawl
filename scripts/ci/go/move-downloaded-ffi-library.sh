@@ -10,7 +10,7 @@ fi
 mkdir -p target/release
 mkdir -p target/x86_64-pc-windows-gnu/release
 mkdir -p packages/go/v4/internal/ffi
-mkdir -p crates/kreuzcrawl-ffi
+mkdir -p crates/crawlberg-ffi
 
 echo "Moving FFI artifacts from ffi-download..."
 echo ""
@@ -27,7 +27,7 @@ while IFS= read -r file; do
     echo "✓ Copied $filename to target/release/"
   fi
   ((LIBRARY_COUNT++)) || true
-done < <(find ffi-download -type f \( -name "libkreuzcrawl_ffi.*" -o -name "kreuzcrawl_ffi.*" \))
+done < <(find ffi-download -type f \( -name "libcrawlberg_ffi.*" -o -name "crawlberg_ffi.*" \))
 
 if [ "$LIBRARY_COUNT" -eq 0 ]; then
   echo "⚠ Warning: No FFI library files found in ffi-download (may be a cross-platform build artifact)"
@@ -35,18 +35,18 @@ fi
 
 # Copy header file to Go package (check both flat and nested paths)
 HEADER_FOUND=false
-if [ -f "ffi-download/kreuzcrawl.h" ]; then
-  cp ffi-download/kreuzcrawl.h packages/go/v4/internal/ffi/
-  echo "✓ Copied kreuzcrawl.h to packages/go/v4/internal/ffi/"
+if [ -f "ffi-download/crawlberg.h" ]; then
+  cp ffi-download/crawlberg.h packages/go/v4/internal/ffi/
+  echo "✓ Copied crawlberg.h to packages/go/v4/internal/ffi/"
   HEADER_FOUND=true
-elif [ -f "ffi-download/crates/kreuzcrawl-ffi/include/kreuzcrawl.h" ]; then
-  cp ffi-download/crates/kreuzcrawl-ffi/include/kreuzcrawl.h packages/go/v4/internal/ffi/
-  echo "✓ Copied kreuzcrawl.h to packages/go/v4/internal/ffi/"
+elif [ -f "ffi-download/crates/crawlberg-ffi/include/crawlberg.h" ]; then
+  cp ffi-download/crates/crawlberg-ffi/include/crawlberg.h packages/go/v4/internal/ffi/
+  echo "✓ Copied crawlberg.h to packages/go/v4/internal/ffi/"
   HEADER_FOUND=true
 fi
 
 if [ "$HEADER_FOUND" = false ]; then
-  echo "✗ Error: Header file kreuzcrawl.h not found in ffi-download"
+  echo "✗ Error: Header file crawlberg.h not found in ffi-download"
   echo "   Contents of ffi-download:"
   ls -la ffi-download/ || echo "   (unable to list directory)"
   echo "   Contents of ffi-download/crates (if exists):"
@@ -55,20 +55,20 @@ if [ "$HEADER_FOUND" = false ]; then
 fi
 
 # Verify header was copied
-if [ ! -f "packages/go/v4/internal/ffi/kreuzcrawl.h" ]; then
-  echo "✗ Error: Failed to copy kreuzcrawl.h to packages/go/v4/internal/ffi/"
+if [ ! -f "packages/go/v4/internal/ffi/crawlberg.h" ]; then
+  echo "✗ Error: Failed to copy crawlberg.h to packages/go/v4/internal/ffi/"
   exit 1
 fi
 
 # Copy pkg-config file (check both flat and nested paths)
-if [ -f "ffi-download/kreuzcrawl-ffi.pc" ]; then
-  cp ffi-download/kreuzcrawl-ffi.pc crates/kreuzcrawl-ffi/
-  echo "✓ Copied kreuzcrawl-ffi.pc to crates/kreuzcrawl-ffi/"
-elif [ -f "ffi-download/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc" ]; then
-  cp ffi-download/crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc crates/kreuzcrawl-ffi/
-  echo "✓ Copied kreuzcrawl-ffi.pc to crates/kreuzcrawl-ffi/"
+if [ -f "ffi-download/crawlberg-ffi.pc" ]; then
+  cp ffi-download/crawlberg-ffi.pc crates/crawlberg-ffi/
+  echo "✓ Copied crawlberg-ffi.pc to crates/crawlberg-ffi/"
+elif [ -f "ffi-download/crates/crawlberg-ffi/crawlberg-ffi.pc" ]; then
+  cp ffi-download/crates/crawlberg-ffi/crawlberg-ffi.pc crates/crawlberg-ffi/
+  echo "✓ Copied crawlberg-ffi.pc to crates/crawlberg-ffi/"
 else
-  echo "⚠ Warning: pkg-config file kreuzcrawl-ffi.pc not found in ffi-download"
+  echo "⚠ Warning: pkg-config file crawlberg-ffi.pc not found in ffi-download"
 fi
 
 echo ""

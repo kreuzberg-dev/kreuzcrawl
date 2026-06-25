@@ -9,9 +9,9 @@ defmodule E2e.FilterTest do
   describe "filter_bm25_crawl_integration" do
     test "filter_bm25_crawl_integration" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_BM25_CRAWL_INTEGRATION") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_bm25_crawl_integration"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'filter.remaining_contain_keyword' not available on result type
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.FilterTest do
   describe "filter_bm25_empty_query" do
     test "filter_bm25_empty_query" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_BM25_EMPTY_QUERY") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_bm25_empty_query"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
@@ -29,9 +29,9 @@ defmodule E2e.FilterTest do
   describe "filter_bm25_high_threshold" do
     test "filter_bm25_high_threshold" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_BM25_HIGH_THRESHOLD") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_bm25_high_threshold"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       # skipped: field 'filter.pages_after_filter' not available on result type
     end
   end
@@ -39,9 +39,9 @@ defmodule E2e.FilterTest do
   describe "filter_bm25_relevant_pages" do
     test "filter_bm25_relevant_pages" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_BM25_RELEVANT_PAGES") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_bm25_relevant_pages"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       # skipped: field 'filter.remaining_contain_keyword' not available on result type
     end
   end
@@ -49,9 +49,9 @@ defmodule E2e.FilterTest do
   describe "filter_bm25_threshold_zero" do
     test "filter_bm25_threshold_zero" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_BM25_THRESHOLD_ZERO") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_bm25_threshold_zero"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
@@ -59,9 +59,9 @@ defmodule E2e.FilterTest do
   describe "filter_noop_crawl_all_kept" do
     test "filter_noop_crawl_all_kept" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_NOOP_CRAWL_ALL_KEPT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_noop_crawl_all_kept"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'filter.pages_after_filter' not available on result type
     end
   end
@@ -69,9 +69,9 @@ defmodule E2e.FilterTest do
   describe "filter_noop_passes_all" do
     test "filter_noop_passes_all" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_FILTER_NOOP_PASSES_ALL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/filter_noop_passes_all"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end

@@ -1,10 +1,10 @@
 [project]
-site_name = "Kreuzcrawl"
-site_description = "Kreuzcrawl – High-performance Rust web crawling engine with always-on HTML→Markdown, LLM extraction, browser automation, and bindings for 14 languages."
-site_url = "https://docs.kreuzcrawl.xberg.io"
+site_name = "Crawlberg"
+site_description = "Crawlberg – High-performance Rust web crawling engine with always-on HTML→Markdown, LLM extraction, browser automation, and bindings for 14 languages."
+site_url = "https://docs.crawlberg.xberg.io"
 site_author = "xberg.io"
-repo_name = "xberg-io/kreuzcrawl"
-repo_url = "https://github.com/xberg-io/kreuzcrawl"
+repo_name = "xberg-io/crawlberg"
+repo_url = "https://github.com/xberg-io/crawlberg"
 edit_uri = "edit/main/docs/"
 copyright = "Copyright &copy; 2023-2026 Kreuzberg, inc."
 extra_css = ["css/extra.css"]
@@ -205,25 +205,25 @@ forks = true
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
-link = "https://github.com/xberg-io/kreuzcrawl"
+link = "https://github.com/xberg-io/crawlberg"
 name = "View on GitHub"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/python"
-link = "https://pypi.org/project/kreuzcrawl/"
+link = "https://pypi.org/project/crawlberg/"
 name = "View on PyPI"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/docker"
-link = "https://github.com/xberg-io/kreuzcrawl/pkgs/container/kreuzcrawl"
+link = "https://github.com/xberg-io/crawlberg/pkgs/container/crawlberg"
 name = "View on GitHub Container Registry"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/npm"
-link = "https://www.npmjs.com/package/@kreuzberg/kreuzcrawl"
+link = "https://www.npmjs.com/package/@kreuzberg/crawlberg"
 name = "View on npm"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/rust"
-link = "https://crates.io/crates/kreuzcrawl"
+link = "https://crates.io/crates/crawlberg"
 name = "View on crates.io"

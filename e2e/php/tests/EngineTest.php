@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
-use Kreuzcrawl\CrawlStreamRequest;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
+use Crawlberg\CrawlStreamRequest;
 
 /** E2e tests for category: engine. */
 final class EngineTest extends TestCase
@@ -21,10 +21,10 @@ final class EngineTest extends TestCase
     /** CrawlEngine with defaults batch scrapes like the free function */
     public function test_engine_batch_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_batch_basic';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
         // skipped: field 'batch.completed_count' not available on result type        // skipped: field 'batch.total_count' not available on result type
 
@@ -35,10 +35,10 @@ final class EngineTest extends TestCase
     public function test_engine_crawl_basic(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ENGINE_CRAWL_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/engine_crawl_basic';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'crawl.min_pages' not available on result type
 
@@ -48,10 +48,10 @@ final class EngineTest extends TestCase
     /** CrawlEngine with defaults discovers URLs like the free function */
     public function test_engine_map_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_ENGINE_MAP_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/engine_map_basic';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::mapUrls($engine, $url);
+        $result = Crawlberg::mapUrls($engine, $url);
 
         // skipped: field 'map.min_urls' not available on result type
 
@@ -61,9 +61,9 @@ final class EngineTest extends TestCase
     /** CrawlEngine with defaults scrapes a page identically to the free function */
     public function test_engine_scrape_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_ENGINE_SCRAPE_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/engine_scrape_basic';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals("text/html", trim($result->contentType));
@@ -80,7 +80,7 @@ final class EngineTest extends TestCase
     public function test_engine_stream_basic(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ENGINE_STREAM_BASIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/engine_stream_basic';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);

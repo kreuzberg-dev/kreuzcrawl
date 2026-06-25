@@ -2,7 +2,7 @@
 # Source: [workspace.citation] in alef.toml + workspace version in Cargo.toml.
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
-title: kreuzcrawl
+title: crawlberg
 abstract: "Web crawling and scraping with HTML→Markdown and headless-Chrome fallback."
 authors:
   - family-names: Hirschfeld
@@ -10,7 +10,7 @@ authors:
     email: "naaman@kreuzberg.dev"
     orcid: "https://orcid.org/0009-0000-2247-5072"
   - name: "Kreuzberg, Inc."
-repository-code: "https://github.com/xberg-io/kreuzcrawl"
+repository-code: "https://github.com/xberg-io/crawlberg"
 url: "https://xberg.io"
 license: Elastic-2.0
 version: 0.3.0

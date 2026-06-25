@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,63 +165,63 @@ void main() {
   });
 
   test('Parses a standard urlset sitemap', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("sitemap_basic");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(4));
   });
 
   test('Parses a gzip-compressed sitemap file', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("sitemap_compressed_gzip");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(3));
   });
 
   test('Handles empty sitemap gracefully', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("sitemap_empty");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(0));
   });
 
   test('Discovers sitemap via robots.txt Sitemap directive', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("sitemap_from_robots_txt");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(4));
   });
 
   test('Follows sitemap index to discover child sitemaps', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("sitemap_index");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(3));
   });
 
   test('Filters sitemap URLs by lastmod date', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("sitemap_lastmod_filter");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(4));
   });
 
   test('Uses sitemap URLs exclusively without following page links', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("sitemap_only_mode");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(4));
   });
 
   test('Parses sitemap with XHTML namespace alternate links', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("sitemap_xhtml_links");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(2));
   });
 

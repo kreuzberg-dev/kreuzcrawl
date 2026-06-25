@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "download_basic_pdf" {
 
     const url = if (std.c.getenv("MOCK_SERVER_DOWNLOAD_BASIC_PDF")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/download_basic_pdf", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -45,7 +45,7 @@ test "download_filename_extraction" {
 
     const url = if (std.c.getenv("MOCK_SERVER_DOWNLOAD_FILENAME_EXTRACTION")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/download_filename_extraction", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -63,7 +63,7 @@ test "download_mime_filter" {
 
     const url = if (std.c.getenv("MOCK_SERVER_DOWNLOAD_MIME_FILTER")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/download_mime_filter", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"document_mime_types\":[\"application/pdf\"],\"download_documents\":true,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"document_mime_types\":[\"application/pdf\"],\"download_documents\":true,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -80,7 +80,7 @@ test "download_no_document" {
 
     const url = if (std.c.getenv("MOCK_SERVER_DOWNLOAD_NO_DOCUMENT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/download_no_document", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"download_documents\":true,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -97,7 +97,7 @@ test "download_size_limit" {
 
     const url = if (std.c.getenv("MOCK_SERVER_DOWNLOAD_SIZE_LIMIT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/download_size_limit", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.scrape("{\"document_max_size\":100,\"download_documents\":true,\"respect_robots_txt\":false}", url);
+    const _result_json = try crawlberg.scrape("{\"document_max_size\":100,\"download_documents\":true,\"respect_robots_txt\":false}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

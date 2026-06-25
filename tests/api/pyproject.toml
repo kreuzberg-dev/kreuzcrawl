@@ -3,9 +3,9 @@ build-backend = "setuptools.build_meta"
 requires = [ "setuptools>=68", "wheel" ]
 
 [project]
-name = "kreuzcrawl-api-tests"
+name = "crawlberg-api-tests"
 version = "0.0.0"
-description = "Schemathesis API contract tests for kreuzcrawl"
+description = "Schemathesis API contract tests for crawlberg"
 requires-python = ">=3.10"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",

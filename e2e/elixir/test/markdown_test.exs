@@ -8,9 +8,9 @@ defmodule E2e.MarkdownTest do
 
   describe "citations_balanced_parens" do
     test "citations_balanced_parens" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/citations_balanced_parens"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.markdown.content != ""
       assert String.contains?(to_string(result.markdown.content), "(")
@@ -19,9 +19,9 @@ defmodule E2e.MarkdownTest do
 
   describe "citations_duplicate_urls" do
     test "citations_duplicate_urls" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/citations_duplicate_urls"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.markdown.content != ""
       assert result.markdown.citations == true
@@ -30,9 +30,9 @@ defmodule E2e.MarkdownTest do
 
   describe "markdown_basic_conversion" do
     test "markdown_basic_conversion" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_basic_conversion"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert String.trim(result.metadata.title) == "Test"
       assert result.html != ""
@@ -44,18 +44,18 @@ defmodule E2e.MarkdownTest do
   describe "markdown_crawl_all_pages" do
     test "markdown_crawl_all_pages" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_MARKDOWN_CRAWL_ALL_PAGES") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_crawl_all_pages"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
 
   describe "markdown_fit_content" do
     test "markdown_fit_content" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_MARKDOWN_FIT_CONTENT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_fit_content"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.markdown.content != ""
     end
@@ -63,9 +63,9 @@ defmodule E2e.MarkdownTest do
 
   describe "markdown_headings_and_paragraphs" do
     test "markdown_headings_and_paragraphs" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_headings_and_paragraphs"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.markdown.content != ""
       assert String.contains?(to_string(result.markdown.content), "Main Title")
     end
@@ -73,9 +73,9 @@ defmodule E2e.MarkdownTest do
 
   describe "markdown_links_converted" do
     test "markdown_links_converted" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_links_converted"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.html != ""
       assert result.markdown.content != ""
@@ -85,9 +85,9 @@ defmodule E2e.MarkdownTest do
 
   describe "markdown_with_citations" do
     test "markdown_with_citations" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/markdown_with_citations"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.markdown.content != ""
     end

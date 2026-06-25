@@ -26,10 +26,10 @@ repos:
                 - --allow-dirty
                 - --allow-staged
                 - --workspace
-                - --exclude=kreuzcrawl-php
-                - --exclude=kreuzcrawl-py
-                - --exclude=kreuzcrawl-node
-                - --exclude=kreuzcrawl-e2e-rust
+                - --exclude=crawlberg-php
+                - --exclude=crawlberg-py
+                - --exclude=crawlberg-node
+                - --exclude=crawlberg-e2e-rust
                 - --all-features
                 - --all-targets
                 - --
@@ -46,16 +46,16 @@ repos:
           - id: cargo-deny
             args: ["check"]
           - id: rustdoc-lint
-            files: ^crates/kreuzcrawl/src/.*\.rs$
+            files: ^crates/crawlberg/src/.*\.rs$
             exclude: /tests/
             args:
                 - -p
-                - kreuzcrawl
+                - crawlberg
           - id: rust-max-lines
             args: ["--max=1000"]
             # Remediation backlog: existing files over the 1,000-LOC ceiling. New
             # files are subject to the cap. Shrink this list when files are split.
-            exclude: ^(crates/kreuzcrawl-browser/src/adapter\.rs|crates/kreuzcrawl-browser/src/js/runtime\.rs|crates/kreuzcrawl-browser/src/page\.rs|crates/kreuzcrawl-ffi/src/lib\.rs|crates/kreuzcrawl-node/src/lib\.rs|crates/kreuzcrawl-php/src/lib\.rs|crates/kreuzcrawl-py/src/lib\.rs|crates/kreuzcrawl-wasm/src/lib\.rs|crates/kreuzcrawl/src/engine/crawl_loop\.rs|crates/kreuzcrawl/src/engine/mod\.rs|packages/dart/rust/src/frb_generated\.rs|packages/dart/rust/src/lib\.rs|packages/elixir/native/kreuzcrawl_nif/src/lib\.rs|packages/ruby/ext/kreuzcrawl_rb/src/lib\.rs|packages/swift/rust/src/lib\.rs|tools/benchmark-harness/src/output\.rs)$
+            exclude: ^(crates/crawlberg-browser/src/adapter\.rs|crates/crawlberg-browser/src/js/runtime\.rs|crates/crawlberg-browser/src/page\.rs|crates/crawlberg-ffi/src/lib\.rs|crates/crawlberg-node/src/lib\.rs|crates/crawlberg-php/src/lib\.rs|crates/crawlberg-py/src/lib\.rs|crates/crawlberg-wasm/src/lib\.rs|crates/crawlberg/src/engine/crawl_loop\.rs|crates/crawlberg/src/engine/mod\.rs|packages/dart/rust/src/frb_generated\.rs|packages/dart/rust/src/lib\.rs|packages/elixir/native/crawlberg_nif/src/lib\.rs|packages/ruby/ext/crawlberg_rb/src/lib\.rs|packages/swift/rust/src/lib\.rs|tools/benchmark-harness/src/output\.rs)$
 
           # Linters and checks
           - id: ai-rulez-generate
@@ -145,17 +145,17 @@ repos:
 
           - id: rubocop-lint
             files: ^packages/ruby/.*\.(rb|rbs)$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+            exclude: ^packages/ruby/(ext/|lib/crawlberg/native\.rb$)
           - id: steep
             files: ^packages/ruby/.*\.(rb|rbs)$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+            exclude: ^packages/ruby/(ext/|lib/crawlberg/native\.rb$)
           - id: yard-coverage
-            exclude: ^(e2e/|test_apps/|packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$|Rakefile$))
+            exclude: ^(e2e/|test_apps/|packages/ruby/(ext/|lib/crawlberg/native\.rb$|Rakefile$))
 
           - id: dotnet-format-check
             files: ^packages/csharp/.*\.cs$
           - id: cs-xmldoc-lint
-            files: ^packages/csharp/Kreuzcrawl/.*\.cs$
+            files: ^packages/csharp/Crawlberg/.*\.cs$
 
           - id: phpstan
             files: ^packages/php/(src|tests)/.*\.php$
@@ -196,7 +196,7 @@ repos:
           - id: zig-doc-lint
 
           - id: clang-tidy
-            files: ^crates/kreuzcrawl-ffi/tests/c/
+            files: ^crates/crawlberg-ffi/tests/c/
           - id: cppcheck
             args:
                 - --suppress=unusedStructMember
@@ -228,7 +228,7 @@ repos:
                 - --kotlinlang-style
           - id: rubocop
             files: ^packages/ruby/.*\.rb$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+            exclude: ^packages/ruby/(ext/|lib/crawlberg/native\.rb$)
           - id: dotnet-format
             files: ^packages/csharp/.*\.cs$
           - id: php-cs-fixer
@@ -245,4 +245,4 @@ repos:
           - id: clang-format
             args:
                 - --style=file
-            files: ^crates/kreuzcrawl-ffi/tests/c/
+            files: ^crates/crawlberg-ffi/tests/c/

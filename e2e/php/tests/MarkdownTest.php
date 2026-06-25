@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: markdown. */
 final class MarkdownTest extends TestCase
@@ -20,9 +20,9 @@ final class MarkdownTest extends TestCase
     /** Citations correctly handle links inside parentheses with balanced rendering */
     public function test_citations_balanced_parens(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/citations_balanced_parens';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMarkdown()->content);
@@ -35,9 +35,9 @@ final class MarkdownTest extends TestCase
     /** Citations deduplicates multiple links to the same URL */
     public function test_citations_duplicate_urls(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/citations_duplicate_urls';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMarkdown()->content);
@@ -50,9 +50,9 @@ final class MarkdownTest extends TestCase
     /** HTML is always converted to markdown alongside raw HTML */
     public function test_markdown_basic_conversion(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_basic_conversion';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals("Test", trim(($result->getMetadata()->title ?? null)));
@@ -68,10 +68,10 @@ final class MarkdownTest extends TestCase
     public function test_markdown_crawl_all_pages(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_MARKDOWN_CRAWL_ALL_PAGES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/markdown_crawl_all_pages';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type
 
@@ -81,9 +81,9 @@ final class MarkdownTest extends TestCase
     /** Fit markdown removes navigation and boilerplate content */
     public function test_markdown_fit_content(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_MARKDOWN_FIT_CONTENT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/markdown_fit_content';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMarkdown()->content);
@@ -95,9 +95,9 @@ final class MarkdownTest extends TestCase
     /** Markdown conversion preserves heading hierarchy and paragraph text */
     public function test_markdown_headings_and_paragraphs(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_headings_and_paragraphs';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->getMarkdown()->content);
             $this->assertStringContainsString("Main Title", $result->getMarkdown()->content);
@@ -109,9 +109,9 @@ final class MarkdownTest extends TestCase
     /** HTML links are converted to markdown link syntax */
     public function test_markdown_links_converted(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_links_converted';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->html);
@@ -125,9 +125,9 @@ final class MarkdownTest extends TestCase
     /** Markdown includes citation conversion with numbered references */
     public function test_markdown_with_citations(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_with_citations';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMarkdown()->content);

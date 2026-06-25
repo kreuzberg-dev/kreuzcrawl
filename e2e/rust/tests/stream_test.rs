@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: stream
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
-use kreuzcrawl::{batch_crawl_stream, crawl_stream};
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
+use crawlberg::{batch_crawl_stream, crawl_stream};
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -40,13 +40,13 @@ async fn test_batch_crawl_stream_events() {
         .collect();
     assert!(chunks.len() >= 4, "expected >= 4");
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -83,17 +83,17 @@ async fn test_batch_crawl_stream_partial_failure() {
         .map(|r| r.expect("stream item failed"))
         .collect();
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Error { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Error { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -117,13 +117,13 @@ async fn test_crawl_stream_events() {
         .collect();
     assert!(chunks.len() >= 4, "expected >= 4");
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -147,13 +147,13 @@ async fn test_stream_depth_crawl() {
         .collect();
     assert!(chunks.len() >= 5, "expected >= 5");
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -182,17 +182,17 @@ async fn test_stream_error_event_mid_crawl() {
         .map(|r| r.expect("stream item failed"))
         .collect();
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Error { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Error { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -218,11 +218,11 @@ async fn test_stream_event_ordering() {
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(chunks.len() >= 3, "expected >= 3");
@@ -247,13 +247,13 @@ async fn test_stream_large_crawl() {
         .collect();
     assert!(chunks.len() >= 6, "expected >= 6");
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
 }
@@ -276,13 +276,13 @@ async fn test_stream_with_error_event() {
         .map(|r| r.expect("stream item failed"))
         .collect();
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
     assert!(chunks.len() >= 2, "expected >= 2");

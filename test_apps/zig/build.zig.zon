@@ -4,9 +4,9 @@
     .fingerprint = 0xf16334c0592376fc,
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
-        .kreuzcrawl = .{
-            .url = "https://github.com/xberg-io/kreuzcrawl/releases/download/v0.3.0/kreuzcrawl-zig-v0.3.0.tar.gz",
-            .hash = "kreuzcrawl-0.3.0-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH",
+        .crawlberg = .{
+            .url = "https://github.com/xberg-io/crawlberg/releases/download/v0.3.0/crawlberg-zig-v0.3.0.tar.gz",
+            .hash = "crawlberg-0.3.0-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH",
         },
     },
     .paths = .{

@@ -9,7 +9,7 @@ MOCK_SERVER_BIN="${REPO_ROOT}/e2e/rust/target/release/mock-server"
 FIXTURES_DIR="${REPO_ROOT}/fixtures"
 E2E_ZIG_DIR="${REPO_ROOT}/e2e/zig"
 FFI_PATH="${REPO_ROOT}/target/release"
-FFI_INCLUDE="${REPO_ROOT}/crates/kreuzcrawl-ffi/include"
+FFI_INCLUDE="${REPO_ROOT}/crates/crawlberg-ffi/include"
 
 if [ ! -f "$MOCK_SERVER_BIN" ]; then
   echo "mock-server not found at $MOCK_SERVER_BIN" >&2

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/crawlberg/packages/go"
 )
 
 func Test_MetadataArticleTimes(t *testing.T) {
@@ -154,7 +154,7 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 	if result.Metadata.Viewport == nil {
 		t.Errorf("expected non-empty value")
 	}
-	if strings.TrimSpace(string(metadataGenerator)) != `kreuzcrawl/1.0` {
+	if strings.TrimSpace(string(metadataGenerator)) != `crawlberg/1.0` {
 		t.Errorf("equals mismatch: got %v", metadataGenerator)
 	}
 	if strings.TrimSpace(string(metadataThemeColor)) != `#ff6600` {

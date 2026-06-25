@@ -4,8 +4,8 @@
 # Docker Configuration Volume Mount Testing Script
 #
 # This script validates all Docker configuration scenarios locally:
-# - Volume mounts to /etc/kreuzcrawl/kreuzcrawl.toml (recommended)
-# - Volume mounts to /app/.config/kreuzcrawl/config.toml (user path)
+# - Volume mounts to /etc/crawlberg/crawlberg.toml (recommended)
+# - Volume mounts to /app/.config/crawlberg/config.toml (user path)
 # - Custom paths with --config flag
 # - Environment variable overrides with config files
 # - All config formats (TOML, YAML, JSON)
@@ -38,7 +38,7 @@ VERBOSE="${VERBOSE:-false}"
 KEEP_CONTAINERS="${KEEP_CONTAINERS:-false}"
 TIMEOUT_SECONDS=30
 PORT_BASE=18100
-TEST_TEMP_DIR="/tmp/kreuzcrawl-config-test-$$"
+TEST_TEMP_DIR="/tmp/crawlberg-config-test-$$"
 
 # Test tracking
 TOTAL_TESTS=0
@@ -107,7 +107,7 @@ cleanup() {
 
   if [ "$KEEP_CONTAINERS" != "true" ]; then
     # Stop and remove test containers
-    docker ps -a --filter "name=kreuzcrawl-config-test-" --format "{{.Names}}" | while read -r container; do
+    docker ps -a --filter "name=crawlberg-config-test-" --format "{{.Names}}" | while read -r container; do
       log_debug "Stopping container: $container"
       docker stop "$container" 2>/dev/null || true
       docker rm "$container" 2>/dev/null || true
@@ -174,7 +174,7 @@ get_image_name() {
     echo "$IMAGE_NAME"
   else
     # Use default naming convention (local mode)
-    echo "kreuzcrawl:$variant"
+    echo "crawlberg:$variant"
   fi
 }
 
@@ -192,7 +192,7 @@ create_toml_config() {
 max_depth = 1
 max_pages = 5
 respect_robots_txt = true
-user_agent = "kreuzcrawl-config-test"
+user_agent = "crawlberg-config-test"
 
 [content]
 output_format = "markdown"
@@ -211,7 +211,7 @@ create_yaml_config() {
 max_depth: 1
 max_pages: 5
 respect_robots_txt: true
-user_agent: "kreuzcrawl-config-test"
+user_agent: "crawlberg-config-test"
 
 content:
   output_format: "markdown"
@@ -231,7 +231,7 @@ create_json_config() {
   "max_depth": 1,
   "max_pages": 5,
   "respect_robots_txt": true,
-  "user_agent": "kreuzcrawl-config-test",
+  "user_agent": "crawlberg-config-test",
   "content": {
     "output_format": "markdown"
   }
@@ -328,23 +328,23 @@ get_container_logs() {
 # Test Cases
 ################################################################################
 
-test_etc_kreuzcrawl_mount() {
+test_etc_crawlberg_mount() {
   local variant="$1"
-  start_test "Volume mount to /etc/kreuzcrawl/kreuzcrawl.toml (variant: $variant)"
+  start_test "Volume mount to /etc/crawlberg/crawlberg.toml (variant: $variant)"
 
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-etc-${variant}-$$"
-  local config_file="$TEST_TEMP_DIR/kreuzcrawl.toml"
+  local container_name="crawlberg-config-test-etc-${variant}-$$"
+  local config_file="$TEST_TEMP_DIR/crawlberg.toml"
 
   # Create config file
   create_toml_config "$config_file" "$port"
 
   # Run container with mount
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.toml:ro"; then
-    fail_test "Failed to start container with /etc/kreuzcrawl mount"
+    --volume "$config_file:/etc/crawlberg/crawlberg.toml:ro"; then
+    fail_test "Failed to start container with /etc/crawlberg mount"
     log_error "  Container logs:\n$(get_container_logs "$container_name" 2>/dev/null || echo 'N/A')"
     return 1
   fi
@@ -380,12 +380,12 @@ test_etc_kreuzcrawl_mount() {
 
 test_app_config_mount() {
   local variant="$1"
-  start_test "Volume mount to /app/.config/kreuzcrawl/config.toml (variant: $variant)"
+  start_test "Volume mount to /app/.config/crawlberg/config.toml (variant: $variant)"
 
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-app-config-${variant}-$$"
+  local container_name="crawlberg-config-test-app-config-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/config.toml"
 
   # Create config file
@@ -393,7 +393,7 @@ test_app_config_mount() {
 
   # Run container with mount
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/app/.config/kreuzcrawl/config.toml:ro"; then
+    --volume "$config_file:/app/.config/crawlberg/config.toml:ro"; then
     fail_test "Failed to start container with /app/.config mount"
     log_error "  Container logs:\n$(get_container_logs "$container_name" 2>/dev/null || echo 'N/A')"
     return 1
@@ -432,7 +432,7 @@ test_custom_path_with_flag() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-custom-${variant}-$$"
+  local container_name="crawlberg-config-test-custom-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/custom-config.toml"
   local container_path="/app/custom-config.toml"
 
@@ -442,7 +442,7 @@ test_custom_path_with_flag() {
   # Run container with custom config path
   if ! run_container "$container_name" "$image" "$port" \
     --volume "$config_file:$container_path:ro" \
-    --entrypoint "/usr/local/bin/kreuzcrawl" \
+    --entrypoint "/usr/local/bin/crawlberg" \
     -- "serve" "--config" "$container_path" "--host" "0.0.0.0"; then
     fail_test "Failed to start container with custom --config flag"
     log_error "  Container logs:\n$(get_container_logs "$container_name" 2>/dev/null || echo 'N/A')"
@@ -482,7 +482,7 @@ test_env_var_overrides() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-env-${variant}-$$"
+  local container_name="crawlberg-config-test-env-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/env-config.toml"
 
   # Create config file with port 8000
@@ -490,7 +490,7 @@ test_env_var_overrides() {
 
   # Run container with config mount and environment variable override
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.toml:ro" \
+    --volume "$config_file:/etc/crawlberg/crawlberg.toml:ro" \
     --env "KREUZBERG_SERVER_PORT=$port"; then
     fail_test "Failed to start container with env var override"
     log_error "  Container logs:\n$(get_container_logs "$container_name" 2>/dev/null || echo 'N/A')"
@@ -530,13 +530,13 @@ test_toml_format() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-toml-${variant}-$$"
+  local container_name="crawlberg-config-test-toml-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/config.toml"
 
   create_toml_config "$config_file" "$port"
 
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.toml:ro"; then
+    --volume "$config_file:/etc/crawlberg/crawlberg.toml:ro"; then
     fail_test "Failed to start container with TOML config"
     return 1
   fi
@@ -561,13 +561,13 @@ test_yaml_format() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-yaml-${variant}-$$"
+  local container_name="crawlberg-config-test-yaml-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/config.yaml"
 
   create_yaml_config "$config_file" "$port"
 
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.yaml:ro"; then
+    --volume "$config_file:/etc/crawlberg/crawlberg.yaml:ro"; then
     fail_test "Failed to start container with YAML config"
     return 1
   fi
@@ -592,13 +592,13 @@ test_json_format() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-json-${variant}-$$"
+  local container_name="crawlberg-config-test-json-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/config.json"
 
   create_json_config "$config_file" "$port"
 
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.json:ro"; then
+    --volume "$config_file:/etc/crawlberg/crawlberg.json:ro"; then
     fail_test "Failed to start container with JSON config"
     return 1
   fi
@@ -623,14 +623,14 @@ test_readonly_mount() {
   local image
   image="$(get_image_name "$variant")"
   local port=$((PORT_BASE + TOTAL_TESTS))
-  local container_name="kreuzcrawl-config-test-readonly-${variant}-$$"
+  local container_name="crawlberg-config-test-readonly-${variant}-$$"
   local config_file="$TEST_TEMP_DIR/readonly-config.toml"
 
   create_toml_config "$config_file" "$port"
 
   # Run with read-only mount (explicitly :ro)
   if ! run_container "$container_name" "$image" "$port" \
-    --volume "$config_file:/etc/kreuzcrawl/kreuzcrawl.toml:ro"; then
+    --volume "$config_file:/etc/crawlberg/crawlberg.toml:ro"; then
     fail_test "Failed to start container with read-only mount"
     return 1
   fi
@@ -671,7 +671,7 @@ run_test_suite() {
   TESTED_VARIANTS+=("$variant")
 
   # Run all test cases
-  test_etc_kreuzcrawl_mount "$variant"
+  test_etc_crawlberg_mount "$variant"
   test_app_config_mount "$variant"
   test_custom_path_with_flag "$variant"
   test_env_var_overrides "$variant"

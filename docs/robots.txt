@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://docs.kreuzcrawl.xberg.io/sitemap.xml
+Sitemap: https://docs.crawlberg.xberg.io/sitemap.xml

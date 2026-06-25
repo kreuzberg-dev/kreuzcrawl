@@ -13,7 +13,7 @@ cd "$REPO_ROOT"
 
 echo "=== Installing wheel for current platform ==="
 
-wheel_path="$(find dist -maxdepth 1 -name "kreuzcrawl-*.whl" -print -quit 2>/dev/null || true)"
+wheel_path="$(find dist -maxdepth 1 -name "crawlberg-*.whl" -print -quit 2>/dev/null || true)"
 
 if [ -z "$wheel_path" ]; then
   echo "No wheel found in dist/. Contents:"

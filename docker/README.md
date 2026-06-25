@@ -1,10 +1,10 @@
-# Kreuzcrawl Docker Images
+# Crawlberg Docker Images
 
-This directory contains Dockerfiles for building kreuzcrawl container images.
+This directory contains Dockerfiles for building crawlberg container images.
 
 ## Primary Image: Dockerfile.alpine
 
-**The main, production-ready image** for kreuzcrawl. Optimized for CLI usage and distribution.
+**The main, production-ready image** for crawlberg. Optimized for CLI usage and distribution.
 
 ### Features
 
@@ -12,44 +12,44 @@ This directory contains Dockerfiles for building kreuzcrawl container images.
 - **Architecture**: Multi-arch (amd64, arm64)
 - **Binary**: Statically compiled with musl
 - **Size**: ~30-50MB (highly portable)
-- **User**: Non-root (`kreuzcrawl` user)
+- **User**: Non-root (`crawlberg` user)
 - **Features**: API server (`serve`), MCP mode (`mcp`), CLI commands
 
 ### Build
 
 ```bash
 # Local development build
-docker build -f docker/Dockerfile.alpine -t kreuzcrawl:latest .
+docker build -f docker/Dockerfile.alpine -t crawlberg:latest .
 
 # Test the image
-docker run --rm kreuzcrawl:latest --version
-docker run --rm kreuzcrawl:latest --help
+docker run --rm crawlberg:latest --version
+docker run --rm crawlberg:latest --help
 
 # Run a scrape command
-docker run --rm kreuzcrawl:latest scrape https://example.com
+docker run --rm crawlberg:latest scrape https://example.com
 ```
 
 ### Usage
 
 ```bash
 # CLI: scrape a URL
-docker run --rm kreuzcrawl:latest scrape https://example.com
+docker run --rm crawlberg:latest scrape https://example.com
 
 # CLI: extract from a local file
-docker run -v /data:/data:ro --rm kreuzcrawl:latest extract /data/document.pdf
+docker run -v /data:/data:ro --rm crawlberg:latest extract /data/document.pdf
 
 # API server mode
-docker run -p 8000:3000 --rm kreuzcrawl:latest serve
+docker run -p 8000:3000 --rm crawlberg:latest serve
 
 # MCP server mode
-docker run --rm kreuzcrawl:latest mcp
+docker run --rm crawlberg:latest mcp
 ```
 
 ### Pull from Registry
 
 ```bash
-docker pull ghcr.io/xberg-io/kreuzcrawl:latest
-docker pull ghcr.io/xberg-io/kreuzcrawl:v0.1.0
+docker pull ghcr.io/xberg-io/crawlberg:latest
+docker pull ghcr.io/xberg-io/crawlberg:v0.1.0
 ```
 
 ## Legacy Images
@@ -74,7 +74,7 @@ Minimal CLI image on Debian slim.
 
 Alpine builder for extracting the CLI binary to host filesystem.
 
-- **Output**: `dist/kreuzcrawl` (static binary)
+- **Output**: `dist/crawlberg` (static binary)
 - **Use case**: Standalone CLI distribution without Docker
 
 ### Dockerfile.musl-ffi, Dockerfile.musl-nif
@@ -93,7 +93,7 @@ Specialized builders for language bindings (FFI, Ruby NIF).
 - **Trigger**: `workflow_dispatch`, `release` (published), `repository_dispatch`
 - **Variant**: Alpine CLI (single image)
 - **Architecture**: Builds amd64 + arm64 with Buildx
-- **Registry**: `ghcr.io/xberg-io/kreuzcrawl`
+- **Registry**: `ghcr.io/xberg-io/crawlberg`
 - **Tags**: `{version}`, `latest`
 - **Testing**: Runs full test suite before push
 
@@ -104,7 +104,7 @@ Specialized builders for language bindings (FFI, Ruby NIF).
 scripts/ci/docker/build_and_test.sh
 
 # Test pre-built image
-scripts/ci/docker/build_and_test.sh --image kreuzcrawl:v0.1.0
+scripts/ci/docker/build_and_test.sh --image crawlberg:v0.1.0
 
 # Verbose output
 scripts/ci/docker/build_and_test.sh --verbose
@@ -128,7 +128,7 @@ Tests for Alpine CLI variant:
 Run full test suite:
 
 ```bash
-python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
+python3 scripts/ci/docker/test_docker.py --image crawlberg:latest --variant cli
 ```
 
 ## Build Performance
@@ -149,14 +149,14 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 - Alpine base: ~5MB
 - CA certificates: ~500KB
 - curl: ~3MB
-- kreuzcrawl binary (stripped): ~20-30MB
+- crawlberg binary (stripped): ~20-30MB
 - **Total**: ~30-40MB
 
 ## Security
 
 ### Image Security Practices
 
-- ✅ Non-root user (`kreuzcrawl:kreuzcrawl`)
+- ✅ Non-root user (`crawlberg:crawlberg`)
 - ✅ Read-only filesystem support (with `/tmp` exemption)
 - ✅ Minimal base (Alpine, no extra utilities)
 - ✅ CA certificates for HTTPS
@@ -170,16 +170,16 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 docker run --rm \
   --read-only \
   --tmpfs /tmp \
-  --user kreuzcrawl:kreuzcrawl \
+  --user crawlberg:crawlberg \
   -v /data:/data:ro \
-  kreuzcrawl:latest \
+  crawlberg:latest \
   extract /data/document.pdf
 
 # Memory limits
 docker run --rm \
   --memory 512m \
   --memory-swap 512m \
-  kreuzcrawl:latest \
+  crawlberg:latest \
   scrape https://example.com
 ```
 
@@ -188,7 +188,7 @@ docker run --rm \
 ### Image too large?
 
 - Use `Dockerfile.alpine` (not legacy variants)
-- Ensure binary is stripped: `strip target/release/kreuzcrawl`
+- Ensure binary is stripped: `strip target/release/crawlberg`
 
 ### Build fails on ARM64?
 
@@ -197,8 +197,8 @@ docker run --rm \
 
 ### Binary crashes at startup?
 
-- Verify static linking: `ldd kreuzcrawl` (should show `not a dynamic executable`)
-- Check feature flags: `kreuzcrawl --version`
+- Verify static linking: `ldd crawlberg` (should show `not a dynamic executable`)
+- Check feature flags: `crawlberg --version`
 
 ### Test failures in CI?
 
@@ -212,13 +212,13 @@ docker run --rm \
 
 ```bash
 # Build image
-docker build -f docker/Dockerfile.alpine -t kreuzcrawl:dev .
+docker build -f docker/Dockerfile.alpine -t crawlberg:dev .
 
 # Quick smoke test
-docker run --rm kreuzcrawl:dev --version
+docker run --rm crawlberg:dev --version
 
 # Full test suite
-python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:dev --variant cli --verbose
+python3 scripts/ci/docker/test_docker.py --image crawlberg:dev --variant cli --verbose
 ```
 
 ### Publish Workflow (after release)
@@ -236,7 +236,7 @@ gh workflow run publish-docker.yaml \
   -f force_republish=false
 
 # Option 3: Via repository_dispatch event
-gh api repos/xberg-io/kreuzcrawl/dispatches \
+gh api repos/xberg-io/crawlberg/dispatches \
   -f event_type=publish-docker \
   -f client_payload='{"tag":"v0.1.0"}'
 ```

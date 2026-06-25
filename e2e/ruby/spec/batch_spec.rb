@@ -5,16 +5,16 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'batch' do
   it 'batch_crawl_basic: Batch crawl of 2 seed URLs with links to discover' do
     engine_config = { 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     urls_base = ENV.fetch('MOCK_SERVER_BATCH_CRAWL_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/batch_crawl_basic"
     urls = ['/seed1', '/seed2'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_crawl_async(engine, urls)
+    result = Crawlberg.batch_crawl_async(engine, urls)
     expect(result.completed_count).to eq(2)
     expect(result.failed_count).to eq(0)
     expect(result.total_count).to eq(2)
@@ -23,10 +23,10 @@ RSpec.describe 'batch' do
 
   it 'batch_crawl_partial_failure: Batch crawl where one seed URL returns 404 error' do
     engine_config = { 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     urls_base = ENV.fetch('MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/batch_crawl_partial_failure"
     urls = ['/good_seed', '/bad_seed'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_crawl_async(engine, urls)
+    result = Crawlberg.batch_crawl_async(engine, urls)
     expect(result.completed_count).to eq(1)
     expect(result.failed_count).to eq(1)
     expect(result.total_count).to eq(2)
@@ -35,10 +35,10 @@ RSpec.describe 'batch' do
 
   it 'batch_crawl_with_config: Batch crawl with max_depth=1 config verifying pages are discovered' do
     engine_config = { 'max_depth' => 1, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     urls_base = ENV.fetch('MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/batch_crawl_with_config"
     urls = ['/seed1', '/seed2'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_crawl_async(engine, urls)
+    result = Crawlberg.batch_crawl_async(engine, urls)
     expect(result.completed_count).to eq(2)
     expect(result.failed_count).to eq(0)
 
@@ -46,19 +46,19 @@ RSpec.describe 'batch' do
 
   it 'batch_scrape_empty_urls_error: Batch scrape with empty batch_urls array returns error' do
     expect {
-      engine = Kreuzcrawl.create_engine(nil)
+      engine = Crawlberg.create_engine(nil)
       urls_base = ENV.fetch('MOCK_SERVER_BATCH_SCRAPE_EMPTY_URLS_ERROR', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/batch_scrape_empty_urls_error"
       urls = [].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-      Kreuzcrawl.batch_scrape_async(engine, urls)
+      Crawlberg.batch_scrape_async(engine, urls)
     }.to raise_error(RuntimeError)
   end
 
   it 'batch_scrape_with_config: Batch scrape with aggressive preprocessing configuration' do
     engine_config = { 'content' => { 'preprocessing_preset' => 'aggressive' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     urls_base = ENV.fetch('MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/batch_scrape_with_config"
     urls = ['/article1', '/article2'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_scrape_async(engine, urls)
+    result = Crawlberg.batch_scrape_async(engine, urls)
     expect(result.completed_count).to eq(2)
     expect(result.failed_count).to eq(0)
     expect(result.total_count).to eq(2)
@@ -66,10 +66,10 @@ RSpec.describe 'batch' do
   end
 
   it 'scrape_batch_basic: Batch scrape of multiple URLs all succeeding' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     urls_base = ENV.fetch('MOCK_SERVER_SCRAPE_BATCH_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/scrape_batch_basic"
     urls = ['/page1', '/page2', '/page3'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_scrape_async(engine, urls)
+    result = Crawlberg.batch_scrape_async(engine, urls)
     expect(result.completed_count).to eq(3)
     expect(result.failed_count).to eq(0)
     expect(result.total_count).to eq(3)
@@ -77,10 +77,10 @@ RSpec.describe 'batch' do
   end
 
   it 'scrape_batch_partial_failure: Batch scrape with one URL failing returns partial results' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     urls_base = ENV.fetch('MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/scrape_batch_partial_failure"
     urls = ['/good1', '/bad', '/good2'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_scrape_async(engine, urls)
+    result = Crawlberg.batch_scrape_async(engine, urls)
     expect(result.completed_count).to eq(2)
     expect(result.failed_count).to eq(1)
     expect(result.total_count).to eq(3)
@@ -88,10 +88,10 @@ RSpec.describe 'batch' do
   end
 
   it 'scrape_batch_progress: Batch scrape of 2 URLs completes with 2 results' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     urls_base = ENV.fetch('MOCK_SERVER_SCRAPE_BATCH_PROGRESS', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/scrape_batch_progress"
     urls = ['/target', '/other'].map { |p| p.start_with?('http') ? p : "#{urls_base}#{p}" }
-    result = Kreuzcrawl.batch_scrape_async(engine, urls)
+    result = Crawlberg.batch_scrape_async(engine, urls)
     expect(result.total_count).to eq(2)
     expect(result.completed_count).to eq(2)
 

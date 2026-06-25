@@ -55,7 +55,7 @@ fn main() {
     }
 }
 
-const FRB_GENERATED_DART: &str = "../lib/src/kreuzcrawl_bridge_generated/frb_generated.dart";
+const FRB_GENERATED_DART: &str = "../lib/src/crawlberg_bridge_generated/frb_generated.dart";
 const FRB_HANDLER_EXECUTOR_MARKER: &str = "handler.executeSync(";
 const LOADER_MARKER: &str = "_alefResolveExternalLibrary";
 const FRB_INIT_PROLOGUE: &str = "  /// Initialize flutter_rust_bridge\n  static Future<void> init({\n    RustLibApi? api,\n    BaseHandler? handler,\n    ExternalLibrary? externalLibrary,\n    bool forceSameCodegenVersion = true,\n  }) async {\n";
@@ -65,17 +65,17 @@ const FRB_INIT_REPLACEMENT: &str = r#"  /// Resolve the prebuilt native library 
   ///
   /// Published pub.dev packages stage natives under `lib/src/native/<rid>/`
   /// (e.g. `macos-arm64`, `linux-x64`). For local FRB-dev builds the dylib is
-  /// emitted into `lib/src/kreuzcrawl_bridge_generated/`; that
+  /// emitted into `lib/src/crawlberg_bridge_generated/`; that
   /// path is searched as a fallback.
   static Future<ExternalLibrary?> _alefResolveExternalLibrary() async {
     try {
       final packageRoot =
-          await Isolate.resolvePackageUri(Uri.parse('package:kreuzcrawl/kreuzcrawl.dart'));
+          await Isolate.resolvePackageUri(Uri.parse('package:crawlberg/crawlberg.dart'));
       if (packageRoot == null) return null;
       final libNames = _alefHostLibNames();
       final searchDirs = <Uri>[
         if (_alefHostRid() != null) packageRoot.resolve('src/native/${_alefHostRid()}/'),
-        packageRoot.resolve('src/kreuzcrawl_bridge_generated/'),
+        packageRoot.resolve('src/crawlberg_bridge_generated/'),
       ];
       for (final dir in searchDirs) {
         for (final name in libNames) {
@@ -112,11 +112,11 @@ const FRB_INIT_REPLACEMENT: &str = r#"  /// Resolve the prebuilt native library 
     // — list that first so the loader finds it before the bare dylib.
     if (Platform.isMacOS)
       return const [
-        'kreuzcrawl_dart.framework',
-        'libkreuzcrawl_dart.dylib',
+        'crawlberg_dart.framework',
+        'libcrawlberg_dart.dylib',
       ];
-    if (Platform.isWindows) return const ['kreuzcrawl_dart.dll'];
-    return const ['libkreuzcrawl_dart.so'];
+    if (Platform.isWindows) return const ['crawlberg_dart.dll'];
+    return const ['libcrawlberg_dart.so'];
   }
 
   /// Initialize flutter_rust_bridge

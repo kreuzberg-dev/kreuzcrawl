@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: content.</summary>
     public class ContentTests
@@ -26,9 +26,9 @@ namespace Kreuzcrawl
         public async Task Test_Content204NoContent()
         {
             // Handles 204 No Content response gracefully
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_204_no_content";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 204);
     Assert.True(string.IsNullOrEmpty(result.Html?.ToString()));
 
@@ -39,9 +39,9 @@ namespace Kreuzcrawl
         {
             // Handles ISO-8859-1 encoded page correctly
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_charset_iso8859";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("iso-8859-1", result.DetectedCharset!.Trim());
 
         }
@@ -51,9 +51,9 @@ namespace Kreuzcrawl
         {
             // Handles 200 response with empty body gracefully
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_empty_body";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }
@@ -63,9 +63,9 @@ namespace Kreuzcrawl
         {
             // Handles response with Accept-Encoding gzip negotiation
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_gzip_compressed";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
     Assert.True(result.StatusCode == 200);
 
@@ -76,9 +76,9 @@ namespace Kreuzcrawl
         {
             // Respects max body size limit and truncates or skips oversized pages
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_body_size\":1024,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_large_page_limit";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.BodySize < 1025, "expected < 1025");
 
         }
@@ -88,9 +88,9 @@ namespace Kreuzcrawl
         {
             // Extracts content with aggressive preprocessing, excluding nav, sidebar, footer
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_main_only";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
 
         }
 
@@ -99,9 +99,9 @@ namespace Kreuzcrawl
         {
             // Detects PDF content by Content-Type header when URL has no .pdf extension
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_pdf_no_extension";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsPdf);
 
         }
@@ -111,9 +111,9 @@ namespace Kreuzcrawl
         {
             // Removes specified HTML elements by CSS selector before processing
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_remove_tags";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
 
         }
@@ -123,9 +123,9 @@ namespace Kreuzcrawl
         {
             // Handles UTF-8 content with BOM marker correctly
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_utf8_bom";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("utf-8", result.DetectedCharset!.Trim());
     Assert.False(string.IsNullOrEmpty(result.Html?.ToString()));
 

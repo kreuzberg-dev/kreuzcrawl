@@ -14,5 +14,5 @@ fi
 
 echo "=== Saving Docker image as tar archive ==="
 mkdir -p "$OUTPUT_DIR"
-docker save "kreuzcrawl:$VARIANT" | gzip >"$OUTPUT_DIR/kreuzcrawl-$VARIANT.tar.gz"
-ls -lh "$OUTPUT_DIR/kreuzcrawl-$VARIANT.tar.gz"
+docker save "crawlberg:$VARIANT" | gzip >"$OUTPUT_DIR/crawlberg-$VARIANT.tar.gz"
+ls -lh "$OUTPUT_DIR/crawlberg-$VARIANT.tar.gz"

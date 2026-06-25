@@ -9,9 +9,9 @@ defmodule E2e.StealthTest do
   describe "stealth_ua_rotation_config" do
     test "stealth_ua_rotation_config" do
       engine_config = "{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stealth_ua_rotation_config"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
     end
   end
@@ -19,9 +19,9 @@ defmodule E2e.StealthTest do
   describe "stealth_ua_rotation_round_robin" do
     test "stealth_ua_rotation_round_robin" do
       engine_config = "{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stealth_ua_rotation_round_robin"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.pages) >= 2
     end
   end
@@ -29,9 +29,9 @@ defmodule E2e.StealthTest do
   describe "stealth_ua_rotation_single_domain" do
     test "stealth_ua_rotation_single_domain" do
       engine_config = "{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stealth_ua_rotation_single_domain"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert Enum.at(result.pages, 0).status_code == 200
       assert length(result.pages) == 1
     end

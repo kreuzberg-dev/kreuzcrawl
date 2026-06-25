@@ -9,7 +9,7 @@ set -euo pipefail
 test_metadata_article_times() {
   # Extracts article:published_time, modified_time, author, section, and tags
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_ARTICLE_TIMES:-${MOCK_SERVER_URL}/fixtures/metadata_article_times}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_ARTICLE_TIMES:-${MOCK_SERVER_URL}/fixtures/metadata_article_times}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -24,7 +24,7 @@ test_metadata_article_times() {
 test_metadata_favicons() {
   # Extracts favicon link tags including apple-touch-icon
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_FAVICONS:-${MOCK_SERVER_URL}/fixtures/metadata_favicons}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_FAVICONS:-${MOCK_SERVER_URL}/fixtures/metadata_favicons}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -36,7 +36,7 @@ test_metadata_favicons() {
 test_metadata_headings() {
   # Extracts heading hierarchy (h1-h6) from HTML page
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_HEADINGS:-${MOCK_SERVER_URL}/fixtures/metadata_headings}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_HEADINGS:-${MOCK_SERVER_URL}/fixtures/metadata_headings}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -49,7 +49,7 @@ test_metadata_headings() {
 test_metadata_hreflang() {
   # Extracts hreflang alternate link tags
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_HREFLANG:-${MOCK_SERVER_URL}/fixtures/metadata_hreflang}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_HREFLANG:-${MOCK_SERVER_URL}/fixtures/metadata_hreflang}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -61,7 +61,7 @@ test_metadata_hreflang() {
 test_metadata_keywords_author() {
   # Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_KEYWORDS_AUTHOR:-${MOCK_SERVER_URL}/fixtures/metadata_keywords_author}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_KEYWORDS_AUTHOR:-${MOCK_SERVER_URL}/fixtures/metadata_keywords_author}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -86,7 +86,7 @@ test_metadata_keywords_author() {
   assert_not_empty "$val_metadata_viewport" 'metadata.viewport'
   local val_metadata_generator
   val_metadata_generator=$(echo "$output" | jq -r '.metadata.generator')
-  assert_equals "$val_metadata_generator" 'kreuzcrawl/1.0' 'metadata.generator'
+  assert_equals "$val_metadata_generator" 'crawlberg/1.0' 'metadata.generator'
   local val_metadata_theme_color
   val_metadata_theme_color=$(echo "$output" | jq -r '.metadata.theme_color')
   assert_equals "$val_metadata_theme_color" '#ff6600' 'metadata.theme_color'
@@ -104,7 +104,7 @@ test_metadata_keywords_author() {
 test_metadata_og_video_audio() {
   # Extracts og:video, og:audio, and og:locale:alternate metadata
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_OG_VIDEO_AUDIO:-${MOCK_SERVER_URL}/fixtures/metadata_og_video_audio}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_OG_VIDEO_AUDIO:-${MOCK_SERVER_URL}/fixtures/metadata_og_video_audio}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -121,7 +121,7 @@ test_metadata_og_video_audio() {
 test_metadata_response_headers() {
   # Extracts response metadata from HTTP headers (etag, server, content-language)
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_RESPONSE_HEADERS:-${MOCK_SERVER_URL}/fixtures/metadata_response_headers}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_RESPONSE_HEADERS:-${MOCK_SERVER_URL}/fixtures/metadata_response_headers}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -135,7 +135,7 @@ test_metadata_response_headers() {
 test_metadata_word_count() {
   # Computes word count from visible page text
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_METADATA_WORD_COUNT:-${MOCK_SERVER_URL}/fixtures/metadata_word_count}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_METADATA_WORD_COUNT:-${MOCK_SERVER_URL}/fixtures/metadata_word_count}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')

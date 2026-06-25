@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: warc
 
-use kreuzcrawl::crawl;
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::crawl;
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -16,7 +16,7 @@ use mock_server::{MockRoute, MockServer};
 async fn test_warc_basic_output() {
     // Scrape single page with WARC output enabled writes to file
     let engine_config: CrawlConfig =
-        serde_json::from_str("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}")
+        serde_json::from_str("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_test.warc\"}")
             .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = std::env::var("MOCK_SERVER_WARC_BASIC_OUTPUT").unwrap_or_else(|_| {
@@ -33,7 +33,7 @@ async fn test_warc_basic_output() {
 async fn test_warc_multi_page_crawl() {
     // Crawl multiple pages with depth=1 and WARC output enabled
     let engine_config: CrawlConfig = serde_json::from_str(
-        "{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}",
+        "{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/crawlberg_crawl.warc\"}",
     )
     .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");

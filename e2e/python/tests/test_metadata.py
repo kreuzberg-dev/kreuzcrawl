@@ -7,7 +7,7 @@
 
 import os
 import pytest  # noqa: F401
-from kreuzcrawl import scrape, create_engine
+from crawlberg import scrape, create_engine
 
 
 def _alef_e2e_text(value: object) -> str:
@@ -96,7 +96,7 @@ async def test_metadata_keywords_author() -> None:
     assert "rust" in result.metadata.keywords  # noqa: S101
     assert result.metadata.author.strip() == "Jane Developer"  # noqa: S101
     assert result.metadata.viewport  # noqa: S101
-    assert result.metadata.generator.strip() == "kreuzcrawl/1.0"  # noqa: S101
+    assert result.metadata.generator.strip() == "crawlberg/1.0"  # noqa: S101
     assert result.metadata.theme_color.strip() == "#ff6600"  # noqa: S101
     assert result.metadata.robots.strip() == "index, follow"  # noqa: S101
     assert result.metadata.html_lang.strip() == "en"  # noqa: S101

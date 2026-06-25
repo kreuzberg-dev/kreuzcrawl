@@ -40,7 +40,7 @@ tha = "tha"
 # Substring matching in error classification (e.g. chain.contains("truncat"))
 truncat = "truncat"
 AIMD = "AIMD"
-kreuzcrawl = "kreuzcrawl"
+crawlberg = "crawlberg"
 # Domain-specific terms
 opf = "opf"
 hocr = "hocr"

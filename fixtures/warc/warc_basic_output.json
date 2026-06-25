@@ -18,7 +18,7 @@
 			}
 		],
 		"config": {
-			"warc_output": "/tmp/kreuzcrawl_test.warc",
+			"warc_output": "/tmp/crawlberg_test.warc",
 			"respect_robots_txt": false
 		}
 	},

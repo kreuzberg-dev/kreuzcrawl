@@ -5,15 +5,15 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'interaction' do
   it 'interact_action_sequence: Execute a sequence of multiple actions (click, type, click) and verify all succeed with correct indices' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_action_sequence"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#open', 'type' => 'click' }, { 'selector' => '#field', 'text' => 'test_data', 'type' => 'type' }, { 'selector' => '#submit', 'type' => 'click' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#open', 'type' => 'click' }, { 'selector' => '#field', 'text' => 'test_data', 'type' => 'type' }, { 'selector' => '#submit', 'type' => 'click' }])
     expect(result.action_results[0].action_index).to eq(0)
     expect(result.action_results[0].action_type.to_s.strip).to eq('click'.strip)
     expect(result.action_results[0].success).to be(true)
@@ -28,9 +28,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_click_element: Click a button element and verify success' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_click_element"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#submit', 'type' => 'click' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#submit', 'type' => 'click' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('click'.strip)
     expect(result.action_results[0].action_index).to eq(0)
@@ -39,9 +39,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_execute_js: Execute JavaScript that returns document.title and verify success with data' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_execute_js"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'script' => 'document.title', 'type' => 'executeJs' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'script' => 'document.title', 'type' => 'executeJs' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('executeJs'.strip)
     expect(result.action_results[0].data.to_s).to include('JS Test Page')
@@ -50,9 +50,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_invalid_selector: Click on a non-existent selector and verify error in action_results' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_invalid_selector"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#nonexistent', 'type' => 'click' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#nonexistent', 'type' => 'click' }])
     expect(result.action_results[0].success).to be(false)
     expect(result.action_results[0].action_type.to_s.strip).to eq('click'.strip)
     expect(result.action_results[0].error.to_s).to include('find click target')
@@ -62,17 +62,17 @@ RSpec.describe 'interaction' do
   it 'interact_max_actions_exceeded: Submit 101 actions (exceeds MAX_ACTIONS=100) and verify validation error' do
     expect {
       engine_config = { 'browser' => { 'mode' => 'always' } }
-      engine = Kreuzcrawl.create_engine(engine_config.to_json)
+      engine = Crawlberg.create_engine(engine_config.to_json)
       url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_max_actions_exceeded"
-      Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }])
+      Crawlberg.interact_async(engine, url, [{ 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }, { 'selector' => '#btn', 'type' => 'click' }])
     }.to raise_error(RuntimeError)
   end
 
   it 'interact_press_key: Press a keyboard key (Enter) and verify success' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_press_key"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#searchbox', 'type' => 'click' }, { 'selector' => '#searchbox', 'text' => 'test', 'type' => 'type' }, { 'key' => 'Enter', 'type' => 'press' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#searchbox', 'type' => 'click' }, { 'selector' => '#searchbox', 'text' => 'test', 'type' => 'type' }, { 'key' => 'Enter', 'type' => 'press' }])
     expect(result.action_results[2].success).to be(true)
     expect(result.action_results[2].action_type.to_s.strip).to eq('press'.strip)
     expect(result.action_results[2].action_index).to eq(2)
@@ -81,9 +81,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_scrape_default: Execute default Scrape action and verify extracted content' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_scrape_default"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'type' => 'scrape' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'type' => 'scrape' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('scrape'.strip)
     expect(result.action_results[0].data.to_s).not_to be_empty
@@ -92,9 +92,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_screenshot: Screenshot a specific element via selector and verify image data' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_screenshot"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'full_page' => false, 'type' => 'screenshot' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'full_page' => false, 'type' => 'screenshot' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('screenshot'.strip)
     expect(result.action_results[0].data.to_s).not_to be_empty
@@ -103,9 +103,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_screenshot_full_page: Screenshot full page and verify image data' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_screenshot_full_page"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'full_page' => true, 'type' => 'screenshot' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'full_page' => true, 'type' => 'screenshot' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('screenshot'.strip)
     expect(result.action_results[0].data.to_s).not_to be_empty
@@ -114,9 +114,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_scroll_down: Scroll down on the page and verify success' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_scroll_down"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'amount' => 500, 'direction' => 'down', 'type' => 'scroll' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'amount' => 500, 'direction' => 'down', 'type' => 'scroll' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('scroll'.strip)
     expect(result.action_results[0].action_index).to eq(0)
@@ -125,9 +125,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_type_input: Type text into an input field and verify success' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_type_input"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#username', 'text' => 'john_doe', 'type' => 'type' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#username', 'text' => 'john_doe', 'type' => 'type' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('type'.strip)
     expect(result.action_results[0].action_index).to eq(0)
@@ -136,9 +136,9 @@ RSpec.describe 'interaction' do
 
   it 'interact_wait_selector: Wait for a CSS selector that exists on the page' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/interact_wait_selector"
-    result = Kreuzcrawl.interact_async(engine, url, [{ 'selector' => '#content', 'type' => 'wait' }])
+    result = Crawlberg.interact_async(engine, url, [{ 'selector' => '#content', 'type' => 'wait' }])
     expect(result.action_results[0].success).to be(true)
     expect(result.action_results[0].action_type.to_s.strip).to eq('wait'.strip)
     expect(result.action_results[0].action_index).to eq(0)

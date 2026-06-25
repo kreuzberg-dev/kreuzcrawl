@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,49 +166,49 @@ void main() {
 
   test('Discovers all URLs on a site without fetching full content', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_discover_urls");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, greaterThanOrEqualTo(3));
   });
 
   test('Excludes URLs matching patterns from URL map', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"exclude_paths":["/private/.*","/api/.*"],"max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_exclude_patterns");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, equals(1));
   });
 
   test('Includes subdomain URLs in URL map discovery; page has 1 local and 1 subdomain link', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"allow_subdomains":true,"max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_include_subdomains");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, greaterThanOrEqualTo(2));
   });
 
   test('Handles large sitemap with 100+ URLs', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_large_sitemap");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, greaterThanOrEqualTo(100));
   });
 
   test('Limits map result count to specified maximum', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"map_limit":5,"max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_limit_pagination");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, lessThanOrEqualTo(5));
   });
 
   test('Filters map results by search keyword; 4 links in page but only 2 match \'blog\'', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"map_search":"blog","max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("map_search_filter");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     expect(result.urls.length, greaterThanOrEqualTo(2));
     expect(result.urls.length, lessThanOrEqualTo(2));
   });

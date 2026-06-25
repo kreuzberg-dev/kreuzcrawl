@@ -38,7 +38,7 @@ permissions:
 jobs:
     rust:
         name: Rust (${{ matrix.os }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ${{ matrix.os }}
         timeout-minutes: 120
         strategy:
@@ -72,7 +72,7 @@ jobs:
               uses: xberg-io/actions/install-task@v1
 
             - name: Run clippy
-              run: cargo clippy --workspace --exclude kreuzcrawl-ffi --exclude kreuzcrawl-py --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm -- -D warnings
+              run: cargo clippy --workspace --exclude crawlberg-ffi --exclude crawlberg-py --exclude crawlberg-php --exclude crawlberg-node --exclude crawlberg-wasm -- -D warnings
               shell: bash
 
             - name: Run tests
@@ -84,12 +84,12 @@ jobs:
                   DYLD_FALLBACK_LIBRARY_PATH: ${{ env.DYLD_FALLBACK_LIBRARY_PATH || '' }}
 
             - name: Check no-default-features
-              run: cargo check -p kreuzcrawl --no-default-features
+              run: cargo check -p crawlberg --no-default-features
               shell: bash
 
     validate-rust:
         name: Validate Rust
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 60
         steps:
@@ -128,9 +128,9 @@ jobs:
             - name: Validate vendored C headers match canonical
               shell: bash
               run: |
-                  CANONICAL="crates/kreuzcrawl-ffi/include/kreuzcrawl.h"
+                  CANONICAL="crates/crawlberg-ffi/include/crawlberg.h"
                   FAIL=0
-                  for VENDORED in packages/go/v4/internal/ffi/kreuzcrawl.h packages/ruby/vendor/kreuzcrawl-ffi/kreuzcrawl.h; do
+                  for VENDORED in packages/go/v4/internal/ffi/crawlberg.h packages/ruby/vendor/crawlberg-ffi/crawlberg.h; do
                     if [ -f "$VENDORED" ] && ! diff -q "$CANONICAL" "$VENDORED" > /dev/null 2>&1; then
                       echo "::error::$VENDORED is out of sync with $CANONICAL — run 'alef sync-versions'"
                       diff "$CANONICAL" "$VENDORED" | head -20

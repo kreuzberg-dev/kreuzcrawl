@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_content_binary_skip(void) {
     /* Skips image and video content types gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_BINARY_SKIP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,20 +30,20 @@ void test_content_binary_skip(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_binary_skip", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t content_was_skipped = kcrawl_scrape_result_was_skipped(result);
+    int32_t content_was_skipped = cberg_scrape_result_was_skipped(result);
     assert(content_was_skipped == 1 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_pdf_link_skip(void) {
     /* Encounters PDF link and skips or marks as document type */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_PDF_LINK_SKIP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -54,20 +54,20 @@ void test_content_pdf_link_skip(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_pdf_link_skip", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t content_was_skipped = kcrawl_scrape_result_was_skipped(result);
+    int32_t content_was_skipped = cberg_scrape_result_was_skipped(result);
     assert(content_was_skipped == 1 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_concurrent_depth(void) {
     /* Concurrent crawl respects max_depth limit */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":3,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_CONCURRENT_DEPTH");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -78,24 +78,24 @@ void test_crawl_concurrent_depth(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_concurrent_depth", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length == 3 && "equals assertion failed");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_concurrent_limit(void) {
     /* Respects max concurrent requests limit during crawl */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":2,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":2,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_CONCURRENT_LIMIT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -106,22 +106,22 @@ void test_crawl_concurrent_limit(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_concurrent_limit", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 5 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_concurrent_max_pages(void) {
     /* Concurrent crawl respects max_pages budget */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":4,\"max_depth\":1,\"max_pages\":3,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":4,\"max_depth\":1,\"max_pages\":3,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -132,22 +132,22 @@ void test_crawl_concurrent_max_pages(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_concurrent_max_pages", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length <= 3 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_custom_headers(void) {
     /* Sends custom headers on all crawl requests */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"custom_headers\":{\"accept_language\":\"en-US\",\"x_custom_header\":\"test-value\"},\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"custom_headers\":{\"accept_language\":\"en-US\",\"x_custom_header\":\"test-value\"},\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_CUSTOM_HEADERS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -158,22 +158,22 @@ void test_crawl_custom_headers(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_custom_headers", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_depth_one(void) {
     /* Follows links one level deep from start page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_DEPTH_ONE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -184,24 +184,24 @@ void test_crawl_depth_one(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_depth_one", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length == 3 && "equals assertion failed");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_depth_priority(void) {
     /* Crawls in breadth-first order, processing depth-0 pages before depth-1 */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":2,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":2,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_DEPTH_PRIORITY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -212,22 +212,22 @@ void test_crawl_depth_priority(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_depth_priority", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 4 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_depth_two(void) {
     /* Crawls 3 levels deep (depth 0, 1, 2) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":2,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":2,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_DEPTH_TWO");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -238,23 +238,23 @@ void test_crawl_depth_two(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_depth_two", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 3 && "equals assertion failed");
     assert(pages_length >= 3 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_depth_two_chain(void) {
     /* Depth=2 crawl follows a chain of links across three levels */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -265,22 +265,22 @@ void test_crawl_depth_two_chain(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_depth_two_chain", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 3 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_double_slash_normalization(void) {
     /* Normalizes double slashes in URL paths (//page to /page) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -291,22 +291,22 @@ void test_crawl_double_slash_normalization(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_double_slash_normalization", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_empty_page_no_links(void) {
     /* Crawl completes when child page has no outgoing links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -317,22 +317,22 @@ void test_crawl_empty_page_no_links(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_empty_page_no_links", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_exclude_path_pattern(void) {
     /* Skips URLs matching the exclude path pattern */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"exclude_paths\":[\"/admin/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"exclude_paths\":[\"/admin/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -343,22 +343,22 @@ void test_crawl_exclude_path_pattern(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_exclude_path_pattern", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_external_links_ignored(void) {
     /* External links are discovered but not followed when stay_on_domain is true */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1,\"stay_on_domain\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1,\"stay_on_domain\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -369,24 +369,24 @@ void test_crawl_external_links_ignored(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_external_links_ignored", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length == 2 && "equals assertion failed");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_fragment_stripping(void) {
     /* Strips #fragment from URLs for deduplication */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -397,22 +397,22 @@ void test_crawl_fragment_stripping(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_fragment_stripping", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_include_path_pattern(void) {
     /* Only follows URLs matching the include path pattern */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"include_paths\":[\"/blog/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"include_paths\":[\"/blog/.*\"],\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -423,22 +423,22 @@ void test_crawl_include_path_pattern(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_include_path_pattern", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_max_depth_zero(void) {
     /* max_depth=0 crawls only the seed page with no link following */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":0}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":0}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -449,23 +449,23 @@ void test_crawl_max_depth_zero(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_max_depth_zero", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 1 && "equals assertion failed");
     assert(pages_length <= 1 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_max_pages(void) {
     /* Stops crawling at page budget limit */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_pages\":3,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_pages\":3,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_MAX_PAGES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -476,22 +476,22 @@ void test_crawl_max_pages(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_max_pages", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length <= 3 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_mixed_content_types(void) {
     /* Crawl handles links to non-HTML content types gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -502,22 +502,22 @@ void test_crawl_mixed_content_types(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_mixed_content_types", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 2 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_multiple_redirects_in_traversal(void) {
     /* Multiple linked pages with redirects are handled during crawl traversal */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -528,22 +528,22 @@ void test_crawl_multiple_redirects_in_traversal(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_multiple_redirects_in_traversal", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 1 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_query_param_dedup(void) {
     /* Deduplicates URLs with same query params in different order */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -554,22 +554,22 @@ void test_crawl_query_param_dedup(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_query_param_dedup", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_redirect_in_traversal(void) {
     /* Links that redirect are followed during crawl traversal */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -580,22 +580,22 @@ void test_crawl_redirect_in_traversal(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_redirect_in_traversal", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 1 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_self_link_no_loop(void) {
     /* Page linking to itself does not cause infinite crawl loop */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -606,22 +606,22 @@ void test_crawl_self_link_no_loop(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_self_link_no_loop", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_single_page_no_links(void) {
     /* Crawling a page with no links returns only the seed page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_SINGLE_PAGE_NO_LINKS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -632,22 +632,22 @@ void test_crawl_single_page_no_links(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_single_page_no_links", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_stay_on_domain(void) {
     /* Does not follow external links when stay_on_domain is true */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_STAY_ON_DOMAIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -658,24 +658,24 @@ void test_crawl_stay_on_domain(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_stay_on_domain", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length == 2 && "equals assertion failed");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_subdomain_exclusion(void) {
     /* Stays on exact domain and skips subdomain links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"allow_subdomains\":false,\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"allow_subdomains\":false,\"max_depth\":1,\"respect_robots_txt\":false,\"stay_on_domain\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -686,24 +686,24 @@ void test_crawl_subdomain_exclusion(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_subdomain_exclusion", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
-    int32_t stayed_on_domain = kcrawl_crawl_result_stayed_on_domain(result);
+    int32_t stayed_on_domain = cberg_crawl_result_stayed_on_domain(result);
     assert(pages_length == 2 && "equals assertion failed");
     assert(stayed_on_domain == 1 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_subdomain_inclusion(void) {
     /* Crawls subdomains when allow_subdomains is enabled */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"allow_subdomains\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"allow_subdomains\":true,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -714,22 +714,22 @@ void test_crawl_subdomain_inclusion(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_subdomain_inclusion", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 2 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_trailing_slash_dedup(void) {
     /* Deduplicates /page and /page/ as the same URL */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -740,22 +740,22 @@ void test_crawl_trailing_slash_dedup(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_trailing_slash_dedup", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length == 2 && "equals assertion failed");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_crawl_url_deduplication(void) {
     /* Deduplicates URLs that differ only by fragment or query params */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CRAWL_URL_DEDUPLICATION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -766,12 +766,12 @@ void test_crawl_url_deduplication(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/crawl_url_deduplication", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length <= 2 && "expected less than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

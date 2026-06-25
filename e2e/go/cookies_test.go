@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/crawlberg/packages/go"
 )
 
 func Test_CookiesPerDomain(t *testing.T) {

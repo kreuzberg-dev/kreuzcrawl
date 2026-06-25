@@ -4,7 +4,7 @@ set -euo pipefail
 
 artifacts_dir="${1:-node-artifacts}"
 typescript_defs_dir="${2:-typescript-defs}"
-dest_dir="${3:-crates/kreuzcrawl-node}"
+dest_dir="${3:-crates/crawlberg-node}"
 
 if [ ! -d "$artifacts_dir" ]; then
   echo "Error: Artifacts directory not found: $artifacts_dir" >&2

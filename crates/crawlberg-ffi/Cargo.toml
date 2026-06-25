@@ -1,0 +1,42 @@
+[package]
+name = "crawlberg-ffi"
+version = "0.3.0"
+edition = "2021"
+license = "Elastic-2.0"
+description = "High-performance web crawling engine"
+readme = false
+keywords = ["crawl", "scrape", "spider", "web"]
+categories = []
+repository = "https://github.com/xberg-io/crawlberg"
+
+# `serde_json`, `ahash`, and `tokio` are emitted unconditionally above so the
+# manifest is stable across regens (and so the C FFI codegen can pull them in
+# when an async / Result-typed function appears in the API surface), but for
+# umbrella crates with no async fns and no JSON-marshalled return types they
+# are genuinely unused. The conditional `async-trait` / `futures-util` deps
+# are similarly flagged when the umbrella has trait-bridge / streaming adapters
+# configured but no actual async-trait / async-stream callsite in the generated
+# FFI shim.
+[package.metadata.cargo-machete]
+ignored = ["ahash", "serde_json", "tokio", "futures-util"]
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[features]
+default = ["interact", "browser-chromiumoxide"]
+interact = ["crawlberg/interact"]
+browser-chromiumoxide = ["crawlberg/browser-chromiumoxide"]
+
+[dependencies]
+ahash = "0.8"
+crawlberg = { path = "../crawlberg", version = "0.3.0", features = ["interact", "browser-chromiumoxide"] }
+futures-util = "0.3"
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+
+[build-dependencies]
+cbindgen = "0.29"
+
+[dev-dependencies]
+tempfile = "3"

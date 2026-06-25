@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 
 import { describe, expect, it } from "vitest";
-import { scrape, batchCrawlStream, crawlStream, createEngine } from "@kreuzberg/kreuzcrawl";
+import { scrape, batchCrawlStream, crawlStream, createEngine } from "@kreuzberg/crawlberg";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {
 	const contentEncoding = response.headers.get("content-encoding");

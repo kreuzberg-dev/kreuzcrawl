@@ -36,12 +36,12 @@ pub struct ScrapeOutput {
 
 /// A pluggable scraping backend.
 ///
-/// Implementors wrap a specific framework (e.g., the native kreuzcrawl engine,
+/// Implementors wrap a specific framework (e.g., the native crawlberg engine,
 /// an external HTTP service, or a third-party library) so that the harness can
 /// drive any backend through a uniform interface.
 #[async_trait]
 pub trait ScrapeAdapter: Send + Sync {
-    /// Short, human-readable name for this adapter (e.g., `"kreuzcrawl-native"`).
+    /// Short, human-readable name for this adapter (e.g., `"crawlberg-native"`).
     fn name(&self) -> &str;
 
     /// Version string for the underlying framework, if available.

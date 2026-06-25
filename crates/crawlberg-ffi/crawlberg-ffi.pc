@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: crawlberg-ffi
+Description: C FFI bindings for Crawlberg web crawling library
+Version: 0.1.0-rc.2
+URL: https://github.com/xberg-io/crawlberg
+Libs: -L${libdir} -lcrawlberg_ffi
+Cflags: -I${includedir}

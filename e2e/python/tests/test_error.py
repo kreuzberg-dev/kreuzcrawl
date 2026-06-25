@@ -7,7 +7,7 @@
 
 import os
 import pytest  # noqa: F401
-from kreuzcrawl import scrape, create_engine, CrawlConfig, BrowserConfig, ProxyConfig
+from crawlberg import scrape, create_engine, CrawlConfig, BrowserConfig, ProxyConfig
 
 
 def _alef_e2e_text(value: object) -> str:

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: stealth. */
 final class StealthTest extends TestCase
@@ -21,9 +21,9 @@ final class StealthTest extends TestCase
     public function test_stealth_ua_rotation_config(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["userAgents" => ["Mozilla/5.0 (Windows NT 10.0)", "Chrome/120.0.0.0"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_config';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 
@@ -35,9 +35,9 @@ final class StealthTest extends TestCase
     public function test_stealth_ua_rotation_round_robin(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "maxPages" => 3, "userAgents" => ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_round_robin';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
 
@@ -49,9 +49,9 @@ final class StealthTest extends TestCase
     public function test_stealth_ua_rotation_single_domain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 0, "stayOnDomain" => true, "userAgents" => ["Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_single_domain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(200, $result->getPages()[0]->statusCode);
             $this->assertEquals(1, count($result->getPages()));

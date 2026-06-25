@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: robots.</summary>
     public class RobotsTests
@@ -27,10 +27,10 @@ namespace Kreuzcrawl
         {
             // Permissive robots.txt allows all paths
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_ALLOW_ALL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_allow_all";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -40,10 +40,10 @@ namespace Kreuzcrawl
         {
             // Allow directive overrides Disallow for specific paths
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_ALLOW_OVERRIDE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_allow_override";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -52,11 +52,11 @@ namespace Kreuzcrawl
         public async Task Test_RobotsCommentsHandling()
         {
             // Correctly parses robots.txt with inline and line comments
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_COMMENTS_HANDLING");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_comments_handling";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -65,11 +65,11 @@ namespace Kreuzcrawl
         public async Task Test_RobotsCrawlDelay()
         {
             // Respects crawl-delay directive from robots.txt
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_CRAWL_DELAY");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_crawl_delay";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.CrawlDelay == 2);
 
         }
@@ -79,10 +79,10 @@ namespace Kreuzcrawl
         {
             // Robots.txt disallows specific paths
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_DISALLOW_PATH");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_disallow_path";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(result.IsAllowed);
 
         }
@@ -92,10 +92,10 @@ namespace Kreuzcrawl
         {
             // Detects nofollow meta robots tag and skips link extraction
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_META_NOFOLLOW");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_meta_nofollow";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.NofollowDetected);
 
         }
@@ -105,10 +105,10 @@ namespace Kreuzcrawl
         {
             // Detects noindex meta robots tag in HTML page
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_META_NOINDEX");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_meta_noindex";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.NoindexDetected);
 
         }
@@ -118,10 +118,10 @@ namespace Kreuzcrawl
         {
             // Missing robots.txt (404) allows all crawling
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_MISSING_404");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_missing_404";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -131,10 +131,10 @@ namespace Kreuzcrawl
         {
             // Picks the most specific user-agent block from robots.txt
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"SpecificBot\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_MULTIPLE_USER_AGENTS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_multiple_user_agents";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -143,11 +143,11 @@ namespace Kreuzcrawl
         public async Task Test_RobotsRequestRate()
         {
             // Parses request-rate directive from robots.txt
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_REQUEST_RATE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_request_rate";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.CrawlDelay == 5);
     Assert.True(result.IsAllowed);
 
@@ -158,10 +158,10 @@ namespace Kreuzcrawl
         {
             // Discovers sitemap URL from Sitemap directive in robots.txt
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_SITEMAP_DIRECTIVE");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_sitemap_directive";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.IsAllowed);
 
         }
@@ -170,11 +170,11 @@ namespace Kreuzcrawl
         public async Task Test_RobotsUserAgentSpecific()
         {
             // Matches user-agent specific rules in robots.txt
-            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"KreuzcrawlBot\"}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"CrawlbergBot\"}", ConfigOptions)!;
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_user_agent_specific";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(result.IsAllowed);
 
         }
@@ -184,10 +184,10 @@ namespace Kreuzcrawl
         {
             // Handles wildcard Disallow patterns in robots.txt
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_WILDCARD_PATHS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_wildcard_paths";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.False(result.IsAllowed);
 
         }
@@ -197,10 +197,10 @@ namespace Kreuzcrawl
         {
             // Respects X-Robots-Tag HTTP header directives
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_ROBOTS_X_ROBOTS_TAG");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_x_robots_tag";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Equal("noindex, nofollow", result.XRobotsTag!.Trim());
     Assert.True(result.NoindexDetected);
     Assert.True(result.NofollowDetected);

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: auth. */
 final class AuthTest extends TestCase
@@ -21,9 +21,9 @@ final class AuthTest extends TestCase
     public function test_auth_basic_http(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["auth" => ["password" => "testpass", "type" => "basic", "username" => "testuser"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_basic_http';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->authHeaderSent);
             $this->assertEquals(200, $result->statusCode);
@@ -36,9 +36,9 @@ final class AuthTest extends TestCase
     public function test_auth_bearer_token(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["auth" => ["token" => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test", "type" => "bearer"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_bearer_token';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->authHeaderSent);
             $this->assertEquals(200, $result->statusCode);
@@ -51,9 +51,9 @@ final class AuthTest extends TestCase
     public function test_auth_custom_header(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["auth" => ["name" => "X-API-Key", "type" => "header", "value" => "sk-test-key-12345"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_custom_header';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->authHeaderSent);
             $this->assertEquals(200, $result->statusCode);

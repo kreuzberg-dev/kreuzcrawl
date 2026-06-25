@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: content. */
 final class ContentTest extends TestCase
@@ -20,9 +20,9 @@ final class ContentTest extends TestCase
     /** Handles 204 No Content response gracefully */
     public function test_content_204_no_content(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_204_no_content';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(204, $result->statusCode);
             $this->assertEmpty($result->html);
@@ -35,9 +35,9 @@ final class ContentTest extends TestCase
     public function test_content_charset_iso8859(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_charset_iso8859';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("iso-8859-1", trim(($result->detectedCharset ?? null)));
 
@@ -49,9 +49,9 @@ final class ContentTest extends TestCase
     public function test_content_empty_body(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_empty_body';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 
@@ -63,9 +63,9 @@ final class ContentTest extends TestCase
     public function test_content_gzip_compressed(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_gzip_compressed';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
             $this->assertEquals(200, $result->statusCode);
@@ -78,9 +78,9 @@ final class ContentTest extends TestCase
     public function test_content_large_page_limit(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxBodySize" => 1024, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_large_page_limit';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertLessThan(1025, $result->bodySize);
 
@@ -92,9 +92,9 @@ final class ContentTest extends TestCase
     public function test_content_main_only(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["content" => ["preprocessingPreset" => "aggressive"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_main_only';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
         $this->assertNotNull($result);
     }
 
@@ -103,9 +103,9 @@ final class ContentTest extends TestCase
     public function test_content_pdf_no_extension(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_pdf_no_extension';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isPdf);
 
@@ -117,9 +117,9 @@ final class ContentTest extends TestCase
     public function test_content_remove_tags(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["removeTags" => ["nav", "aside", "footer"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_remove_tags';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
 
@@ -131,9 +131,9 @@ final class ContentTest extends TestCase
     public function test_content_utf8_bom(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_utf8_bom';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("utf-8", trim(($result->detectedCharset ?? null)));
             $this->assertNotEmpty($result->html);

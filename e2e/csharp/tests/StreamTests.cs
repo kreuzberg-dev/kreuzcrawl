@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: stream.</summary>
     public class StreamTests
@@ -27,14 +27,14 @@ namespace Kreuzcrawl
         {
             // Batch crawl stream produces expected Page and Complete events
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_CRAWL_STREAM_EVENTS");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_crawl_stream_events";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/page1", "/page2", "/page3" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
             var urlsReq = new BatchCrawlStreamRequest { Urls = urls };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.BatchCrawlStreamAsync(engine, urlsReq))
+            await foreach (var chunk in CrawlbergConverter.BatchCrawlStreamAsync(engine, urlsReq))
             {
                 chunks.Add(chunk);
             }
@@ -50,14 +50,14 @@ namespace Kreuzcrawl
         {
             // Batch crawl stream emits both Page and Error events for mixed success/failure URLs
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_CRAWL_STREAM_PARTIAL_FAILURE");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_crawl_stream_partial_failure";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/success1", "/fail", "/success2" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
             var urlsReq = new BatchCrawlStreamRequest { Urls = urls };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.BatchCrawlStreamAsync(engine, urlsReq))
+            await foreach (var chunk in CrawlbergConverter.BatchCrawlStreamAsync(engine, urlsReq))
             {
                 chunks.Add(chunk);
             }
@@ -73,13 +73,13 @@ namespace Kreuzcrawl
         {
             // Crawl stream produces page and complete events
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CRAWL_STREAM_EVENTS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_stream_events";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }
@@ -95,13 +95,13 @@ namespace Kreuzcrawl
         {
             // Stream produces events for multi-depth crawl with link following
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STREAM_DEPTH_CRAWL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_depth_crawl";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }
@@ -117,13 +117,13 @@ namespace Kreuzcrawl
         {
             // Stream emits error event when a page fails mid-crawl, but other pages succeed
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STREAM_ERROR_EVENT_MID_CRAWL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_error_event_mid_crawl";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }
@@ -139,13 +139,13 @@ namespace Kreuzcrawl
         {
             // Stream ensures complete event arrives after all page events
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STREAM_EVENT_ORDERING");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_event_ordering";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }
@@ -161,13 +161,13 @@ namespace Kreuzcrawl
         {
             // Stream handles crawl of 5+ pages with multiple events
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STREAM_LARGE_CRAWL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_large_crawl";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }
@@ -183,13 +183,13 @@ namespace Kreuzcrawl
         {
             // Stream emits page and complete events even when some pages fail
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_STREAM_WITH_ERROR_EVENT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_with_error_event";
             var urlReq = new CrawlStreamRequest { Url = url };
             var chunks = new List<CrawlEvent>();
             var streamComplete = false;
-            await foreach (var chunk in KreuzcrawlConverter.CrawlStreamAsync(engine, urlReq))
+            await foreach (var chunk in CrawlbergConverter.CrawlStreamAsync(engine, urlReq))
             {
                 chunks.Add(chunk);
             }

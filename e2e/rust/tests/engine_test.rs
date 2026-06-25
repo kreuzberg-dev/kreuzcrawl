@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: engine
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
-use kreuzcrawl::{crawl, crawl_stream, map_urls, scrape};
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
+use crawlberg::{crawl, crawl_stream, map_urls, scrape};
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -113,13 +113,13 @@ async fn test_engine_stream_basic() {
         .map(|r| r.expect("stream item failed"))
         .collect();
     assert!(
-        chunks.iter().any(|e| matches!(e, kreuzcrawl::CrawlEvent::Page { .. })),
+        chunks.iter().any(|e| matches!(e, crawlberg::CrawlEvent::Page { .. })),
         "expected true"
     );
     assert!(
         chunks
             .iter()
-            .any(|e| matches!(e, kreuzcrawl::CrawlEvent::Complete { .. })),
+            .any(|e| matches!(e, crawlberg::CrawlEvent::Complete { .. })),
         "expected true"
     );
     assert!(chunks.len() >= 3, "expected >= 3");

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: proxy. */
 final class ProxyTest extends TestCase
@@ -21,9 +21,9 @@ final class ProxyTest extends TestCase
     public function test_proxy_authenticated(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["proxy" => ["password" => "proxypass", "url" => "http://127.0.0.1:8889", "username" => "proxyuser"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/proxy_authenticated';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(0, count($result->getPages()));
 
@@ -35,9 +35,9 @@ final class ProxyTest extends TestCase
     public function test_proxy_basic_success(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["proxy" => ["url" => "http://127.0.0.1:8888"], "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/proxy_basic_success';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(0, count($result->getPages()));
 

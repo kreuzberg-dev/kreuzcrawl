@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,11 +166,11 @@ void main() {
 
   test('Batch crawl stream produces expected Page and Complete events', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_crawl_stream_events");
     final urls = <String>['/page1', '/page2', '/page3'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
     final urlsReq = BatchCrawlStreamRequest(urls: urls);
-    final result = await KreuzcrawlBridge.batchCrawlStream(engine, urlsReq).toList();
+    final result = await CrawlbergBridge.batchCrawlStream(engine, urlsReq).toList();
     // skipped streaming assertion: 'greater_than_or_equal'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -178,11 +178,11 @@ void main() {
 
   test('Batch crawl stream emits both Page and Error events for mixed success/failure URLs', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final urlsBase = _fixtureUrl("batch_crawl_stream_partial_failure");
     final urls = <String>['/success1', '/fail', '/success2'].map((p) => p.startsWith('http') ? p : urlsBase + p).toList();
     final urlsReq = BatchCrawlStreamRequest(urls: urls);
-    final result = await KreuzcrawlBridge.batchCrawlStream(engine, urlsReq).toList();
+    final result = await CrawlbergBridge.batchCrawlStream(engine, urlsReq).toList();
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -190,10 +190,10 @@ void main() {
 
   test('Crawl stream produces page and complete events', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("crawl_stream_events");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'greater_than_or_equal'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -201,10 +201,10 @@ void main() {
 
   test('Stream produces events for multi-depth crawl with link following', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stream_depth_crawl");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'greater_than_or_equal'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -212,10 +212,10 @@ void main() {
 
   test('Stream emits error event when a page fails mid-crawl, but other pages succeed', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stream_error_event_mid_crawl");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -223,10 +223,10 @@ void main() {
 
   test('Stream ensures complete event arrives after all page events', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stream_event_ordering");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'greater_than_or_equal'
@@ -234,10 +234,10 @@ void main() {
 
   test('Stream handles crawl of 5+ pages with multiple events', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stream_large_crawl");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'greater_than_or_equal'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
@@ -245,10 +245,10 @@ void main() {
 
   test('Stream emits page and complete events even when some pages fail', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stream_with_error_event");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'greater_than_or_equal'

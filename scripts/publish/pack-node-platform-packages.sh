@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-npm_dir="${1:-crates/kreuzcrawl-node/npm}"
+npm_dir="${1:-crates/crawlberg-node/npm}"
 
 if [ ! -d "$npm_dir" ]; then
   echo "Error: npm directory not found: $npm_dir" >&2

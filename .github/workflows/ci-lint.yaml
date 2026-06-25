@@ -13,7 +13,7 @@ permissions:
 jobs:
     lint:
         name: Lint
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 30
         env:
@@ -86,7 +86,7 @@ jobs:
             - name: Validate C header
               shell: bash
               run: |
-                  HEADER="crates/kreuzcrawl-ffi/include/kreuzcrawl.h"
+                  HEADER="crates/crawlberg-ffi/include/crawlberg.h"
                   if [ ! -f "$HEADER" ]; then
                     echo "::error::C header not found at $HEADER — run 'task alef:generate'"
                     exit 1

@@ -50,8 +50,8 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-crates/kreuzcrawl-node/index.d.ts
-crates/kreuzcrawl-node/index.js
+crates/crawlberg-node/index.d.ts
+crates/crawlberg-node/index.js
 .wrangler/
 .pnpm-store/
 
@@ -92,8 +92,8 @@ packages/ruby/lib/*.bundle
 *.Cache
 
 # PHP
-php-kreuzcrawl.ini
-packages/php/php-kreuzcrawl.ini
+php-crawlberg.ini
+packages/php/php-crawlberg.ini
 packages/php/tests.xml
 .php-cs-fixer.cache
 
@@ -115,11 +115,11 @@ e2e/elixir/deps/
 .nox/
 
 # C FFI
-crates/kreuzcrawl-ffi/tests/c/test_*
-!crates/kreuzcrawl-ffi/tests/c/test_*.c
-!crates/kreuzcrawl-ffi/tests/c/test_*.h
-crates/kreuzcrawl-ffi/tests/c/*.o
-crates/kreuzcrawl-ffi/tests/c/*.dSYM/
+crates/crawlberg-ffi/tests/c/test_*
+!crates/crawlberg-ffi/tests/c/test_*.c
+!crates/crawlberg-ffi/tests/c/test_*.h
+crates/crawlberg-ffi/tests/c/*.o
+crates/crawlberg-ffi/tests/c/*.dSYM/
 e2e/c/test_*
 !e2e/c/test_*.c
 !e2e/c/test_*.h
@@ -204,7 +204,7 @@ GEMINI.md
 
 # Misc
 output.txt
-/tmp/kreuzcrawl-docker-test-results.json
+/tmp/crawlberg-docker-test-results.json
 *.pyd
 .gems/
 vendor/bundle/
@@ -214,7 +214,7 @@ vendor/
 *.class
 bin/
 # Exempt the alef-emitted Dart entrypoint dir which is real source we must
-# track (used by `dart run kreuzcrawl:download_libs` consumers).
+# track (used by `dart run crawlberg:download_libs` consumers).
 !packages/dart/bin/
 obj/
 # pkg/ removed — needed for WASM npm publish (wasm-pack outputs to pkg/)
@@ -241,7 +241,7 @@ pkg/
 # the contract is obvious to anyone reading this file.
 chrome-memwatch.log
 
-# Per-language smoke workflows scaffolded by alef. kreuzcrawl uses the unified
+# Per-language smoke workflows scaffolded by alef. crawlberg uses the unified
 # ci-e2e.yaml matrix for all language coverage; these standalone workflows are
 # kept emitted on disk for upstream parity but never committed.
 .github/workflows/dart.yml

@@ -12,9 +12,9 @@ fi
 
 echo "=== Cleaning up Docker resources ==="
 
-docker ps -aq --filter "name=kreuzcrawl-test" | xargs -r docker rm -f || true
+docker ps -aq --filter "name=crawlberg-test" | xargs -r docker rm -f || true
 
-docker rmi "kreuzcrawl:$VARIANT" || true
+docker rmi "crawlberg:$VARIANT" || true
 
 docker system prune -af --volumes || true
 

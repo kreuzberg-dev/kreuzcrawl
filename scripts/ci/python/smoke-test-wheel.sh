@@ -10,6 +10,6 @@ source "$REPO_ROOT/scripts/lib/common.sh"
 validate_repo_root "$REPO_ROOT" || exit 1
 
 echo "=== Installing and testing wheel ==="
-pip install --no-index --find-links "$REPO_ROOT/target/wheels" kreuzcrawl
-python "$REPO_ROOT/scripts/python/print_kreuzcrawl_version.py"
+pip install --no-index --find-links "$REPO_ROOT/target/wheels" crawlberg
+python "$REPO_ROOT/scripts/python/print_crawlberg_version.py"
 echo "Smoke test passed!"

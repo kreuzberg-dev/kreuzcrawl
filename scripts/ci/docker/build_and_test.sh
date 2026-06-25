@@ -2,7 +2,7 @@
 # =============================================================================
 # Docker build and test helper script
 #
-# Tests the kreuzcrawl Docker image (Alpine CLI variant).
+# Tests the crawlberg Docker image (Alpine CLI variant).
 # Used in CI/CD pipeline: builds locally, runs test suite, reports results.
 #
 # Usage:
@@ -33,7 +33,7 @@ NC='\033[0m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 DOCKERFILE="$REPO_ROOT/docker/Dockerfile.alpine"
-IMAGE_NAME="${IMAGE_NAME:-kreuzcrawl-test:latest}"
+IMAGE_NAME="${IMAGE_NAME:-crawlberg-test:latest}"
 BUILD_IMAGE=true
 VERBOSE=false
 

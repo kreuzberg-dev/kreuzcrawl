@@ -9,7 +9,7 @@ set -euo pipefail
 test_concurrent_basic() {
   # Concurrent crawling fetches all pages with max_concurrent workers
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CONCURRENT_BASIC:-${MOCK_SERVER_URL}/fixtures/concurrent_basic}" --config '{"max_concurrent":3,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CONCURRENT_BASIC:-${MOCK_SERVER_URL}/fixtures/concurrent_basic}" --config '{"max_concurrent":3,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -22,7 +22,7 @@ test_concurrent_basic() {
 test_concurrent_depth_two_fan_out() {
   # Concurrent depth=2 crawl correctly fans out and deduplicates across levels
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT:-${MOCK_SERVER_URL}/fixtures/concurrent_depth_two_fan_out}" --config '{"max_concurrent":3,"max_depth":2}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT:-${MOCK_SERVER_URL}/fixtures/concurrent_depth_two_fan_out}" --config '{"max_concurrent":3,"max_depth":2}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -32,7 +32,7 @@ test_concurrent_depth_two_fan_out() {
 test_concurrent_max_pages_exact() {
   # Concurrent crawling does not exceed max_pages limit even with high concurrency
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT:-${MOCK_SERVER_URL}/fixtures/concurrent_max_pages_exact}" --config '{"max_concurrent":5,"max_depth":1,"max_pages":3}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT:-${MOCK_SERVER_URL}/fixtures/concurrent_max_pages_exact}" --config '{"max_concurrent":5,"max_depth":1,"max_pages":3}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -42,7 +42,7 @@ test_concurrent_max_pages_exact() {
 test_concurrent_partial_errors() {
   # Concurrent crawl handles partial failures gracefully
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS:-${MOCK_SERVER_URL}/fixtures/concurrent_partial_errors}" --config '{"max_concurrent":3,"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS:-${MOCK_SERVER_URL}/fixtures/concurrent_partial_errors}" --config '{"max_concurrent":3,"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -52,7 +52,7 @@ test_concurrent_partial_errors() {
 test_concurrent_respects_max_pages() {
   # Concurrent crawling respects max_pages limit
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/concurrent_respects_max_pages}" --config '{"max_concurrent":2,"max_depth":1,"max_pages":3}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES:-${MOCK_SERVER_URL}/fixtures/concurrent_respects_max_pages}" --config '{"max_concurrent":2,"max_depth":1,"max_pages":3}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')

@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: batch.</summary>
     public class BatchTests
@@ -27,11 +27,11 @@ namespace Kreuzcrawl
         {
             // Batch crawl of 2 seed URLs with links to discover
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_CRAWL_BASIC");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_crawl_basic";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/seed1", "/seed2" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchCrawlAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchCrawlAsync(engine, urls);
     Assert.True(result.CompletedCount == 2);
     Assert.True(result.FailedCount == 0);
     Assert.True(result.TotalCount == 2);
@@ -43,11 +43,11 @@ namespace Kreuzcrawl
         {
             // Batch crawl where one seed URL returns 404 error
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_CRAWL_PARTIAL_FAILURE");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_crawl_partial_failure";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/good_seed", "/bad_seed" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchCrawlAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchCrawlAsync(engine, urls);
     Assert.True(result.CompletedCount == 1);
     Assert.True(result.FailedCount == 1);
     Assert.True(result.TotalCount == 2);
@@ -59,11 +59,11 @@ namespace Kreuzcrawl
         {
             // Batch crawl with max_depth=1 config verifying pages are discovered
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_CRAWL_WITH_CONFIG");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_crawl_with_config";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/seed1", "/seed2" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchCrawlAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchCrawlAsync(engine, urls);
     Assert.True(result.CompletedCount == 2);
     Assert.True(result.FailedCount == 0);
 
@@ -73,13 +73,13 @@ namespace Kreuzcrawl
         public async Task Test_BatchScrapeEmptyUrlsError()
         {
             // Batch scrape with empty batch_urls array returns error
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
+            await Assert.ThrowsAnyAsync<CrawlbergException>(async () =>
             {
-                var engine = KreuzcrawlConverter.CreateEngine(null);
+                var engine = CrawlbergConverter.CreateEngine(null);
                 var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_SCRAPE_EMPTY_URLS_ERROR");
                 var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_scrape_empty_urls_error";
                 var urls = new System.Collections.Generic.List<string>(new string[] {  }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-                await KreuzcrawlConverter.BatchScrapeAsync(engine, urls);
+                await CrawlbergConverter.BatchScrapeAsync(engine, urls);
             });
         }
 
@@ -88,11 +88,11 @@ namespace Kreuzcrawl
         {
             // Batch scrape with aggressive preprocessing configuration
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"content\":{\"preprocessing_preset\":\"aggressive\"}}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_BATCH_SCRAPE_WITH_CONFIG");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/batch_scrape_with_config";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/article1", "/article2" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchScrapeAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchScrapeAsync(engine, urls);
     Assert.True(result.CompletedCount == 2);
     Assert.True(result.FailedCount == 0);
     Assert.True(result.TotalCount == 2);
@@ -103,11 +103,11 @@ namespace Kreuzcrawl
         public async Task Test_ScrapeBatchBasic()
         {
             // Batch scrape of multiple URLs all succeeding
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_SCRAPE_BATCH_BASIC");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_basic";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/page1", "/page2", "/page3" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchScrapeAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchScrapeAsync(engine, urls);
     Assert.True(result.CompletedCount == 3);
     Assert.True(result.FailedCount == 0);
     Assert.True(result.TotalCount == 3);
@@ -118,11 +118,11 @@ namespace Kreuzcrawl
         public async Task Test_ScrapeBatchPartialFailure()
         {
             // Batch scrape with one URL failing returns partial results
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_SCRAPE_BATCH_PARTIAL_FAILURE");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_partial_failure";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/good1", "/bad", "/good2" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchScrapeAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchScrapeAsync(engine, urls);
     Assert.True(result.CompletedCount == 2);
     Assert.True(result.FailedCount == 1);
     Assert.True(result.TotalCount == 3);
@@ -133,11 +133,11 @@ namespace Kreuzcrawl
         public async Task Test_ScrapeBatchProgress()
         {
             // Batch scrape of 2 URLs completes with 2 results
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfBase_urls = Environment.GetEnvironmentVariable("MOCK_SERVER_SCRAPE_BATCH_PROGRESS");
             var _base_urls = !string.IsNullOrEmpty(_pfBase_urls) ? _pfBase_urls : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_progress";
             var urls = new System.Collections.Generic.List<string>(new string[] { "/target", "/other" }.Select(p => p.StartsWith("http") ? p : _base_urls + p));
-            var result = await KreuzcrawlConverter.BatchScrapeAsync(engine, urls);
+            var result = await CrawlbergConverter.BatchScrapeAsync(engine, urls);
     Assert.True(result.TotalCount == 2);
     Assert.True(result.CompletedCount == 2);
 

@@ -22,8 +22,8 @@ import (
 
 const (
 	moduleVersion = "0.3.0"
-	repoURL       = "https://github.com/xberg-io/kreuzcrawl"
-	assetPrefix   = "kreuzcrawl"
+	repoURL       = "https://github.com/xberg-io/crawlberg"
+	assetPrefix   = "crawlberg"
 )
 
 func main() {
@@ -70,7 +70,7 @@ func determinePaths() (string, string, string, error) {
 		osName = "macos"
 	}
 
-	libName := "kreuzcrawl_ffi"
+	libName := "crawlberg_ffi"
 	// go generate changes to the module directory before running directives.
 	// cwd is the module's root (binding.go is at this level).
 	moduleRoot, err := os.Getwd()

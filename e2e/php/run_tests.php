@@ -12,7 +12,7 @@ $extSuffix = match (PHP_OS_FAMILY) {
     'Darwin' => '.dylib',
     default => '.so',
 };
-$extPath = __DIR__ . '/../../target/release/libkreuzcrawl_php' . $extSuffix;
+$extPath = __DIR__ . '/../../target/release/libcrawlberg_php' . $extSuffix;
 
 // Check for PIE-installed extension path (set by install.sh in registry mode).
 // In registry mode, the extension is installed system-wide via PIE and passed

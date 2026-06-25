@@ -17,7 +17,7 @@ if stat -f '%m %N' "$BUILD_DIR" >/dev/null 2>&1; then
 else
   STAT_FMT=(-c '%Y %n')
 fi
-OUT=$(find "$BUILD_DIR" -maxdepth 2 -type d -name out -path '*kreuzcrawl-swift-*' \
+OUT=$(find "$BUILD_DIR" -maxdepth 2 -type d -name out -path '*crawlberg-swift-*' \
   -exec stat "${STAT_FMT[@]}" {} + 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
 if [ -z "$OUT" ]; then
   echo "ERROR: Could not find swift-bridge build output in ${BUILD_DIR}/"
@@ -31,7 +31,7 @@ mkdir -p packages/swift/Sources/RustBridgeC
 mkdir -p packages/swift/Sources/RustBridge
 
 # Copy C headers
-cat "$OUT/SwiftBridgeCore.h" "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.h" \
+cat "$OUT/SwiftBridgeCore.h" "$OUT/crawlberg-swift/crawlberg-swift.h" \
   >packages/swift/Sources/RustBridgeC/RustBridgeC.h
 
 # Copy Swift bridge files with import statement prepended
@@ -41,7 +41,7 @@ cat "$OUT/SwiftBridgeCore.h" "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.h" \
 } >packages/swift/Sources/RustBridge/SwiftBridgeCore.swift
 {
   printf 'import RustBridgeC\n'
-  cat "$OUT/kreuzcrawl-swift/kreuzcrawl-swift.swift"
-} >packages/swift/Sources/RustBridge/kreuzcrawl-swift.swift
+  cat "$OUT/crawlberg-swift/crawlberg-swift.swift"
+} >packages/swift/Sources/RustBridge/crawlberg-swift.swift
 
 echo "Swift-bridge files setup complete"

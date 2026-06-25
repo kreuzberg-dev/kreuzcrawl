@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,19 +165,19 @@ void main() {
   });
 
   test('Scrape single page with WARC output enabled writes to file', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_test.warc"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_test.warc"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("warc_basic_output");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages[0].statusCode, equals(200));
     expect(result.pages.length, equals(1));
   });
 
   test('Crawl multiple pages with depth=1 and WARC output enabled', () async {
-    final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_crawl.warc"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/crawlberg_crawl.warc"}');
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("warc_multi_page_crawl");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
     expect(result.stayedOnDomain, equals(true));
   });

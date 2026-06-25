@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: proxy.</summary>
     public class ProxyTests
@@ -27,9 +27,9 @@ namespace Kreuzcrawl
         {
             // Proxy with username and password credentials authenticates successfully
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"proxy\":{\"password\":\"proxypass\",\"url\":\"http://127.0.0.1:8889\",\"username\":\"proxyuser\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/proxy_authenticated";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 0);
 
         }
@@ -39,9 +39,9 @@ namespace Kreuzcrawl
         {
             // Configure proxy URL and successfully crawl through it
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"proxy\":{\"url\":\"http://127.0.0.1:8888\"},\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/proxy_basic_success";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 0);
 
         }

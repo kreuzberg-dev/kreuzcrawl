@@ -6,7 +6,7 @@
 // To verify freshness: alef verify --exit-code
 declare(strict_types=1);
 
-namespace Kreuzcrawl;
+namespace Crawlberg;
 
 /**
  * Opaque handle to a configured crawl engine.

@@ -19,14 +19,14 @@ Before running tests, build the Docker images:
 cd .
 
 # Build core variant
-docker build -f docker/Dockerfile.core -t kreuzcrawl:core .
+docker build -f docker/Dockerfile.core -t crawlberg:core .
 
 # Build full variant
-docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
+docker build -f docker/Dockerfile.full -t crawlberg:full .
 
 # Or build both
-docker build -f docker/Dockerfile.core -t kreuzcrawl:core . && \
-docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
+docker build -f docker/Dockerfile.core -t crawlberg:core . && \
+docker build -f docker/Dockerfile.full -t crawlberg:full .
 ```
 
 ## Running Tests
@@ -73,28 +73,28 @@ Test all variants with default settings:
 
 ## Test Cases Explained
 
-### 1. Volume Mount to /etc/kreuzcrawl/kreuzcrawl.toml
+### 1. Volume Mount to /etc/crawlberg/crawlberg.toml
 
 **What it tests**: System-wide configuration path (recommended)
 
 **Docker command**:
 
 ```bash
-docker run -v /local/config.toml:/etc/kreuzcrawl/kreuzcrawl.toml:ro kreuzcrawl:full
+docker run -v /local/config.toml:/etc/crawlberg/crawlberg.toml:ro crawlberg:full
 ```
 
 **Expected**: Container reads config from standard system location
 
 ---
 
-### 2. Volume Mount to /app/.config/kreuzcrawl/config.toml
+### 2. Volume Mount to /app/.config/crawlberg/config.toml
 
 **What it tests**: User-level configuration path (alternative location)
 
 **Docker command**:
 
 ```bash
-docker run -v /local/config.toml:/app/.config/kreuzcrawl/config.toml:ro kreuzcrawl:full
+docker run -v /local/config.toml:/app/.config/crawlberg/config.toml:ro crawlberg:full
 ```
 
 **Expected**: Container reads config from user application directory
@@ -110,8 +110,8 @@ docker run -v /local/config.toml:/app/.config/kreuzcrawl/config.toml:ro kreuzcra
 ```bash
 docker run \
   -v /local/config.toml:/app/custom-config.toml:ro \
-  --entrypoint "/app/kreuzcrawl" \
-  kreuzcrawl:full \
+  --entrypoint "/app/crawlberg" \
+  crawlberg:full \
   --config /app/custom-config.toml
 ```
 
@@ -127,9 +127,9 @@ docker run \
 
 ```bash
 docker run \
-  -v /local/config.toml:/etc/kreuzcrawl/kreuzcrawl.toml:ro \
+  -v /local/config.toml:/etc/crawlberg/crawlberg.toml:ro \
   -e KREUZBERG_SERVER_PORT=8000 \
-  kreuzcrawl:full
+  crawlberg:full
 ```
 
 **Expected**: Environment variable takes precedence over config file
@@ -146,7 +146,7 @@ docker run \
 max_depth = 1
 max_pages = 5
 respect_robots_txt = true
-user_agent = "kreuzcrawl-config-test"
+user_agent = "crawlberg-config-test"
 
 [content]
 output_format = "markdown"
@@ -166,7 +166,7 @@ output_format = "markdown"
 max_depth: 1
 max_pages: 5
 respect_robots_txt: true
-user_agent: "kreuzcrawl-config-test"
+user_agent: "crawlberg-config-test"
 
 content:
   output_format: "markdown"
@@ -187,7 +187,7 @@ content:
   "max_depth": 1,
   "max_pages": 5,
   "respect_robots_txt": true,
-  "user_agent": "kreuzcrawl-config-test",
+  "user_agent": "crawlberg-config-test",
   "content": {
     "output_format": "markdown"
   }
@@ -205,7 +205,7 @@ content:
 **Docker command**:
 
 ```bash
-docker run -v /local/config.toml:/etc/kreuzcrawl/kreuzcrawl.toml:ro kreuzcrawl:full
+docker run -v /local/config.toml:/etc/crawlberg/crawlberg.toml:ro crawlberg:full
 ```
 
 **Expected**: Container works with read-only volumes, application doesn't attempt to modify config
@@ -229,7 +229,7 @@ docker run -v /local/config.toml:/etc/kreuzcrawl/kreuzcrawl.toml:ro kreuzcrawl:f
 
 [INFO] Docker is available
 
-Test 01: Volume mount to /etc/kreuzcrawl/kreuzcrawl.toml (variant: core)
+Test 01: Volume mount to /etc/crawlberg/crawlberg.toml (variant: core)
 [PASS] Test passed
 ```
 
@@ -239,7 +239,7 @@ Test 01: Volume mount to /etc/kreuzcrawl/kreuzcrawl.toml (variant: core)
 Test 02: Custom path with --config flag (variant: core)
 [FAIL] Test failed: Failed to start container with custom --config flag
 [FAIL]   Details: Container logs:
-          /app/kreuzcrawl: line 123: syntax error: unexpected token
+          /app/crawlberg: line 123: syntax error: unexpected token
 ```
 
 ### Summary
@@ -255,8 +255,8 @@ Failed Tests:  0
 Pass Rate:     100%
 
 Tested Variants:
-  - kreuzcrawl:core
-  - kreuzcrawl:full
+  - crawlberg:core
+  - crawlberg:full
 ```
 
 ## Debugging Failed Tests
@@ -284,17 +284,17 @@ Then inspect containers manually:
 
 ```bash
 # List test containers
-docker ps -a | grep kreuzcrawl-config-test
+docker ps -a | grep crawlberg-config-test
 
 # View specific container logs
-docker logs kreuzcrawl-config-test-etc-core-12345
+docker logs crawlberg-config-test-etc-core-12345
 
 # Execute command in running container
-docker exec kreuzcrawl-config-test-etc-core-12345 cat /etc/kreuzcrawl/kreuzcrawl.toml
+docker exec crawlberg-config-test-etc-core-12345 cat /etc/crawlberg/crawlberg.toml
 
 # Stop container manually
-docker stop kreuzcrawl-config-test-etc-core-12345
-docker rm kreuzcrawl-config-test-etc-core-12345
+docker stop crawlberg-config-test-etc-core-12345
+docker rm crawlberg-config-test-etc-core-12345
 ```
 
 ### Check Health Endpoint Manually
@@ -304,8 +304,8 @@ docker rm kreuzcrawl-config-test-etc-core-12345
 docker run -d \
   --name test-container \
   -p 8000:8000 \
-  -v /path/to/config.toml:/etc/kreuzcrawl/kreuzcrawl.toml:ro \
-  kreuzcrawl:full
+  -v /path/to/config.toml:/etc/crawlberg/crawlberg.toml:ro \
+  crawlberg:full
 
 # Wait for startup
 sleep 3
@@ -364,7 +364,7 @@ docker ps
 **Solution**: Build the image
 
 ```bash
-docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
+docker build -f docker/Dockerfile.full -t crawlberg:full .
 ```
 
 ### Port Already in Use
@@ -381,7 +381,7 @@ docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
 lsof -i :18100-18199
 
 # Or just stop all test containers
-docker ps -a --filter "name=kreuzcrawl-config-test" --format "{{.Names}}" | \
+docker ps -a --filter "name=crawlberg-config-test" --format "{{.Names}}" | \
   xargs -r docker stop
 ```
 
@@ -396,7 +396,7 @@ docker ps -a --filter "name=kreuzcrawl-config-test" --format "{{.Names}}" | \
 1. Check container is still running:
 
 ```bash
-docker ps | grep kreuzcrawl-config-test
+docker ps | grep crawlberg-config-test
 ```
 
 2. View container logs:
@@ -434,8 +434,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -f docker/Dockerfile.core -t kreuzcrawl:core .
-          docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
+          docker build -f docker/Dockerfile.core -t crawlberg:core .
+          docker build -f docker/Dockerfile.full -t crawlberg:full .
 
       - name: Run configuration tests
         run: ./scripts/test/test-docker-config-local.sh --variant all
@@ -450,8 +450,8 @@ docker-config-tests:
   services:
     - docker:dind
   script:
-    - docker build -f docker/Dockerfile.core -t kreuzcrawl:core .
-    - docker build -f docker/Dockerfile.full -t kreuzcrawl:full .
+    - docker build -f docker/Dockerfile.core -t crawlberg:core .
+    - docker build -f docker/Dockerfile.full -t crawlberg:full .
     - ./scripts/test/test-docker-config-local.sh --variant all
 ```
 
@@ -497,7 +497,7 @@ To test only one specific scenario, modify the `run_test_suite()` call in `main(
 
 ```bash
 # Comment out unwanted tests
-# test_etc_kreuzcrawl_mount "$variant"
+# test_etc_crawlberg_mount "$variant"
 test_app_config_mount "$variant"
 # test_custom_path_with_flag "$variant"
 # ... etc

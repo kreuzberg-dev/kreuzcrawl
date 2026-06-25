@@ -7,7 +7,7 @@ LOG_DIR="${1:-/tmp/docker-logs}"
 echo "=== Collecting Docker logs ==="
 mkdir -p "$LOG_DIR"
 
-for container in $(docker ps -a --filter "name=kreuzcrawl-test" --format "{{.Names}}"); do
+for container in $(docker ps -a --filter "name=crawlberg-test" --format "{{.Names}}"); do
   echo "Collecting logs from: $container"
   docker logs "$container" >"$LOG_DIR/${container}.log" 2>&1 || true
 done

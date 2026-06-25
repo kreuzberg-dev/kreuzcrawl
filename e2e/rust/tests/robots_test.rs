@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: robots
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::scrape;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::create_engine;
+use crawlberg::scrape;
+use crawlberg::CrawlConfig;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -46,7 +46,7 @@ async fn test_robots_allow_override() {
 async fn test_robots_comments_handling() {
     // Correctly parses robots.txt with inline and line comments
     let engine_config: CrawlConfig =
-        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")
+        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}")
             .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = std::env::var("MOCK_SERVER_ROBOTS_COMMENTS_HANDLING").unwrap_or_else(|_| {
@@ -62,7 +62,7 @@ async fn test_robots_comments_handling() {
 async fn test_robots_crawl_delay() {
     // Respects crawl-delay directive from robots.txt
     let engine_config: CrawlConfig =
-        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")
+        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}")
             .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = std::env::var("MOCK_SERVER_ROBOTS_CRAWL_DELAY").unwrap_or_else(|_| {
@@ -159,7 +159,7 @@ async fn test_robots_multiple_user_agents() {
 async fn test_robots_request_rate() {
     // Parses request-rate directive from robots.txt
     let engine_config: CrawlConfig =
-        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")
+        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}")
             .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = std::env::var("MOCK_SERVER_ROBOTS_REQUEST_RATE").unwrap_or_else(|_| {
@@ -191,7 +191,7 @@ async fn test_robots_sitemap_directive() {
 async fn test_robots_user_agent_specific() {
     // Matches user-agent specific rules in robots.txt
     let engine_config: CrawlConfig =
-        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"KreuzcrawlBot\"}")
+        serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"CrawlbergBot\"}")
             .expect("config should parse");
     let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = std::env::var("MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC").unwrap_or_else(|_| {

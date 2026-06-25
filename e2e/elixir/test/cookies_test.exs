@@ -22,9 +22,9 @@ defmodule E2e.CookiesTest do
   describe "cookies_per_domain" do
     test "cookies_per_domain" do
       engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_COOKIES_PER_DOMAIN") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/cookies_per_domain"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert length(result.cookies) == 1
       assert Enum.any?(result.cookies, fn item -> Enum.any?(alef_e2e_item_texts(item), &String.contains?(&1, "domain_cookie")) end)
     end
@@ -33,9 +33,9 @@ defmodule E2e.CookiesTest do
   describe "cookies_persistence" do
     test "cookies_persistence" do
       engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_COOKIES_PERSISTENCE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/cookies_persistence"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert Enum.any?(result.cookies, fn item -> Enum.any?(alef_e2e_item_texts(item), &String.contains?(&1, "session")) end)
     end
   end
@@ -43,9 +43,9 @@ defmodule E2e.CookiesTest do
   describe "cookies_set_cookie_response" do
     test "cookies_set_cookie_response" do
       engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/cookies_set_cookie_response"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       assert Enum.any?(result.cookies, fn item -> Enum.any?(alef_e2e_item_texts(item), &String.contains?(&1, "tracking")) end)
     end
   end

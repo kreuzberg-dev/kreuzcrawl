@@ -418,7 +418,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "clap",
- "kreuzcrawl",
+ "crawlberg",
  "num_cpus",
  "pprof",
  "regex",
@@ -1149,6 +1149,233 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b2a41393f66f16b0823bb79094d54ac5fbd34ab292ddafb9a0456ac9f87d201"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "crawlberg"
+version = "0.3.0"
+dependencies = [
+ "ahash",
+ "aho-corasick",
+ "arc-swap",
+ "astral-tl",
+ "async-trait",
+ "axum",
+ "base64",
+ "blake3",
+ "chromiumoxide",
+ "chrono",
+ "crawlberg-browser",
+ "criterion 0.8.2",
+ "dashmap 6.1.0",
+ "dirs",
+ "encoding_rs",
+ "flate2",
+ "futures",
+ "getrandom 0.3.4",
+ "getrandom 0.4.2",
+ "html-to-markdown-rs",
+ "ipnet",
+ "liter-llm",
+ "memchr",
+ "minijinja",
+ "notify",
+ "opentelemetry",
+ "opentelemetry-otlp",
+ "opentelemetry-semantic-conventions",
+ "opentelemetry_sdk",
+ "proptest",
+ "quick-xml 0.40.1",
+ "regex",
+ "reqwest",
+ "rmcp",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "toml 1.1.2+spec-1.1.0",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "url",
+ "utoipa",
+ "uuid",
+ "wiremock",
+]
+
+[[package]]
+name = "crawlberg-bindings-common"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+]
+
+[[package]]
+name = "crawlberg-browser"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "base64",
+ "cssparser",
+ "deno_core",
+ "deno_error",
+ "futures",
+ "html5ever",
+ "ipnet",
+ "png",
+ "precomputed-hash",
+ "reqwest",
+ "selectors",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "url",
+ "wreq",
+ "wreq-util",
+]
+
+[[package]]
+name = "crawlberg-bypass"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "crawlberg",
+ "reqwest",
+ "saphyr",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "urlencoding",
+ "wiremock",
+]
+
+[[package]]
+name = "crawlberg-cli"
+version = "0.3.0"
+dependencies = [
+ "clap",
+ "crawlberg",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-dart"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+ "flutter_rust_bridge",
+ "futures-util",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-ffi"
+version = "0.3.0"
+dependencies = [
+ "ahash",
+ "cbindgen",
+ "crawlberg",
+ "futures-util",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-jni"
+version = "0.3.0"
+dependencies = [
+ "base64",
+ "crawlberg",
+ "futures-util",
+ "jni",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-node"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+ "futures-util",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "crawlberg-php"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+ "ext-php-rs",
+ "futures-util",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-py"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+ "futures",
+ "pyo3",
+ "pyo3-async-runtimes",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-swift"
+version = "0.3.0"
+dependencies = [
+ "ahash",
+ "async-trait",
+ "crawlberg",
+ "futures-util",
+ "libc",
+ "serde",
+ "serde_json",
+ "swift-bridge",
+ "swift-bridge-build",
+ "tokio",
+]
+
+[[package]]
+name = "crawlberg-wasm"
+version = "0.3.0"
+dependencies = [
+ "crawlberg",
+ "futures",
+ "futures-util",
+ "getrandom 0.2.17",
+ "getrandom 0.3.4",
+ "getrandom 0.4.2",
+ "js-sys",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
@@ -3008,233 +3235,6 @@ checksum = "07293a4e297ac234359b510362495713f75ea345d5307140414f20c69ffeb087"
 dependencies = [
  "bitflags 2.13.0",
  "libc",
-]
-
-[[package]]
-name = "kreuzcrawl"
-version = "0.3.0"
-dependencies = [
- "ahash",
- "aho-corasick",
- "arc-swap",
- "astral-tl",
- "async-trait",
- "axum",
- "base64",
- "blake3",
- "chromiumoxide",
- "chrono",
- "criterion 0.8.2",
- "dashmap 6.1.0",
- "dirs",
- "encoding_rs",
- "flate2",
- "futures",
- "getrandom 0.3.4",
- "getrandom 0.4.2",
- "html-to-markdown-rs",
- "ipnet",
- "kreuzcrawl-browser",
- "liter-llm",
- "memchr",
- "minijinja",
- "notify",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry-semantic-conventions",
- "opentelemetry_sdk",
- "proptest",
- "quick-xml 0.40.1",
- "regex",
- "reqwest",
- "rmcp",
- "schemars",
- "serde",
- "serde_json",
- "serial_test",
- "sha2",
- "tempfile",
- "thiserror",
- "tokio",
- "tokio-stream",
- "toml 1.1.2+spec-1.1.0",
- "tower",
- "tower-http",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "url",
- "utoipa",
- "uuid",
- "wiremock",
-]
-
-[[package]]
-name = "kreuzcrawl-bindings-common"
-version = "0.3.0"
-dependencies = [
- "kreuzcrawl",
-]
-
-[[package]]
-name = "kreuzcrawl-browser"
-version = "0.3.0"
-dependencies = [
- "async-trait",
- "base64",
- "cssparser",
- "deno_core",
- "deno_error",
- "futures",
- "html5ever",
- "ipnet",
- "png",
- "precomputed-hash",
- "reqwest",
- "selectors",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "url",
- "wreq",
- "wreq-util",
-]
-
-[[package]]
-name = "kreuzcrawl-bypass"
-version = "0.3.0"
-dependencies = [
- "async-trait",
- "kreuzcrawl",
- "reqwest",
- "saphyr",
- "serde_json",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "urlencoding",
- "wiremock",
-]
-
-[[package]]
-name = "kreuzcrawl-cli"
-version = "0.3.0"
-dependencies = [
- "clap",
- "kreuzcrawl",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-dart"
-version = "0.3.0"
-dependencies = [
- "flutter_rust_bridge",
- "futures-util",
- "kreuzcrawl",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-ffi"
-version = "0.3.0"
-dependencies = [
- "ahash",
- "cbindgen",
- "futures-util",
- "kreuzcrawl",
- "serde_json",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-jni"
-version = "0.3.0"
-dependencies = [
- "base64",
- "futures-util",
- "jni",
- "kreuzcrawl",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-node"
-version = "0.3.0"
-dependencies = [
- "futures-util",
- "kreuzcrawl",
- "napi",
- "napi-build",
- "napi-derive",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "kreuzcrawl-php"
-version = "0.3.0"
-dependencies = [
- "ext-php-rs",
- "futures-util",
- "kreuzcrawl",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-py"
-version = "0.3.0"
-dependencies = [
- "futures",
- "kreuzcrawl",
- "pyo3",
- "pyo3-async-runtimes",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-swift"
-version = "0.3.0"
-dependencies = [
- "ahash",
- "async-trait",
- "futures-util",
- "kreuzcrawl",
- "libc",
- "serde",
- "serde_json",
- "swift-bridge",
- "swift-bridge-build",
- "tokio",
-]
-
-[[package]]
-name = "kreuzcrawl-wasm"
-version = "0.3.0"
-dependencies = [
- "futures",
- "futures-util",
- "getrandom 0.2.17",
- "getrandom 0.3.4",
- "getrandom 0.4.2",
- "js-sys",
- "kreuzcrawl",
- "serde",
- "serde-wasm-bindgen",
- "serde_json",
- "wasm-bindgen",
- "wasm-bindgen-futures",
 ]
 
 [[package]]

@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: cookies
 
-use kreuzcrawl::crawl;
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::crawl;
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]

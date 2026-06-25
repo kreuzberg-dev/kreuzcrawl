@@ -8,9 +8,9 @@ defmodule E2e.EngineTest do
 
   describe "engine_batch_basic" do
     test "engine_batch_basic" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/engine_batch_basic"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       # skipped: field 'batch.completed_count' not available on result type
       # skipped: field 'batch.total_count' not available on result type
     end
@@ -19,9 +19,9 @@ defmodule E2e.EngineTest do
   describe "engine_crawl_basic" do
     test "engine_crawl_basic" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ENGINE_CRAWL_BASIC") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/engine_crawl_basic"
-      {:ok, result} = Kreuzcrawl.crawl_async(engine, url)
+      {:ok, result} = Crawlberg.crawl_async(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
       # skipped: field 'crawl.min_pages' not available on result type
     end
@@ -29,18 +29,18 @@ defmodule E2e.EngineTest do
 
   describe "engine_map_basic" do
     test "engine_map_basic" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_ENGINE_MAP_BASIC") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/engine_map_basic"
-      {:ok, result} = Kreuzcrawl.map_urls_async(engine, url)
+      {:ok, result} = Crawlberg.map_urls_async(engine, url)
       # skipped: field 'map.min_urls' not available on result type
     end
   end
 
   describe "engine_scrape_basic" do
     test "engine_scrape_basic" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = System.get_env("MOCK_SERVER_ENGINE_SCRAPE_BASIC") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/engine_scrape_basic"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert String.trim(result.content_type) == "text/html"
       assert String.trim(result.metadata.title) == "Engine Test"
@@ -53,10 +53,10 @@ defmodule E2e.EngineTest do
   describe "engine_stream_basic" do
     test "engine_stream_basic" do
       engine_config = "{\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ENGINE_STREAM_BASIC") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/engine_stream_basic"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 3
     end

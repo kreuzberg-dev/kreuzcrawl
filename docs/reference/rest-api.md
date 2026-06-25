@@ -1,6 +1,6 @@
 # REST API Reference
 
-Kreuzcrawl exposes Firecrawl v1-compatible REST routes for web scraping, crawling, site mapping, batch scrape jobs, and document downloads. The API server is started via the CLI (`kreuzcrawl serve`) or programmatically with `kreuzcrawl::serve_api(config)` when the `api` feature is enabled.
+Crawlberg exposes Firecrawl v1-compatible REST routes for web scraping, crawling, site mapping, batch scrape jobs, and document downloads. The API server is started via the CLI (`crawlberg serve`) or programmatically with `crawlberg::serve_api(config)` when the `api` feature is enabled.
 
 All request and response bodies use JSON. Responses follow a consistent envelope format.
 

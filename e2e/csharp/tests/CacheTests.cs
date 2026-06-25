@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: cache.</summary>
     public class CacheTests
@@ -26,9 +26,9 @@ namespace Kreuzcrawl
         public async Task Test_CacheBasic()
         {
             // Crawling with disk cache enabled succeeds without errors
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cache_basic";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.StatusCode == 200);
 
         }
@@ -38,10 +38,10 @@ namespace Kreuzcrawl
         {
             // Etag header enables conditional requests for cached content
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CACHE_ETAG_CONDITIONAL");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cache_etag_conditional";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 1, "expected >= 1");
     Assert.True(result.Pages[0].StatusCode == 200);
 
@@ -52,10 +52,10 @@ namespace Kreuzcrawl
         {
             // Last-Modified header enables conditional requests via If-Modified-Since
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CACHE_LAST_MODIFIED");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cache_last_modified";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 1, "expected >= 1");
 
         }
@@ -65,10 +65,10 @@ namespace Kreuzcrawl
         {
             // Uncached URLs are fetched fresh without conditional headers
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CACHE_MISS_FRESH_FETCH");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cache_miss_fresh_fetch";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 3);
     Assert.True(result.Pages[0].StatusCode == 200);
 

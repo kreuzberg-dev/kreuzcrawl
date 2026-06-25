@@ -1,7 +1,7 @@
 .{
-    .name = .kreuzcrawl,
+    .name = .crawlberg,
     .version = "0.3.0",
-    .fingerprint = 0xeaf10589362aea97,
+    .fingerprint = 0x1b5a068a0a358622,
     .minimum_zig_version = "0.16.0",
     .dependencies = .{},
     .paths = .{

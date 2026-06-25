@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: browser
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
-use kreuzcrawl::{crawl, scrape};
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
+use crawlberg::{crawl, scrape};
 mod common;
 mod mock_server;
 #[allow(unused_imports)]

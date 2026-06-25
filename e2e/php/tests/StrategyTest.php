@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: strategy. */
 final class StrategyTest extends TestCase
@@ -21,10 +21,10 @@ final class StrategyTest extends TestCase
     public function test_strategy_adaptive_saturation(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/strategy_adaptive_saturation';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type
 
@@ -35,10 +35,10 @@ final class StrategyTest extends TestCase
     public function test_strategy_adaptive_window(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW') ?: getenv('MOCK_SERVER_URL') . '/fixtures/strategy_adaptive_window';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type
 
@@ -49,10 +49,10 @@ final class StrategyTest extends TestCase
     public function test_strategy_best_first_seed(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STRATEGY_BEST_FIRST_SEED') ?: getenv('MOCK_SERVER_URL') . '/fixtures/strategy_best_first_seed';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'strategy.first_page_url_contains' not available on result type
 
@@ -63,10 +63,10 @@ final class StrategyTest extends TestCase
     public function test_strategy_bfs_default_order(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER') ?: getenv('MOCK_SERVER_URL') . '/fixtures/strategy_bfs_default_order';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'strategy.crawl_order' not available on result type
 
@@ -77,10 +77,10 @@ final class StrategyTest extends TestCase
     public function test_strategy_dfs_depth_first(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST') ?: getenv('MOCK_SERVER_URL') . '/fixtures/strategy_dfs_depth_first';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'strategy.crawl_order' not available on result type
 

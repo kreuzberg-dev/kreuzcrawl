@@ -3,9 +3,9 @@ build-backend = "hatchling.build"
 requires = [ "hatchling" ]
 
 [project]
-name = "kreuzcrawl-cli"
+name = "crawlberg-cli"
 version = "0.1.0"
-description = "CLI proxy for kreuzcrawl — downloads and runs the native kreuzcrawl binary from GitHub releases."
+description = "CLI proxy for crawlberg — downloads and runs the native crawlberg binary from GitHub releases."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [ { name = "Na'aman Hirschfeld", email = "naaman@kreuzberg.dev" } ]
@@ -22,10 +22,10 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-urls.Homepage = "https://github.com/xberg-io/kreuzcrawl"
-urls.Issues = "https://github.com/xberg-io/kreuzcrawl/issues"
-urls.Repository = "https://github.com/xberg-io/kreuzcrawl.git"
-scripts.kreuzcrawl = "kreuzcrawl_cli.cli:main"
+urls.Homepage = "https://github.com/xberg-io/crawlberg"
+urls.Issues = "https://github.com/xberg-io/crawlberg/issues"
+urls.Repository = "https://github.com/xberg-io/crawlberg.git"
+scripts.crawlberg = "crawlberg_cli.cli:main"
 
 [tool.hatch]
-build.targets.wheel.packages = [ "kreuzcrawl_cli" ]
+build.targets.wheel.packages = [ "crawlberg_cli" ]

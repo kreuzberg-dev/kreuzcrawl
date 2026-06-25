@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: crawl. */
 final class CrawlTest extends TestCase
@@ -21,9 +21,9 @@ final class CrawlTest extends TestCase
     public function test_content_binary_skip(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_binary_skip';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->wasSkipped);
 
@@ -35,9 +35,9 @@ final class CrawlTest extends TestCase
     public function test_content_pdf_link_skip(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_pdf_link_skip';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->wasSkipped);
 
@@ -49,9 +49,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_concurrent_depth(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 3, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_CONCURRENT_DEPTH') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_depth';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(3, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);
@@ -64,9 +64,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_concurrent_limit(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 2, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_CONCURRENT_LIMIT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_limit';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(5, count($result->getPages()));
 
@@ -78,9 +78,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_concurrent_max_pages(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 4, "maxDepth" => 1, "maxPages" => 3, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_CONCURRENT_MAX_PAGES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_max_pages';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertLessThanOrEqual(3, count($result->getPages()));
 
@@ -92,9 +92,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_custom_headers(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["customHeaders" => ["acceptLanguage" => "en-US", "xCustomHeader" => "test-value"], "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_CUSTOM_HEADERS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_custom_headers';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -106,9 +106,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_depth_one(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_DEPTH_ONE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_one';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(3, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);
@@ -121,9 +121,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_depth_priority(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 2, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_DEPTH_PRIORITY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_priority';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(4, count($result->getPages()));
 
@@ -135,9 +135,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_depth_two(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 2, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_DEPTH_TWO') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_two';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(3, count($result->getPages()));
             $this->assertGreaterThanOrEqual(3, count($result->getPages()));
@@ -150,9 +150,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_depth_two_chain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_DEPTH_TWO_CHAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_two_chain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(3, count($result->getPages()));
 
@@ -164,9 +164,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_double_slash_normalization(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_DOUBLE_SLASH_NORMALIZATION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_double_slash_normalization';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -178,9 +178,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_empty_page_no_links(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_EMPTY_PAGE_NO_LINKS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_empty_page_no_links';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -192,9 +192,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_exclude_path_pattern(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["excludePaths" => ["/admin/.*"], "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_EXCLUDE_PATH_PATTERN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_exclude_path_pattern';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -206,9 +206,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_external_links_ignored(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1, "stayOnDomain" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_EXTERNAL_LINKS_IGNORED') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_external_links_ignored';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);
@@ -221,9 +221,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_fragment_stripping(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_FRAGMENT_STRIPPING') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_fragment_stripping';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -235,9 +235,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_include_path_pattern(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["includePaths" => ["/blog/.*"], "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_INCLUDE_PATH_PATTERN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_include_path_pattern';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -249,9 +249,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_max_depth_zero(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 0]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_MAX_DEPTH_ZERO') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_max_depth_zero';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(1, count($result->getPages()));
             $this->assertLessThanOrEqual(1, count($result->getPages()));
@@ -264,9 +264,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_max_pages(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxPages" => 3, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_MAX_PAGES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_max_pages';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertLessThanOrEqual(3, count($result->getPages()));
 
@@ -278,9 +278,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_mixed_content_types(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_MIXED_CONTENT_TYPES') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_mixed_content_types';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
 
@@ -292,9 +292,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_multiple_redirects_in_traversal(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_MULTIPLE_REDIRECTS_IN_TRAVERSAL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_multiple_redirects_in_traversal';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
 
@@ -306,9 +306,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_query_param_dedup(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_QUERY_PARAM_DEDUP') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_query_param_dedup';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -320,9 +320,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_redirect_in_traversal(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_REDIRECT_IN_TRAVERSAL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_redirect_in_traversal';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
 
@@ -334,9 +334,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_self_link_no_loop(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_SELF_LINK_NO_LOOP') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_self_link_no_loop';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -348,9 +348,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_single_page_no_links(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_single_page_no_links';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(1, count($result->getPages()));
 
@@ -362,9 +362,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_stay_on_domain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false, "stayOnDomain" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_STAY_ON_DOMAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stay_on_domain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);
@@ -377,9 +377,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_subdomain_exclusion(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["allowSubdomains" => false, "maxDepth" => 1, "respectRobotsTxt" => false, "stayOnDomain" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_SUBDOMAIN_EXCLUSION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_subdomain_exclusion';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
             $this->assertEquals(true, $result->stayedOnDomain);
@@ -392,9 +392,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_subdomain_inclusion(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["allowSubdomains" => true, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_SUBDOMAIN_INCLUSION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_subdomain_inclusion';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
 
@@ -406,9 +406,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_trailing_slash_dedup(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_TRAILING_SLASH_DEDUP') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_trailing_slash_dedup';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertEquals(2, count($result->getPages()));
 
@@ -420,9 +420,9 @@ final class CrawlTest extends TestCase
     public function test_crawl_url_deduplication(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_URL_DEDUPLICATION') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_url_deduplication';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertLessThanOrEqual(2, count($result->getPages()));
 

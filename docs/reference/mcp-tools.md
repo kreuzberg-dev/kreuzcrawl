@@ -1,13 +1,13 @@
 # MCP Tools Reference
 
-Kreuzcrawl implements a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that exposes web scraping, crawling, and mapping capabilities as tools for LLM agents. The server is available over stdio transport (via `kreuzcrawl mcp`) or Streamable HTTP at `/mcp` when the REST API server runs (`kreuzcrawl serve`). Both transports expose the same nine tools; connect your MCP client to either endpoint.
+Crawlberg implements a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that exposes web scraping, crawling, and mapping capabilities as tools for LLM agents. The server is available over stdio transport (via `crawlberg mcp`) or Streamable HTTP at `/mcp` when the REST API server runs (`crawlberg serve`). Both transports expose the same nine tools; connect your MCP client to either endpoint.
 
 ## Server Info
 
 | Field        | Value                              |
 | ------------ | ---------------------------------- |
-| Name         | `kreuzcrawl-mcp`                   |
-| Title        | Kreuzcrawl Web Crawling MCP Server |
+| Name         | `crawlberg-mcp`                   |
+| Title        | Crawlberg Web Crawling MCP Server |
 | Transport    | stdio or Streamable HTTP at `/mcp` |
 | Capabilities | Tools                              |
 
@@ -176,7 +176,7 @@ Convert markdown links to numbered citations.
 
 ### get_version
 
-Get the current kreuzcrawl library version.
+Get the current crawlberg library version.
 
 **Annotations:** `read_only_hint = true`, `idempotent_hint = true`
 
@@ -210,8 +210,8 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl": {
-      "command": "kreuzcrawl",
+    "crawlberg": {
+      "command": "crawlberg",
       "args": ["mcp"]
     }
   }

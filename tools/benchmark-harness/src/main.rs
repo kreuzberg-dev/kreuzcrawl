@@ -15,7 +15,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Parser)]
 #[command(name = "benchmark-harness")]
-#[command(about = "Benchmark and quality-evaluation harness for kreuzcrawl")]
+#[command(about = "Benchmark and quality-evaluation harness for crawlberg")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -73,7 +73,7 @@ enum Commands {
         browser_backend: CliBrowserBackend,
 
         /// Frameworks to benchmark (may be specified multiple times).
-        #[arg(short = 'F', long, default_values = ["kreuzcrawl-native"])]
+        #[arg(short = 'F', long, default_values = ["crawlberg-native"])]
         frameworks: Vec<String>,
 
         /// Directory to write result JSON files.
@@ -163,7 +163,7 @@ enum Commands {
         output: PathBuf,
 
         /// Framework name to treat as the baseline for comparisons.
-        #[arg(short, long, default_value = "kreuzcrawl-native")]
+        #[arg(short, long, default_value = "crawlberg-native")]
         baseline: String,
     },
 
@@ -255,9 +255,9 @@ fn main() -> ExitCode {
     }
 }
 
-fn quality_crawl_config() -> kreuzcrawl::CrawlConfig {
-    kreuzcrawl::CrawlConfig {
-        content: kreuzcrawl::ContentConfig {
+fn quality_crawl_config() -> crawlberg::CrawlConfig {
+    crawlberg::CrawlConfig {
+        content: crawlberg::ContentConfig {
             output_format: "plain".to_owned(),
             preprocessing_preset: "aggressive".to_owned(),
             ..Default::default()
@@ -265,8 +265,8 @@ fn quality_crawl_config() -> kreuzcrawl::CrawlConfig {
         retry_count: 1,
         retry_codes: vec![429, 500, 502, 503, 504],
         cookies_enabled: true,
-        browser: kreuzcrawl::BrowserConfig {
-            mode: kreuzcrawl::BrowserMode::Auto,
+        browser: crawlberg::BrowserConfig {
+            mode: crawlberg::BrowserMode::Auto,
             ..Default::default()
         },
         ..Default::default()
@@ -277,10 +277,10 @@ fn crawl_config_for_backend(
     preset: &str,
     browser_backend: CliBrowserBackend,
     max_concurrent: usize,
-) -> benchmark_harness::Result<kreuzcrawl::CrawlConfig> {
+) -> benchmark_harness::Result<crawlberg::CrawlConfig> {
     let mut crawl_config = match preset {
         "quality" => quality_crawl_config(),
-        "default" => kreuzcrawl::CrawlConfig::default(),
+        "default" => crawlberg::CrawlConfig::default(),
         other => {
             return Err(benchmark_harness::Error::Config(format!(
                 "unknown preset '{other}', expected 'default' or 'quality'"
@@ -292,13 +292,13 @@ fn crawl_config_for_backend(
 
     match browser_backend {
         CliBrowserBackend::Chromiumoxide => {
-            crawl_config.browser.backend = kreuzcrawl::BrowserBackend::Chromiumoxide;
+            crawl_config.browser.backend = crawlberg::BrowserBackend::Chromiumoxide;
         }
         CliBrowserBackend::Native => {
             configure_native_browser_backend(&mut crawl_config)?;
         }
         CliBrowserBackend::Http => {
-            crawl_config.browser.mode = kreuzcrawl::BrowserMode::Never;
+            crawl_config.browser.mode = crawlberg::BrowserMode::Never;
         }
     }
 
@@ -306,14 +306,14 @@ fn crawl_config_for_backend(
 }
 
 #[cfg(feature = "native-browser")]
-fn configure_native_browser_backend(crawl_config: &mut kreuzcrawl::CrawlConfig) -> benchmark_harness::Result<()> {
-    crawl_config.browser.backend = kreuzcrawl::BrowserBackend::Native;
-    crawl_config.browser.mode = kreuzcrawl::BrowserMode::Always;
+fn configure_native_browser_backend(crawl_config: &mut crawlberg::CrawlConfig) -> benchmark_harness::Result<()> {
+    crawl_config.browser.backend = crawlberg::BrowserBackend::Native;
+    crawl_config.browser.mode = crawlberg::BrowserMode::Always;
     Ok(())
 }
 
 #[cfg(not(feature = "native-browser"))]
-fn configure_native_browser_backend(_crawl_config: &mut kreuzcrawl::CrawlConfig) -> benchmark_harness::Result<()> {
+fn configure_native_browser_backend(_crawl_config: &mut crawlberg::CrawlConfig) -> benchmark_harness::Result<()> {
     Err(benchmark_harness::Error::Config(
         "browser-backend=native requires the benchmark-harness native-browser feature".to_string(),
     ))
@@ -352,10 +352,10 @@ fn cmd_run(
     };
 
     for framework in &frameworks {
-        if framework != "kreuzcrawl-native" {
+        if framework != "crawlberg-native" {
             tracing::warn!(
                 framework = %framework,
-                "unknown framework; only 'kreuzcrawl-native' is supported — ignoring"
+                "unknown framework; only 'crawlberg-native' is supported — ignoring"
             );
         }
     }
@@ -613,8 +613,8 @@ mod tests {
     fn native_browser_backend_uses_native_always_and_concurrency() {
         let config = crawl_config_for_backend("default", CliBrowserBackend::Native, 7).unwrap();
 
-        assert_eq!(config.browser.backend, kreuzcrawl::BrowserBackend::Native);
-        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Always);
+        assert_eq!(config.browser.backend, crawlberg::BrowserBackend::Native);
+        assert_eq!(config.browser.mode, crawlberg::BrowserMode::Always);
         assert_eq!(config.max_concurrent, Some(7));
     }
 
@@ -634,7 +634,7 @@ mod tests {
     fn http_browser_backend_disables_browser() {
         let config = crawl_config_for_backend("default", CliBrowserBackend::Http, 3).unwrap();
 
-        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Never);
+        assert_eq!(config.browser.mode, crawlberg::BrowserMode::Never);
         assert_eq!(config.max_concurrent, Some(3));
     }
 
@@ -642,8 +642,8 @@ mod tests {
     fn chromiumoxide_browser_backend_keeps_existing_mode() {
         let config = crawl_config_for_backend("quality", CliBrowserBackend::Chromiumoxide, 5).unwrap();
 
-        assert_eq!(config.browser.backend, kreuzcrawl::BrowserBackend::Chromiumoxide);
-        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Auto);
+        assert_eq!(config.browser.backend, crawlberg::BrowserBackend::Chromiumoxide);
+        assert_eq!(config.browser.mode, crawlberg::BrowserMode::Auto);
         assert_eq!(config.max_concurrent, Some(5));
     }
 }

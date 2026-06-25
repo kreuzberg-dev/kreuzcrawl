@@ -9,9 +9,9 @@ defmodule E2e.ScrapeTest do
   describe "scrape_asset_dedup" do
     test "scrape_asset_dedup" do
       engine_config = "{\"download_assets\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_SCRAPE_ASSET_DEDUP") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_asset_dedup"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) == 2
       assert Enum.at(result.assets, 0).content_hash != ""
@@ -21,9 +21,9 @@ defmodule E2e.ScrapeTest do
   describe "scrape_asset_max_size" do
     test "scrape_asset_max_size" do
       engine_config = "{\"download_assets\":true,\"max_asset_size\":150}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_SCRAPE_ASSET_MAX_SIZE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_asset_max_size"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) == 2
     end
@@ -32,9 +32,9 @@ defmodule E2e.ScrapeTest do
   describe "scrape_asset_type_filter" do
     test "scrape_asset_type_filter" do
       engine_config = "{\"asset_types\":[\"image\"],\"download_assets\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_SCRAPE_ASSET_TYPE_FILTER") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_asset_type_filter"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) == 1
       assert String.contains?(to_string(Enum.at(result.assets, 0).asset_category), "image")
@@ -44,9 +44,9 @@ defmodule E2e.ScrapeTest do
   describe "scrape_basic_html_page" do
     test "scrape_basic_html_page" do
       engine_config = "{\"max_depth\":0,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_basic_html_page"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert String.trim(result.content_type) == "text/html"
       assert result.html != ""
@@ -62,9 +62,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_complex_links" do
     test "scrape_complex_links" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_complex_links"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.links) > 9
       assert Enum.at(result.links, 0).url != ""
@@ -74,9 +74,9 @@ defmodule E2e.ScrapeTest do
   describe "scrape_download_assets" do
     test "scrape_download_assets" do
       engine_config = "{\"download_assets\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_SCRAPE_DOWNLOAD_ASSETS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_download_assets"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) > 2
     end
@@ -84,9 +84,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_dublin_core" do
     test "scrape_dublin_core" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_dublin_core"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.metadata.dc_title != ""
       assert String.trim(result.metadata.dc_title) == "Effects of Climate Change on Marine Biodiversity"
@@ -96,9 +96,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_empty_page" do
     test "scrape_empty_page" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_empty_page"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.links) > -1
       assert length(result.images) == 0
@@ -107,9 +107,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_feed_discovery" do
     test "scrape_feed_discovery" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_feed_discovery"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.feeds) >= 3
     end
@@ -117,9 +117,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_image_sources" do
     test "scrape_image_sources" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_image_sources"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.images) > 4
       assert String.trim(result.metadata.og_image) == "https://example.com/images/og-hero.jpg"
@@ -128,18 +128,18 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_js_heavy_spa" do
     test "scrape_js_heavy_spa" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_js_heavy_spa"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.html != ""
     end
   end
 
   describe "scrape_json_ld" do
     test "scrape_json_ld" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_json_ld"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.json_ld != ""
       assert String.trim(Enum.at(result.json_ld, 0).schema_type) == "Recipe"
@@ -149,9 +149,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_malformed_html" do
     test "scrape_malformed_html" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_malformed_html"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.html != ""
       assert String.contains?(to_string(result.metadata.description), "broken HTML")
@@ -160,9 +160,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_og_metadata" do
     test "scrape_og_metadata" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_og_metadata"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.metadata.og_title != ""
       assert String.trim(result.metadata.og_title) == "Article Title"
@@ -175,9 +175,9 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_twitter_card" do
     test "scrape_twitter_card" do
-      {:ok, engine} = Kreuzcrawl.create_engine(nil)
+      {:ok, engine} = Crawlberg.create_engine(nil)
       url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/scrape_twitter_card"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.metadata.twitter_card != ""
       assert String.trim(result.metadata.twitter_card) == "summary_large_image"

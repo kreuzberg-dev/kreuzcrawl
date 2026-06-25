@@ -1,6 +1,6 @@
 # MCP Server
 
-Kreuzcrawl exposes its crawling capabilities as an
+Crawlberg exposes its crawling capabilities as an
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server, allowing AI
 assistants to scrape, crawl, and map websites through tool calls. The MCP feature is
 gated behind `mcp`.
@@ -10,7 +10,7 @@ gated behind `mcp`.
 ### CLI
 
 ```bash
-kreuzcrawl mcp
+crawlberg mcp
 ```
 
 The server starts on **stdio transport** -- it reads JSON-RPC messages from stdin and
@@ -19,7 +19,7 @@ writes responses to stdout. Diagnostic messages go to stderr.
 ### Programmatic
 
 ```rust
-use kreuzcrawl::mcp::start_mcp_server;
+use crawlberg::mcp::start_mcp_server;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -31,8 +31,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 With custom configuration:
 
 ```rust
-use kreuzcrawl::mcp::start_mcp_server_with_config;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::mcp::start_mcp_server_with_config;
+use crawlberg::CrawlConfig;
 
 let config = CrawlConfig {
     respect_robots_txt: true,
@@ -48,7 +48,7 @@ start_mcp_server_with_config(config).await?;
 Run the REST API server with the MCP server mounted over Streamable HTTP:
 
 ```bash
-kreuzcrawl serve --host 127.0.0.1 --port 3000
+crawlberg serve --host 127.0.0.1 --port 3000
 ```
 
 The MCP server is available at `http://127.0.0.1:3000/mcp`. Connect an MCP client to this endpoint.
@@ -65,7 +65,7 @@ MCP clients that support the Streamable HTTP transport take the endpoint URL dir
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl-http": {
+    "crawlberg-http": {
       "url": "http://127.0.0.1:3000/mcp"
     }
   }
@@ -77,7 +77,7 @@ MCP clients that support the Streamable HTTP transport take the endpoint URL dir
 Use `streamable_http_service()` to create a Streamable HTTP server type:
 
 ```rust
-use kreuzcrawl::{streamable_http_service, CrawlConfig};
+use crawlberg::{streamable_http_service, CrawlConfig};
 
 let config = CrawlConfig::default();
 let service = streamable_http_service(config);
@@ -219,7 +219,7 @@ Returns markdown with inline `[link](url)` syntax converted to `[1]` with
 
 #### `get_version`
 
-Return the kreuzcrawl library version. Takes no parameters.
+Return the crawlberg library version. Takes no parameters.
 
 Example response:
 
@@ -238,8 +238,8 @@ Add to your MCP configuration (`claude_desktop_config.json` or `.mcp.json`):
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl": {
-      "command": "kreuzcrawl",
+    "crawlberg": {
+      "command": "crawlberg",
       "args": ["mcp"]
     }
   }
@@ -250,8 +250,8 @@ Add to your MCP configuration (`claude_desktop_config.json` or `.mcp.json`):
 
 In Cursor settings, add an MCP server:
 
-- **Name:** kreuzcrawl
-- **Command:** `kreuzcrawl mcp`
+- **Name:** crawlberg
+- **Command:** `crawlberg mcp`
 - **Transport:** stdio
 
 ### Windsurf
@@ -261,8 +261,8 @@ Add to your Windsurf MCP configuration:
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl": {
-      "command": "kreuzcrawl",
+    "crawlberg": {
+      "command": "crawlberg",
       "args": ["mcp"]
     }
   }
@@ -274,9 +274,9 @@ Add to your Windsurf MCP configuration:
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl": {
+    "crawlberg": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "kreuzcrawl:latest", "mcp"]
+      "args": ["run", "-i", "--rm", "crawlberg:latest", "mcp"]
     }
   }
 }
@@ -290,9 +290,9 @@ local MCP servers.
 
 The server announces itself with:
 
-- **Name:** `kreuzcrawl-mcp`
+- **Name:** `crawlberg-mcp`
 - **Version:** The crate version from `Cargo.toml`
-- **Title:** Kreuzcrawl Web Crawling MCP Server
+- **Title:** Crawlberg Web Crawling MCP Server
 - **Capabilities:** Tools
 
 The server instructions tell clients:

@@ -30,7 +30,7 @@
 		"**/.next/**",
 		"**/*.min.js",
 		"docs/snippets/**/*.ts",
-		"crates/kreuzcrawl-browser/js/**"
+		"crates/crawlberg-browser/js/**"
 	],
 	"rules": {
 		"no-console": "off",

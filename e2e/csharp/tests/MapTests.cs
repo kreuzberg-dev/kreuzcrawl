@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: map.</summary>
     public class MapTests
@@ -27,10 +27,10 @@ namespace Kreuzcrawl
         {
             // Discovers all URLs on a site without fetching full content
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":0,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_MAP_DISCOVER_URLS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_discover_urls";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count >= 3, "expected >= 3");
 
         }
@@ -40,10 +40,10 @@ namespace Kreuzcrawl
         {
             // Excludes URLs matching patterns from URL map
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"exclude_paths\":[\"/private/.*\",\"/api/.*\"],\"max_depth\":0,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_MAP_EXCLUDE_PATTERNS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_exclude_patterns";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count == 1);
 
         }
@@ -53,10 +53,10 @@ namespace Kreuzcrawl
         {
             // Includes subdomain URLs in URL map discovery; page has 1 local and 1 subdomain link
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"allow_subdomains\":true,\"max_depth\":0,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_MAP_INCLUDE_SUBDOMAINS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_include_subdomains";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count >= 2, "expected >= 2");
 
         }
@@ -66,9 +66,9 @@ namespace Kreuzcrawl
         {
             // Handles large sitemap with 100+ URLs
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_large_sitemap";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count >= 100, "expected >= 100");
 
         }
@@ -78,10 +78,10 @@ namespace Kreuzcrawl
         {
             // Limits map result count to specified maximum
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"map_limit\":5,\"max_depth\":0,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_MAP_LIMIT_PAGINATION");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_limit_pagination";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count <= 5, "expected <= 5");
 
         }
@@ -91,10 +91,10 @@ namespace Kreuzcrawl
         {
             // Filters map results by search keyword; 4 links in page but only 2 match 'blog'
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"map_search\":\"blog\",\"max_depth\":0,\"respect_robots_txt\":false}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_MAP_SEARCH_FILTER");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/map_search_filter";
-            var result = await KreuzcrawlConverter.MapUrlsAsync(engine, url);
+            var result = await CrawlbergConverter.MapUrlsAsync(engine, url);
     Assert.True(result.Urls.Count >= 2, "expected >= 2");
     Assert.True(result.Urls.Count <= 2, "expected <= 2");
 

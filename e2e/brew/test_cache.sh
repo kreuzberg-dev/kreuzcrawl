@@ -9,7 +9,7 @@ set -euo pipefail
 test_cache_basic() {
   # Crawling with disk cache enabled succeeds without errors
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_CACHE_BASIC:-${MOCK_SERVER_URL}/fixtures/cache_basic}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_CACHE_BASIC:-${MOCK_SERVER_URL}/fixtures/cache_basic}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -19,7 +19,7 @@ test_cache_basic() {
 test_cache_etag_conditional() {
   # Etag header enables conditional requests for cached content
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CACHE_ETAG_CONDITIONAL:-${MOCK_SERVER_URL}/fixtures/cache_etag_conditional}" --config '{"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CACHE_ETAG_CONDITIONAL:-${MOCK_SERVER_URL}/fixtures/cache_etag_conditional}" --config '{"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -32,7 +32,7 @@ test_cache_etag_conditional() {
 test_cache_last_modified() {
   # Last-Modified header enables conditional requests via If-Modified-Since
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CACHE_LAST_MODIFIED:-${MOCK_SERVER_URL}/fixtures/cache_last_modified}" --config '{"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CACHE_LAST_MODIFIED:-${MOCK_SERVER_URL}/fixtures/cache_last_modified}" --config '{"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -42,7 +42,7 @@ test_cache_last_modified() {
 test_cache_miss_fresh_fetch() {
   # Uncached URLs are fetched fresh without conditional headers
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_CACHE_MISS_FRESH_FETCH:-${MOCK_SERVER_URL}/fixtures/cache_miss_fresh_fetch}" --config '{"max_depth":1}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_CACHE_MISS_FRESH_FETCH:-${MOCK_SERVER_URL}/fixtures/cache_miss_fresh_fetch}" --config '{"max_depth":1}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')

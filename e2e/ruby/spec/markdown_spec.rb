@@ -5,14 +5,14 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'markdown' do
   it 'citations_balanced_parens: Citations correctly handle links inside parentheses with balanced rendering' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/citations_balanced_parens"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.markdown.content.to_s).not_to be_empty
     expect(result.markdown.content.to_s).to include('(')
@@ -20,9 +20,9 @@ RSpec.describe 'markdown' do
   end
 
   it 'citations_duplicate_urls: Citations deduplicates multiple links to the same URL' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/citations_duplicate_urls"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.markdown.content.to_s).not_to be_empty
     expect(result.markdown.citations).to be true
@@ -30,9 +30,9 @@ RSpec.describe 'markdown' do
   end
 
   it 'markdown_basic_conversion: HTML is always converted to markdown alongside raw HTML' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_basic_conversion"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.metadata.title.to_s.strip).to eq('Test'.strip)
     expect(result.html.to_s).not_to be_empty
@@ -43,36 +43,36 @@ RSpec.describe 'markdown' do
 
   it 'markdown_crawl_all_pages: All crawled pages have markdown field populated' do
     engine_config = { 'max_depth' => 1 }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_MARKDOWN_CRAWL_ALL_PAGES', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_crawl_all_pages"
-    result = Kreuzcrawl.crawl_async(engine, url)
+    result = Crawlberg.crawl_async(engine, url)
     # skipped: field 'crawl.pages_crawled' not available on result type
 
     expect(result).not_to be_nil
   end
 
   it 'markdown_fit_content: Fit markdown removes navigation and boilerplate content' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = ENV.fetch('MOCK_SERVER_MARKDOWN_FIT_CONTENT', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_fit_content"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.markdown.content.to_s).not_to be_empty
 
   end
 
   it 'markdown_headings_and_paragraphs: Markdown conversion preserves heading hierarchy and paragraph text' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_headings_and_paragraphs"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.markdown.content.to_s).not_to be_empty
     expect(result.markdown.content.to_s).to include('Main Title')
 
   end
 
   it 'markdown_links_converted: HTML links are converted to markdown link syntax' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_links_converted"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.html.to_s).not_to be_empty
     expect(result.markdown.content.to_s).not_to be_empty
@@ -81,9 +81,9 @@ RSpec.describe 'markdown' do
   end
 
   it 'markdown_with_citations: Markdown includes citation conversion with numbered references' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_with_citations"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.markdown.content.to_s).not_to be_empty
 

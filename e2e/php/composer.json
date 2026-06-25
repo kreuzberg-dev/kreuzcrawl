@@ -8,12 +8,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Kreuzcrawl\\": "../../packages/php/src/"
+			"Crawlberg\\": "../../packages/php/src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Kreuzcrawl\\E2e\\": "tests/"
+			"Crawlberg\\E2e\\": "tests/"
 		}
 	},
 	"scripts": {

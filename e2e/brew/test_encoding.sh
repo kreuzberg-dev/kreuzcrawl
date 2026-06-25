@@ -9,7 +9,7 @@ set -euo pipefail
 test_encoding_double_encoded() {
   # Handles double-encoded URL characters (%25C3%25B6)
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ENCODING_DOUBLE_ENCODED:-${MOCK_SERVER_URL}/fixtures/encoding_double_encoded}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ENCODING_DOUBLE_ENCODED:-${MOCK_SERVER_URL}/fixtures/encoding_double_encoded}" --config '{}' --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
@@ -22,7 +22,7 @@ test_encoding_double_encoded() {
 test_encoding_mixed_charset_page() {
   # Handles charset mismatch between HTTP header and HTML meta tag
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ENCODING_MIXED_CHARSET_PAGE:-${MOCK_SERVER_URL}/fixtures/encoding_mixed_charset_page}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ENCODING_MIXED_CHARSET_PAGE:-${MOCK_SERVER_URL}/fixtures/encoding_mixed_charset_page}" --config '{}' --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
@@ -32,7 +32,7 @@ test_encoding_mixed_charset_page() {
 test_encoding_percent_encoded_path() {
   # Handles percent-encoded spaces and characters in URL paths
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH:-${MOCK_SERVER_URL}/fixtures/encoding_percent_encoded_path}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH:-${MOCK_SERVER_URL}/fixtures/encoding_percent_encoded_path}" --config '{}' --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
@@ -45,7 +45,7 @@ test_encoding_percent_encoded_path() {
 test_encoding_unicode_url() {
   # Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ENCODING_UNICODE_URL:-${MOCK_SERVER_URL}/fixtures/encoding_unicode_url}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ENCODING_UNICODE_URL:-${MOCK_SERVER_URL}/fixtures/encoding_unicode_url}" --config '{}' --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html')

@@ -1,6 +1,6 @@
 # Content Extraction
 
-Kreuzcrawl's extraction pipeline transforms raw HTTP responses into richly structured data. Every HTML page passes through metadata extraction, link discovery, feed detection, JSON-LD parsing, and Markdown conversion.
+Crawlberg's extraction pipeline transforms raw HTTP responses into richly structured data. Every HTML page passes through metadata extraction, link discovery, feed detection, JSON-LD parsing, and Markdown conversion.
 
 ## Extraction Pipeline
 

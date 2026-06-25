@@ -5,14 +5,14 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'engine' do
   it 'engine_batch_basic: CrawlEngine with defaults batch scrapes like the free function' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_batch_basic"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     # skipped: field 'batch.completed_count' not available on result type
     # skipped: field 'batch.total_count' not available on result type
 
@@ -21,9 +21,9 @@ RSpec.describe 'engine' do
 
   it 'engine_crawl_basic: CrawlEngine with defaults crawls multiple pages like the free function' do
     engine_config = { 'max_depth' => 1 }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_ENGINE_CRAWL_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_crawl_basic"
-    result = Kreuzcrawl.crawl_async(engine, url)
+    result = Crawlberg.crawl_async(engine, url)
     # skipped: field 'crawl.pages_crawled' not available on result type
     # skipped: field 'crawl.min_pages' not available on result type
 
@@ -31,18 +31,18 @@ RSpec.describe 'engine' do
   end
 
   it 'engine_map_basic: CrawlEngine with defaults discovers URLs like the free function' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = ENV.fetch('MOCK_SERVER_ENGINE_MAP_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_map_basic"
-    result = Kreuzcrawl.map_urls_async(engine, url)
+    result = Crawlberg.map_urls_async(engine, url)
     # skipped: field 'map.min_urls' not available on result type
 
     expect(result).not_to be_nil
   end
 
   it 'engine_scrape_basic: CrawlEngine with defaults scrapes a page identically to the free function' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine = Crawlberg.create_engine(nil)
     url = ENV.fetch('MOCK_SERVER_ENGINE_SCRAPE_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_scrape_basic"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.content_type.to_s.strip).to eq('text/html'.strip)
     expect(result.metadata.title.to_s.strip).to eq('Engine Test'.strip)
@@ -54,12 +54,12 @@ RSpec.describe 'engine' do
 
   it 'engine_stream_basic: CrawlEngine with defaults streams events like the free function' do
     engine_config = { 'max_depth' => 1 }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = ENV.fetch('MOCK_SERVER_ENGINE_STREAM_BASIC', nil) || "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_stream_basic"
-    url_req = Kreuzcrawl::CrawlStreamRequest.new(url: url)
+    url_req = Crawlberg::CrawlStreamRequest.new(url: url)
     chunks = []
     stream_complete = false
-    Kreuzcrawl.crawl_stream(engine, url_req) do |chunk|
+    Crawlberg.crawl_stream(engine, url_req) do |chunk|
       chunks << chunk
     end
     stream_complete = true

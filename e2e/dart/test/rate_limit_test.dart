@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,44 +166,44 @@ void main() {
 
   test('Exponential backoff retry succeeds after 429 Too Many Requests', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false,"retry_codes":[429],"retry_count":2}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("rate_limit_adaptive_backoff");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
   });
 
   test('Rate limiter adds delay between requests to the same domain', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("rate_limit_basic_delay");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
     // skipped: field 'rate_limit.min_duration_ms' not available on dart result type
   });
 
   test('Per-domain rate limiting applies delay between requests to same domain', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("rate_limit_per_domain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
     expect(result.pages[0].statusCode, equals(200));
   });
 
   test('Respects Crawl-delay directive in robots.txt', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"respect_robots_txt":true,"user_agent":"TestBot"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("rate_limit_robots_crawl_delay");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(1));
     expect(result.pages[0].statusCode, equals(200));
   });
 
   test('Rate limiter with zero delay does not slow crawling', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("rate_limit_zero_no_delay");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 

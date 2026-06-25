@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,9 +166,9 @@ void main() {
 
   test('Same asset linked twice results in one download with one unique hash', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_assets":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("scrape_asset_dedup");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.assets.length, equals(2));
     expect(result.assets.any((e) => e.contentHash.toString().isNotEmpty), isTrue);
@@ -176,18 +176,18 @@ void main() {
 
   test('Skips assets exceeding max_asset_size limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_assets":true,"max_asset_size":150}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("scrape_asset_max_size");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.assets.length, equals(2));
   });
 
   test('Only downloads image assets when asset_types filter is set', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"asset_types":["image"],"download_assets":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("scrape_asset_type_filter");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.assets.length, equals(1));
     expect(result.assets.any((e) => e.assetCategory.toString().contains('image')), isTrue);
@@ -195,9 +195,9 @@ void main() {
 
   test('Scrapes a simple HTML page and extracts title, description, and links', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":0,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("scrape_basic_html_page");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.contentType.toString().trim(), equals('text/html'.toString().trim()));
     expect(result.html, isNotNull);
@@ -211,9 +211,9 @@ void main() {
   });
 
   test('Classifies links by type: internal, external, anchor, document, image', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_complex_links");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.links.length, greaterThan(9));
     expect(result.links.any((e) => e.url.toString().isNotEmpty), isTrue);
@@ -221,17 +221,17 @@ void main() {
 
   test('Downloads CSS, JS, and image assets from page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_assets":true}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("scrape_download_assets");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.assets.length, greaterThan(2));
   });
 
   test('Extracts Dublin Core metadata from a page', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_dublin_core");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.dcTitle, isNotNull);
     expect(result.metadata.dcTitle.toString().trim(), equals('Effects of Climate Change on Marine Biodiversity'.toString().trim()));
@@ -239,42 +239,42 @@ void main() {
   });
 
   test('Handles an empty HTML document without errors', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_empty_page");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.links.length, greaterThan(-1));
     expect(result.images.length, equals(0));
   });
 
   test('Discovers RSS, Atom, and JSON feed links', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_feed_discovery");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.feeds.length, greaterThanOrEqualTo(3));
   });
 
   test('Extracts images from img, picture, og:image, twitter:image', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_image_sources");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.images.length, greaterThan(4));
     expect(result.metadata.ogImage.toString().trim(), equals('https://example.com/images/og-hero.jpg'.toString().trim()));
   });
 
   test('Handles SPA page with JavaScript-only content (no server-rendered HTML)', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_js_heavy_spa");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.html, isNotNull);
   });
 
   test('Extracts JSON-LD structured data from a page', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_json_ld");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsonLd, isNotEmpty);
     expect(result.jsonLd[0].schemaType.toString().trim(), equals('Recipe'.toString().trim()));
@@ -282,18 +282,18 @@ void main() {
   });
 
   test('Gracefully handles broken HTML without crashing', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_malformed_html");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.html, isNotNull);
     expect(result.metadata.description, contains('broken HTML'));
   });
 
   test('Extracts full Open Graph metadata from a page', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_og_metadata");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.ogTitle, isNotNull);
     expect(result.metadata.ogTitle.toString().trim(), equals('Article Title'.toString().trim()));
@@ -304,9 +304,9 @@ void main() {
   });
 
   test('Extracts Twitter Card metadata from a page', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("scrape_twitter_card");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.metadata.twitterCard, isNotNull);
     expect(result.metadata.twitterCard.toString().trim(), equals('summary_large_image'.toString().trim()));

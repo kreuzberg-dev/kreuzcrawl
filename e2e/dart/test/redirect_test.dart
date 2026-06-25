@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,106 +166,106 @@ void main() {
 
   test('Follows 301 permanent redirect and returns final page content', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_301_permanent");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/target'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Follows 302 Found redirect correctly', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_302_found");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/found-target'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Follows 303 See Other redirect (method changes to GET)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_303_see_other");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/see-other'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Follows 307 Temporary Redirect (preserves method)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_307_temporary");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/temp-target'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Follows 308 Permanent Redirect (preserves method)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_308_permanent");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/perm-target'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Follows a chain of redirects (301 -> 302 -> 200)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_chain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/step2'));
     expect(result.redirectCount, equals(2));
   });
 
   test('Reports cross-domain redirect target without following to external domain', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_cross_domain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/external-redirect'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Detects redirect loop (A -> B -> A) and returns error', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_loop");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'is_error' not available on dart result type
   });
 
   test('Aborts when redirect count exceeds max_redirects limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_redirects":2,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_max_exceeded");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'is_error' not available on dart result type
   });
 
   test('Follows HTML meta-refresh redirect to target page', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_meta_refresh");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/target'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Handles HTTP Refresh header redirect', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_refresh_header");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/refreshed'));
     expect(result.redirectCount, equals(1));
   });
 
   test('Redirect target returns 404 Not Found', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("redirect_to_404");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.finalUrl, contains('/gone'));
     expect(result.redirectCount, equals(1));
     // skipped: field 'is_error' not available on dart result type

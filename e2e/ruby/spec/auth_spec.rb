@@ -5,15 +5,15 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'kreuzcrawl'
+require 'crawlberg'
 require 'json'
 
 RSpec.describe 'auth' do
   it 'auth_basic_http: Sends HTTP Basic authentication header' do
     engine_config = { 'auth' => { 'password' => 'testpass', 'type' => 'basic', 'username' => 'testuser' }, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/auth_basic_http"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.auth_header_sent).to be(true)
     expect(result.status_code).to eq(200)
 
@@ -21,9 +21,9 @@ RSpec.describe 'auth' do
 
   it 'auth_bearer_token: Sends Bearer token in Authorization header' do
     engine_config = { 'auth' => { 'token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test', 'type' => 'bearer' }, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/auth_bearer_token"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.auth_header_sent).to be(true)
     expect(result.status_code).to eq(200)
 
@@ -31,9 +31,9 @@ RSpec.describe 'auth' do
 
   it 'auth_custom_header: Sends authentication via custom header (X-API-Key)' do
     engine_config = { 'auth' => { 'name' => 'X-API-Key', 'type' => 'header', 'value' => 'sk-test-key-12345' }, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config.to_json)
+    engine = Crawlberg.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/auth_custom_header"
-    result = Kreuzcrawl.scrape_async(engine, url)
+    result = Crawlberg.scrape_async(engine, url)
     expect(result.auth_header_sent).to be(true)
     expect(result.status_code).to eq(200)
 

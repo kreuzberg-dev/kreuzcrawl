@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: browser. */
 final class BrowserTest extends TestCase
@@ -21,9 +21,9 @@ final class BrowserTest extends TestCase
     public function test_browser_config_auto_no_feature(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_config_auto_no_feature';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(true, $result->jsRenderHint);
@@ -37,9 +37,9 @@ final class BrowserTest extends TestCase
     public function test_browser_config_never_mode(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_config_never_mode';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(true, $result->jsRenderHint);
@@ -53,9 +53,9 @@ final class BrowserTest extends TestCase
     public function test_browser_crawl_mode_always(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"], "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_BROWSER_CRAWL_MODE_ALWAYS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/browser_crawl_mode_always';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
         // skipped: field 'browser_used' not available on result type
@@ -67,9 +67,9 @@ final class BrowserTest extends TestCase
     public function test_browser_crawl_waf_fallback(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "auto"], "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_BROWSER_CRAWL_WAF_FALLBACK') ?: getenv('MOCK_SERVER_URL') . '/fixtures/browser_crawl_waf_fallback';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
 
@@ -80,9 +80,9 @@ final class BrowserTest extends TestCase
     /** Does NOT flag a short but real content page as needing JS rendering */
     public function test_browser_detect_minimal_page(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_minimal_page';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(false, $result->jsRenderHint);
@@ -96,9 +96,9 @@ final class BrowserTest extends TestCase
     public function test_browser_detect_next_empty(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_next_empty';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(true, $result->jsRenderHint);
@@ -111,9 +111,9 @@ final class BrowserTest extends TestCase
     /** Does NOT flag Next.js page with full SSR content as needing JS rendering */
     public function test_browser_detect_next_rendered(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_next_rendered';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->html);
@@ -127,9 +127,9 @@ final class BrowserTest extends TestCase
     /** Does NOT flag a normal server-rendered page as needing JS rendering */
     public function test_browser_detect_normal_page(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_normal_page';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(false, $result->jsRenderHint);
@@ -143,9 +143,9 @@ final class BrowserTest extends TestCase
     public function test_browser_detect_nuxt_shell(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_nuxt_shell';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(true, $result->jsRenderHint);
@@ -159,9 +159,9 @@ final class BrowserTest extends TestCase
     public function test_browser_detect_react_shell(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_react_shell';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->html);
@@ -176,9 +176,9 @@ final class BrowserTest extends TestCase
     public function test_browser_detect_vue_shell(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "never"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_detect_vue_shell';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(true, $result->jsRenderHint);
@@ -192,9 +192,9 @@ final class BrowserTest extends TestCase
     public function test_browser_extra_wait(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["extraWait" => 200, "mode" => "always", "wait" => "network_idle"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_extra_wait';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
 
@@ -206,9 +206,9 @@ final class BrowserTest extends TestCase
     public function test_browser_fallback_spa_render(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_spa_render';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->jsRenderHint);
             $this->assertEquals(true, $result->browserUsed);
@@ -221,9 +221,9 @@ final class BrowserTest extends TestCase
     public function test_browser_fallback_waf_blocked(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_waf_blocked';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
 
@@ -235,9 +235,9 @@ final class BrowserTest extends TestCase
     public function test_browser_mode_always(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_mode_always';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
 
@@ -249,9 +249,9 @@ final class BrowserTest extends TestCase
     public function test_browser_profile_basic(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always"], "browserProfile" => "test-profile"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_profile_basic';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
             $this->assertEquals(200, $result->statusCode);
@@ -264,9 +264,9 @@ final class BrowserTest extends TestCase
     public function test_browser_wait_fixed(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["extraWait" => 100, "mode" => "always", "wait" => "fixed"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_wait_fixed';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
             $this->assertEquals(200, $result->statusCode);
@@ -279,9 +279,9 @@ final class BrowserTest extends TestCase
     public function test_browser_wait_selector(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["browser" => ["mode" => "always", "wait" => "selector", "waitSelector" => "#content"]]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_wait_selector';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->browserUsed);
             $this->assertEquals(200, $result->statusCode);

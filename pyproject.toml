@@ -22,7 +22,7 @@ line-length = 120
 lint.select = [ "ALL" ]
 lint.ignore = [ "ANN", "COM812", "D", "ISC001" ]
 lint.per-file-ignores."e2e/**/*.py" = [ "B017", "PLR2004", "PT011", "S" ]
-lint.per-file-ignores."packages/python/kreuzcrawl/*.py" = [ "E501", "I001" ]
+lint.per-file-ignores."packages/python/crawlberg/*.py" = [ "E501", "I001" ]
 lint.per-file-ignores."scripts/**/*.py" = [
     "B023",
     "B904",
@@ -68,8 +68,8 @@ indent = 4
 
 [tool.mypy]
 overrides = [
-    # alef-generated facade: type mismatches between the facade and _kreuzcrawl.pyi
+    # alef-generated facade: type mismatches between the facade and _crawlberg.pyi
     # stubs (AuthConfig __init__, BatchScrapeResult list parameterisation) are
     # upstream codegen bugs tracked in alef; relax until the stubs catch up.
-    { module = "kreuzcrawl.api", ignore_errors = true },
+    { module = "crawlberg.api", ignore_errors = true },
 ]

@@ -3,6 +3,6 @@ Crawl-delay: 5
 Allow: /
 Disallow: /admin/
 
-User-agent: kreuzcrawl
+User-agent: crawlberg
 Crawl-delay: 2
 Allow: /

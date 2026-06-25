@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: metadata. */
 final class MetadataTest extends TestCase
@@ -20,9 +20,9 @@ final class MetadataTest extends TestCase
     /** Extracts article:published_time, modified_time, author, section, and tags */
     public function test_metadata_article_times(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_article_times';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
         // skipped: field 'article.published_time' not available on result type        // skipped: field 'article.modified_time' not available on result type        // skipped: field 'article.author' not available on result type        // skipped: field 'article.section' not available on result type        // skipped: field 'article.tags.length' not available on result type
@@ -33,9 +33,9 @@ final class MetadataTest extends TestCase
     /** Extracts favicon link tags including apple-touch-icon */
     public function test_metadata_favicons(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_favicons';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
         // skipped: field 'favicons.length' not available on result type        // skipped: field 'favicons[].apple_touch' not available on result type
@@ -46,9 +46,9 @@ final class MetadataTest extends TestCase
     /** Extracts heading hierarchy (h1-h6) from HTML page */
     public function test_metadata_headings(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_headings';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
         // skipped: field 'headings.h1.length' not available on result type        // skipped: field 'headings.h1[0].text' not available on result type        // skipped: field 'headings.length' not available on result type
@@ -59,9 +59,9 @@ final class MetadataTest extends TestCase
     /** Extracts hreflang alternate link tags */
     public function test_metadata_hreflang(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_hreflang';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
         // skipped: field 'hreflang.length' not available on result type        // skipped: field 'hreflang[].lang' not available on result type
@@ -72,9 +72,9 @@ final class MetadataTest extends TestCase
     /** Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata */
     public function test_metadata_keywords_author(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_keywords_author';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals("Comprehensive Metadata Test Page", trim(($result->getMetadata()->title ?? null)));
@@ -83,7 +83,7 @@ final class MetadataTest extends TestCase
             $this->assertStringContainsString("rust", ($result->getMetadata()->keywords ?? null));
             $this->assertEquals("Jane Developer", trim(($result->getMetadata()->author ?? null)));
             $this->assertNotEmpty(($result->getMetadata()->viewport ?? null));
-            $this->assertEquals("kreuzcrawl/1.0", trim(($result->getMetadata()->generator ?? null)));
+            $this->assertEquals("crawlberg/1.0", trim(($result->getMetadata()->generator ?? null)));
             $this->assertEquals("#ff6600", trim(($result->getMetadata()->themeColor ?? null)));
             $this->assertEquals("index, follow", trim(($result->getMetadata()->robots ?? null)));
             $this->assertEquals("en", trim($result->getMetadata()->htmlLang));
@@ -96,9 +96,9 @@ final class MetadataTest extends TestCase
     /** Extracts og:video, og:audio, and og:locale:alternate metadata */
     public function test_metadata_og_video_audio(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_og_video_audio';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals("https://example.com/video.mp4", trim($result->getMetadata()->ogVideo));
@@ -111,9 +111,9 @@ final class MetadataTest extends TestCase
     /** Extracts response metadata from HTTP headers (etag, server, content-language) */
     public function test_metadata_response_headers(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_response_headers';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
         // skipped: field 'response_headers.etag' not available on result type        // skipped: field 'response_headers.last_modified' not available on result type        // skipped: field 'response_headers.server' not available on result type        // skipped: field 'response_headers.content_language' not available on result type
@@ -124,9 +124,9 @@ final class MetadataTest extends TestCase
     /** Computes word count from visible page text */
     public function test_metadata_word_count(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/metadata_word_count';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThan(99, ($result->getMetadata()->wordCount ?? null));

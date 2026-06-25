@@ -7,7 +7,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Kreuzcrawl;
+namespace Crawlberg;
 
 internal static class TestSetup
 {
@@ -16,8 +16,8 @@ internal static class TestSetup
     [ModuleInitializer]
     internal static void Init()
     {
-        if (Environment.GetEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") == null) {
-            Environment.SetEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
+        if (Environment.GetEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK") == null) {
+            Environment.SetEnvironmentVariable("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true");
         }
 
         // Walk up from the assembly directory until we find the repo root.

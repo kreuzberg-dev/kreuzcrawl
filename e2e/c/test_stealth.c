@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_stealth_ua_rotation_config(void) {
     /* User-agent rotation config is accepted and crawl succeeds */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STEALTH_UA_ROTATION_CONFIG");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,20 +30,20 @@ void test_stealth_ua_rotation_config(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/stealth_ua_rotation_config", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_stealth_ua_rotation_round_robin(void) {
     /* User-agent rotation cycles through multiple agents across multiple requests */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":1,\"max_pages\":3,\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2\"]}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STEALTH_UA_ROTATION_ROUND_ROBIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -54,22 +54,22 @@ void test_stealth_ua_rotation_round_robin(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/stealth_ua_rotation_round_robin", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     int pages_length = alef_json_array_count(pages_json);
     assert(pages_length >= 2 && "expected greater than or equal");
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_stealth_ua_rotation_single_domain(void) {
     /* Custom user-agent string is applied for single domain crawl */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_depth\":0,\"stay_on_domain\":true,\"user_agents\":[\"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)\"]}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STEALTH_UA_ROTATION_SINGLE_DOMAIN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -80,9 +80,9 @@ void test_stealth_ua_rotation_single_domain(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/stealth_ua_rotation_single_domain", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* pages_json = kcrawl_crawl_result_pages(result);
+    char* pages_json = cberg_crawl_result_pages(result);
     assert(pages_json != NULL);
     char* pages_0_json = alef_json_array_get_index(pages_json, 0);
     char* pages_0_status_code = alef_json_get_string(pages_0_json, "status_code");
@@ -91,7 +91,7 @@ void test_stealth_ua_rotation_single_domain(void) {
     assert(pages_length == 1 && "equals assertion failed");
     free(pages_0_status_code);
     free(pages_0_json);
-    kcrawl_free_string(pages_json);
-    kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(pages_json);
+    cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

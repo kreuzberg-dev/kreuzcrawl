@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: scrape. */
 final class ScrapeTest extends TestCase
@@ -21,9 +21,9 @@ final class ScrapeTest extends TestCase
     public function test_scrape_asset_dedup(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadAssets" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_SCRAPE_ASSET_DEDUP') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_dedup';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(2, count($result->getAssets()));
@@ -37,9 +37,9 @@ final class ScrapeTest extends TestCase
     public function test_scrape_asset_max_size(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadAssets" => true, "maxAssetSize" => 150]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_SCRAPE_ASSET_MAX_SIZE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_max_size';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(2, count($result->getAssets()));
@@ -52,9 +52,9 @@ final class ScrapeTest extends TestCase
     public function test_scrape_asset_type_filter(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["assetTypes" => ["image"], "downloadAssets" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_SCRAPE_ASSET_TYPE_FILTER') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_type_filter';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals(1, count($result->getAssets()));
@@ -68,9 +68,9 @@ final class ScrapeTest extends TestCase
     public function test_scrape_basic_html_page(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 0, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_basic_html_page';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertEquals("text/html", trim($result->contentType));
@@ -90,9 +90,9 @@ final class ScrapeTest extends TestCase
     /** Classifies links by type: internal, external, anchor, document, image */
     public function test_scrape_complex_links(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_complex_links';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThan(9, count($result->getLinks()));
@@ -106,9 +106,9 @@ final class ScrapeTest extends TestCase
     public function test_scrape_download_assets(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["downloadAssets" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_SCRAPE_DOWNLOAD_ASSETS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/scrape_download_assets';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThan(2, count($result->getAssets()));
@@ -120,9 +120,9 @@ final class ScrapeTest extends TestCase
     /** Extracts Dublin Core metadata from a page */
     public function test_scrape_dublin_core(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_dublin_core';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMetadata()->dcTitle);
@@ -136,9 +136,9 @@ final class ScrapeTest extends TestCase
     /** Handles an empty HTML document without errors */
     public function test_scrape_empty_page(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_empty_page';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThan(-1, count($result->getLinks()));
@@ -151,9 +151,9 @@ final class ScrapeTest extends TestCase
     /** Discovers RSS, Atom, and JSON feed links */
     public function test_scrape_feed_discovery(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_feed_discovery';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThanOrEqual(3, count($result->getFeeds()));
@@ -165,9 +165,9 @@ final class ScrapeTest extends TestCase
     /** Extracts images from img, picture, og:image, twitter:image */
     public function test_scrape_image_sources(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_image_sources';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertGreaterThan(4, count($result->getImages()));
@@ -180,9 +180,9 @@ final class ScrapeTest extends TestCase
     /** Handles SPA page with JavaScript-only content (no server-rendered HTML) */
     public function test_scrape_js_heavy_spa(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_js_heavy_spa';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertNotEmpty($result->html);
 
@@ -193,9 +193,9 @@ final class ScrapeTest extends TestCase
     /** Extracts JSON-LD structured data from a page */
     public function test_scrape_json_ld(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_json_ld';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
         $jsonLd = $result->getJsonLd();
 
             $this->assertEquals(200, $result->statusCode);
@@ -210,9 +210,9 @@ final class ScrapeTest extends TestCase
     /** Gracefully handles broken HTML without crashing */
     public function test_scrape_malformed_html(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_malformed_html';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->html);
@@ -225,9 +225,9 @@ final class ScrapeTest extends TestCase
     /** Extracts full Open Graph metadata from a page */
     public function test_scrape_og_metadata(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_og_metadata';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMetadata()->ogTitle);
@@ -244,9 +244,9 @@ final class ScrapeTest extends TestCase
     /** Extracts Twitter Card metadata from a page */
     public function test_scrape_twitter_card(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine = Crawlberg::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_twitter_card';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
             $this->assertNotEmpty($result->getMetadata()->twitterCard);

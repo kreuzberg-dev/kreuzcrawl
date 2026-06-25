@@ -1,6 +1,6 @@
 # Docker
 
-Kreuzcrawl ships two Dockerfile variants: a full API server image and a minimal CLI image.
+Crawlberg ships two Dockerfile variants: a full API server image and a minimal CLI image.
 Both use multi-stage builds with Debian Bookworm for reproducible, small runtime images.
 
 ## Dockerfile variants
@@ -27,13 +27,13 @@ one-shot scrape/crawl/map commands.
 ### API server image
 
 ```bash
-docker build -t kreuzcrawl:latest -f docker/Dockerfile .
+docker build -t crawlberg:latest -f docker/Dockerfile .
 ```
 
 ### CLI image
 
 ```bash
-docker build -t kreuzcrawl-cli:latest -f docker/Dockerfile.cli .
+docker build -t crawlberg-cli:latest -f docker/Dockerfile.cli .
 ```
 
 !!! tip "BuildKit caches"
@@ -47,10 +47,10 @@ significantly faster rebuilds.
 
 ```bash
 docker run -d \
-  --name kreuzcrawl \
+  --name crawlberg \
   -p 3000:3000 \
   -e RUST_LOG=info \
-  kreuzcrawl:latest
+  crawlberg:latest
 ```
 
 The server binds to `0.0.0.0:3000` by default. Override with custom arguments:
@@ -58,7 +58,7 @@ The server binds to `0.0.0.0:3000` by default. Override with custom arguments:
 ```bash
 docker run -d \
   -p 8080:8080 \
-  kreuzcrawl:latest \
+  crawlberg:latest \
   serve --host 0.0.0.0 --port 8080
 ```
 
@@ -66,19 +66,19 @@ docker run -d \
 
 ```bash
 # Scrape a single URL
-docker run --rm kreuzcrawl-cli:latest scrape https://example.com
+docker run --rm crawlberg-cli:latest scrape https://example.com
 
 # Crawl with depth limit
-docker run --rm kreuzcrawl-cli:latest crawl https://example.com --depth 2 --format markdown
+docker run --rm crawlberg-cli:latest crawl https://example.com --depth 2 --format markdown
 
 # Map a site
-docker run --rm kreuzcrawl-cli:latest map https://example.com --limit 50
+docker run --rm crawlberg-cli:latest map https://example.com --limit 50
 ```
 
 ### MCP server
 
 ```bash
-docker run -i --rm kreuzcrawl:latest mcp
+docker run -i --rm crawlberg:latest mcp
 ```
 
 The MCP server uses stdio transport, so the container must run with `-i` (interactive stdin).
@@ -87,7 +87,7 @@ The MCP server uses stdio transport, so the container must run with `-i` (intera
 
 | Variable   | Default | Description                                                                               |
 | ---------- | ------- | ----------------------------------------------------------------------------------------- |
-| `RUST_LOG` | `info`  | Log level filter for Rust tracing subscribers (e.g. `debug`, `kreuzcrawl=trace`). |
+| `RUST_LOG` | `info`  | Log level filter for Rust tracing subscribers (e.g. `debug`, `crawlberg=trace`). |
 
 ## Health checks
 
@@ -111,7 +111,7 @@ service is ready.
 
 Both images follow container security best practices:
 
-- **Non-root user** -- The runtime stage creates a dedicated `kreuzcrawl` user and group.
+- **Non-root user** -- The runtime stage creates a dedicated `crawlberg` user and group.
   The binary runs as this unprivileged user.
 - **Minimal base** -- The runtime uses `debian:bookworm-slim` with only `ca-certificates`
   (and `curl` for health checks in the API image).
@@ -122,7 +122,7 @@ Both images follow container security best practices:
 
 ```yaml
 services:
-  kreuzcrawl:
+  crawlberg:
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -145,7 +145,7 @@ For browser-based crawling inside Docker, run Chrome as a sidecar:
 
 ```yaml
 services:
-  kreuzcrawl:
+  crawlberg:
     build:
       context: .
       dockerfile: docker/Dockerfile

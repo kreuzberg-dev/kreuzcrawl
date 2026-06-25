@@ -35,7 +35,7 @@ permissions:
 jobs:
     android-check:
         name: Android cargo check (${{ matrix.abi }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         timeout-minutes: 30
         strategy:
@@ -48,14 +48,14 @@ jobs:
               with:
                   cache-key-prefix: ci-mobile-android-${{ matrix.abi }}
             - uses: xberg-io/actions/setup-android-ndk@v1
-            - name: cargo ndk check kreuzcrawl-dart
-              run: cargo ndk --target ${{ matrix.abi }} --platform 21 -- check -p kreuzcrawl-dart
-            - name: cargo ndk check kreuzcrawl-ffi
-              run: cargo ndk --target ${{ matrix.abi }} --platform 21 -- check -p kreuzcrawl-ffi
+            - name: cargo ndk check crawlberg-dart
+              run: cargo ndk --target ${{ matrix.abi }} --platform 21 -- check -p crawlberg-dart
+            - name: cargo ndk check crawlberg-ffi
+              run: cargo ndk --target ${{ matrix.abi }} --platform 21 -- check -p crawlberg-ffi
 
     kotlin-android-check:
         name: kotlin-android AAR check (${{ matrix.abi }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         timeout-minutes: 45
         strategy:
@@ -75,14 +75,14 @@ jobs:
             - uses: xberg-io/actions/setup-android-ndk@v1
             - uses: xberg-io/actions/build-android-natives@v1
               with:
-                  crate-name: kreuzcrawl-ffi
-                  lib-name: kreuzcrawl_ffi
+                  crate-name: crawlberg-ffi
+                  lib-name: crawlberg_ffi
                   abi: ${{ matrix.abi }}
                   target: ${{ matrix.target }}
             - name: Stage native into AAR jniLibs
               run: |
                   mkdir -p "packages/kotlin-android/src/main/jniLibs/${{ matrix.abi }}"
-                  cp -v "dist/android-natives/${{ matrix.abi }}/libkreuzcrawl_ffi.so" \
+                  cp -v "dist/android-natives/${{ matrix.abi }}/libcrawlberg_ffi.so" \
                         "packages/kotlin-android/src/main/jniLibs/${{ matrix.abi }}/"
               shell: bash
             - uses: xberg-io/actions/setup-gradle@v1
@@ -92,7 +92,7 @@ jobs:
 
     ios-check:
         name: iOS cargo check (${{ matrix.target }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: macos-latest
         timeout-minutes: 30
         strategy:
@@ -105,7 +105,7 @@ jobs:
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: ci-mobile-ios-${{ matrix.target }}
-            - name: cargo check kreuzcrawl-dart
-              run: cargo check -p kreuzcrawl-dart --target ${{ matrix.target }}
-            - name: cargo check kreuzcrawl-swift
-              run: cargo check -p kreuzcrawl-swift --target ${{ matrix.target }}
+            - name: cargo check crawlberg-dart
+              run: cargo check -p crawlberg-dart --target ${{ matrix.target }}
+            - name: cargo check crawlberg-swift
+              run: cargo check -p crawlberg-swift --target ${{ matrix.target }}

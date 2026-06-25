@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 
 import { describe, expect, it } from "vitest";
-import { scrape, createEngine, WasmCrawlConfig, WasmAuthConfig, WasmBrowserConfig, WasmContentConfig, WasmProxyConfig, WasmSsrfPolicy } from "@kreuzberg/kreuzcrawl-wasm";
+import { scrape, createEngine, WasmCrawlConfig, WasmAuthConfig, WasmBrowserConfig, WasmContentConfig, WasmProxyConfig, WasmSsrfPolicy } from "@kreuzberg/crawlberg-wasm";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {

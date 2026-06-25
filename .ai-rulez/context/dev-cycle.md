@@ -13,7 +13,7 @@ task alef:format               # explicit Alef formatting; task format excludes 
 VERSION=0.15.30 task alef:bump # bump pin in alef.toml + reinstall + regen
 ```
 
-### After kreuzcrawl-core changes
+### After crawlberg-core changes
 
 ```text
 task build          # core-only
@@ -43,5 +43,5 @@ task clean:full      # all of the above
 
 - **Two mock-server binaries.** `tools/mock-server` is legacy/unused; `e2e/rust/src/main.rs` is alef-generated and the binary all language conftests actually spawn. `task e2e:build` builds the right one at `e2e/rust/target/release/mock-server`.
 - **Python venv stale `.so`.** After `task python:build:dev`, the e2e venv at `e2e/python/.venv` keeps a stale extension. `task python:cycle` runs `uv sync --reinstall` to refresh.
-- **Elixir precompiled NIF.** Rustler's precompiled binary is tagged at the package's release version and lags local source. `KREUZCRAWL_BUILD=1` is set in `.task/languages/elixir.yml::e2e:test` so the e2e suite always builds the NIF from local source.
+- **Elixir precompiled NIF.** Rustler's precompiled binary is tagged at the package's release version and lags local source. `CRAWLBERG_BUILD=1` is set in `.task/languages/elixir.yml::e2e:test` so the e2e suite always builds the NIF from local source.
 - **Generated e2e files.** `e2e/<lang>/` is alef-generated — never hand-edit. Modify fixtures or alef codegen, then `task alef:generate`.

@@ -12,8 +12,8 @@ let package = Package(
     ],
     targets: [
         .testTarget(
-            name: "KreuzcrawlE2ETests",
-            dependencies: [.product(name: "Kreuzcrawl", package: "swift")]
+            name: "CrawlbergE2ETests",
+            dependencies: [.product(name: "Crawlberg", package: "swift")]
         ),
     ]
 )

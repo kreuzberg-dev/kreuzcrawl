@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"title": "kreuzcrawl E2E Fixture (Alef format)",
+	"title": "crawlberg E2E Fixture (Alef format)",
 	"description": "Defines a single end-to-end crawl/scrape scenario with mock HTTP responses in the Alef fixture format.",
 	"type": "object",
 	"required": ["id", "description", "assertions"],

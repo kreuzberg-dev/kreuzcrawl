@@ -9,9 +9,9 @@ defmodule E2e.RobotsTest do
   describe "robots_allow_all" do
     test "robots_allow_all" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_ALLOW_ALL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_allow_all"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
@@ -19,29 +19,29 @@ defmodule E2e.RobotsTest do
   describe "robots_allow_override" do
     test "robots_allow_override" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_ALLOW_OVERRIDE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_allow_override"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
 
   describe "robots_comments_handling" do
     test "robots_comments_handling" do
-      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_COMMENTS_HANDLING") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_comments_handling"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
 
   describe "robots_crawl_delay" do
     test "robots_crawl_delay" do
-      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_CRAWL_DELAY") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_crawl_delay"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.crawl_delay == 2
     end
   end
@@ -49,9 +49,9 @@ defmodule E2e.RobotsTest do
   describe "robots_disallow_path" do
     test "robots_disallow_path" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_DISALLOW_PATH") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_disallow_path"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == false
     end
   end
@@ -59,9 +59,9 @@ defmodule E2e.RobotsTest do
   describe "robots_meta_nofollow" do
     test "robots_meta_nofollow" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_META_NOFOLLOW") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_meta_nofollow"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.nofollow_detected == true
     end
   end
@@ -69,9 +69,9 @@ defmodule E2e.RobotsTest do
   describe "robots_meta_noindex" do
     test "robots_meta_noindex" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_META_NOINDEX") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_meta_noindex"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.noindex_detected == true
     end
   end
@@ -79,9 +79,9 @@ defmodule E2e.RobotsTest do
   describe "robots_missing_404" do
     test "robots_missing_404" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_MISSING_404") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_missing_404"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
@@ -89,19 +89,19 @@ defmodule E2e.RobotsTest do
   describe "robots_multiple_user_agents" do
     test "robots_multiple_user_agents" do
       engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"SpecificBot\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_MULTIPLE_USER_AGENTS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_multiple_user_agents"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
 
   describe "robots_request_rate" do
     test "robots_request_rate" do
-      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"crawlberg\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_REQUEST_RATE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_request_rate"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.crawl_delay == 5
       assert result.is_allowed == true
     end
@@ -110,19 +110,19 @@ defmodule E2e.RobotsTest do
   describe "robots_sitemap_directive" do
     test "robots_sitemap_directive" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_SITEMAP_DIRECTIVE") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_sitemap_directive"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == true
     end
   end
 
   describe "robots_user_agent_specific" do
     test "robots_user_agent_specific" do
-      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"KreuzcrawlBot\"}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"CrawlbergBot\"}"
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_user_agent_specific"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == false
     end
   end
@@ -130,9 +130,9 @@ defmodule E2e.RobotsTest do
   describe "robots_wildcard_paths" do
     test "robots_wildcard_paths" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_WILDCARD_PATHS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_wildcard_paths"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert result.is_allowed == false
     end
   end
@@ -140,9 +140,9 @@ defmodule E2e.RobotsTest do
   describe "robots_x_robots_tag" do
     test "robots_x_robots_tag" do
       engine_config = "{\"respect_robots_txt\":true}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_ROBOTS_X_ROBOTS_TAG") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/robots_x_robots_tag"
-      {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
+      {:ok, result} = Crawlberg.scrape_async(engine, url)
       assert String.trim(result.x_robots_tag) == "noindex, nofollow"
       assert result.noindex_detected == true
       assert result.nofollow_detected == true

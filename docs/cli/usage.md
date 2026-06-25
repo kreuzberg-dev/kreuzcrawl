@@ -1,9 +1,9 @@
 # CLI Usage
 
-The `kreuzcrawl` CLI provides commands for scraping, crawling, site mapping, and running the API and MCP servers.
+The `crawlberg` CLI provides commands for scraping, crawling, site mapping, and running the API and MCP servers.
 
 ```text
-kreuzcrawl <COMMAND> [OPTIONS]
+crawlberg <COMMAND> [OPTIONS]
 ```
 
 ## Commands
@@ -13,7 +13,7 @@ kreuzcrawl <COMMAND> [OPTIONS]
 Scrape a single URL and extract metadata.
 
 ```text
-kreuzcrawl scrape <URL> [OPTIONS]
+crawlberg scrape <URL> [OPTIONS]
 ```
 
 **Arguments:**
@@ -38,19 +38,19 @@ kreuzcrawl scrape <URL> [OPTIONS]
 
 ```bash
 # Scrape a page as JSON (default)
-kreuzcrawl scrape https://example.com
+crawlberg scrape https://example.com
 
 # Scrape as markdown
-kreuzcrawl scrape https://example.com --format markdown
+crawlberg scrape https://example.com --format markdown
 
 # Scrape through a proxy with custom timeout
-kreuzcrawl scrape https://example.com --proxy http://proxy:8080 --timeout 60000
+crawlberg scrape https://example.com --proxy http://proxy:8080 --timeout 60000
 
 # Force browser rendering for a JS-heavy page
-kreuzcrawl scrape https://quotes.toscrape.com/js/ --browser-mode always --format markdown
+crawlberg scrape https://quotes.toscrape.com/js/ --browser-mode always --format markdown
 
 # Connect to an external browser via CDP
-kreuzcrawl scrape https://example.com --browser-endpoint ws://127.0.0.1:9222/devtools/browser/...
+crawlberg scrape https://example.com --browser-endpoint ws://127.0.0.1:9222/devtools/browser/...
 ```
 
 **Output:**
@@ -65,7 +65,7 @@ kreuzcrawl scrape https://example.com --browser-endpoint ws://127.0.0.1:9222/dev
 Crawl a website following links.
 
 ```text
-kreuzcrawl crawl <URL>... [OPTIONS]
+crawlberg crawl <URL>... [OPTIONS]
 ```
 
 **Arguments:**
@@ -95,19 +95,19 @@ kreuzcrawl crawl <URL>... [OPTIONS]
 
 ```bash
 # Crawl with default settings (depth 2, 10 concurrent)
-kreuzcrawl crawl https://example.com
+crawlberg crawl https://example.com
 
 # Crawl deeper with more concurrency
-kreuzcrawl crawl https://example.com -d 5 -c 20 --max-pages 500
+crawlberg crawl https://example.com -d 5 -c 20 --max-pages 500
 
 # Crawl and output as markdown
-kreuzcrawl crawl https://example.com --format markdown --stay-on-domain
+crawlberg crawl https://example.com --format markdown --stay-on-domain
 
 # Batch crawl multiple seed URLs
-kreuzcrawl crawl https://example.com https://example.org -d 1
+crawlberg crawl https://example.com https://example.org -d 1
 
 # Force browser rendering during crawl
-kreuzcrawl crawl https://quotes.toscrape.com/js/ --browser-mode always --format markdown
+crawlberg crawl https://quotes.toscrape.com/js/ --browser-mode always --format markdown
 ```
 
 **Output:**
@@ -124,7 +124,7 @@ kreuzcrawl crawl https://quotes.toscrape.com/js/ --browser-mode always --format 
 Discover all URLs on a website via sitemaps and link extraction.
 
 ```text
-kreuzcrawl map <URL> [OPTIONS]
+crawlberg map <URL> [OPTIONS]
 ```
 
 **Arguments:**
@@ -145,10 +145,10 @@ kreuzcrawl map <URL> [OPTIONS]
 
 ```bash
 # Discover all URLs
-kreuzcrawl map https://example.com
+crawlberg map https://example.com
 
 # Limit results and filter
-kreuzcrawl map https://example.com --limit 50 --search "/docs/"
+crawlberg map https://example.com --limit 50 --search "/docs/"
 ```
 
 **Output:** Prints one URL per line to stdout.
@@ -160,7 +160,7 @@ kreuzcrawl map https://example.com --limit 50 --search "/docs/"
 Start the REST API server. Requires the `api` feature.
 
 ```text
-kreuzcrawl serve [OPTIONS]
+crawlberg serve [OPTIONS]
 ```
 
 **Options:**
@@ -174,10 +174,10 @@ kreuzcrawl serve [OPTIONS]
 
 ```bash
 # Start on default port
-kreuzcrawl serve
+crawlberg serve
 
 # Start on custom host and port
-kreuzcrawl serve --host 127.0.0.1 --port 8080
+crawlberg serve --host 127.0.0.1 --port 8080
 ```
 
 The server prints a startup message to stderr and runs until interrupted.
@@ -189,7 +189,7 @@ The server prints a startup message to stderr and runs until interrupted.
 Start the MCP server using stdio transport. Requires the `mcp` feature.
 
 ```text
-kreuzcrawl mcp
+crawlberg mcp
 ```
 
 No options. The server communicates via stdin/stdout using the MCP protocol. Startup messages are printed to stderr.
@@ -201,8 +201,8 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "kreuzcrawl": {
-      "command": "kreuzcrawl",
+    "crawlberg": {
+      "command": "crawlberg",
       "args": ["mcp"]
     }
   }

@@ -9,10 +9,10 @@ defmodule E2e.StreamTest do
   describe "crawl_stream_events" do
     test "crawl_stream_events" do
       engine_config = "{\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_CRAWL_STREAM_EVENTS") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/crawl_stream_events"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 4
     end
@@ -21,10 +21,10 @@ defmodule E2e.StreamTest do
   describe "stream_depth_crawl" do
     test "stream_depth_crawl" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":2}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STREAM_DEPTH_CRAWL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stream_depth_crawl"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 5
     end
@@ -33,10 +33,10 @@ defmodule E2e.StreamTest do
   describe "stream_error_event_mid_crawl" do
     test "stream_error_event_mid_crawl" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STREAM_ERROR_EVENT_MID_CRAWL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stream_error_event_mid_crawl"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
     end
   end
@@ -44,10 +44,10 @@ defmodule E2e.StreamTest do
   describe "stream_event_ordering" do
     test "stream_event_ordering" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STREAM_EVENT_ORDERING") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stream_event_ordering"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 3
     end
@@ -56,10 +56,10 @@ defmodule E2e.StreamTest do
   describe "stream_large_crawl" do
     test "stream_large_crawl" do
       engine_config = "{\"max_depth\":1,\"respect_robots_txt\":false}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STREAM_LARGE_CRAWL") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stream_large_crawl"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 6
     end
@@ -68,10 +68,10 @@ defmodule E2e.StreamTest do
   describe "stream_with_error_event" do
     test "stream_with_error_event" do
       engine_config = "{\"max_concurrent\":1,\"max_depth\":1}"
-      {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
+      {:ok, engine} = Crawlberg.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_STREAM_WITH_ERROR_EVENT") || (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/stream_with_error_event"
-      url_req = %Kreuzcrawl.CrawlStreamRequest{url: url}
-      {:ok, result} = Kreuzcrawl.crawl_stream(engine, url_req)
+      url_req = %Crawlberg.CrawlStreamRequest{url: url}
+      {:ok, result} = Crawlberg.crawl_stream(engine, url_req)
       chunks = Enum.to_list(result)
       assert length(chunks) >= 2
     end

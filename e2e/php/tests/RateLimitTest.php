@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: rate_limit. */
 final class RateLimitTest extends TestCase
@@ -21,9 +21,9 @@ final class RateLimitTest extends TestCase
     public function test_rate_limit_adaptive_backoff(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => false, "retryCodes" => [429], "retryCount" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_adaptive_backoff';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(200, $result->statusCode);
 
@@ -35,10 +35,10 @@ final class RateLimitTest extends TestCase
     public function test_rate_limit_basic_delay(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_RATE_LIMIT_BASIC_DELAY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_basic_delay';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type        // skipped: field 'rate_limit.min_duration_ms' not available on result type
 
@@ -49,9 +49,9 @@ final class RateLimitTest extends TestCase
     public function test_rate_limit_per_domain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_RATE_LIMIT_PER_DOMAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_per_domain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(2, count($result->getPages()));
             $this->assertEquals(200, $result->getPages()[0]->statusCode);
@@ -64,9 +64,9 @@ final class RateLimitTest extends TestCase
     public function test_rate_limit_robots_crawl_delay(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => true, "userAgent" => "TestBot"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_RATE_LIMIT_ROBOTS_CRAWL_DELAY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_robots_crawl_delay';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
             $this->assertGreaterThanOrEqual(1, count($result->getPages()));
             $this->assertEquals(200, $result->getPages()[0]->statusCode);
@@ -79,10 +79,10 @@ final class RateLimitTest extends TestCase
     public function test_rate_limit_zero_no_delay(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_RATE_LIMIT_ZERO_NO_DELAY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_zero_no_delay';
         $this->expectNotToPerformAssertions();
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
 
         // skipped: field 'crawl.pages_crawled' not available on result type
 

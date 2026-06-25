@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_auth_basic_http(void) {
     /* Sends HTTP Basic authentication header */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_AUTH_BASIC_HTTP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,22 +30,22 @@ void test_auth_basic_http(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/auth_basic_http", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t auth_header_sent = kcrawl_scrape_result_auth_header_sent(result);
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    int32_t auth_header_sent = cberg_scrape_result_auth_header_sent(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(auth_header_sent == 1 && "equals assertion failed");
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_auth_bearer_token(void) {
     /* Sends Bearer token in Authorization header */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_AUTH_BEARER_TOKEN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -56,22 +56,22 @@ void test_auth_bearer_token(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/auth_bearer_token", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t auth_header_sent = kcrawl_scrape_result_auth_header_sent(result);
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    int32_t auth_header_sent = cberg_scrape_result_auth_header_sent(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(auth_header_sent == 1 && "equals assertion failed");
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_auth_custom_header(void) {
     /* Sends authentication via custom header (X-API-Key) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_AUTH_CUSTOM_HEADER");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -82,12 +82,12 @@ void test_auth_custom_header(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/auth_custom_header", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t auth_header_sent = kcrawl_scrape_result_auth_header_sent(result);
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    int32_t auth_header_sent = cberg_scrape_result_auth_header_sent(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(auth_header_sent == 1 && "equals assertion failed");
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

@@ -1,8 +1,8 @@
 ```rust
-use kreuzcrawl::{create_engine, scrape};
+use crawlberg::{create_engine, scrape};
 
 #[tokio::main]
-async fn main() -> kreuzcrawl::Result<()> {
+async fn main() -> crawlberg::Result<()> {
     let engine = create_engine(None)?;
     let result = scrape(&engine, "https://example.com").await?;
 

@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,25 +166,25 @@ void main() {
 
   test('User-agent rotation config is accepted and crawl succeeds', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"user_agents":["Mozilla/5.0 (Windows NT 10.0)","Chrome/120.0.0.0"]}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stealth_ua_rotation_config");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
   });
 
   test('User-agent rotation cycles through multiple agents across multiple requests', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1,"max_pages":3,"user_agents":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestAgent-1","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) TestAgent-2"]}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stealth_ua_rotation_round_robin");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
   });
 
   test('Custom user-agent string is applied for single domain crawl', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":0,"stay_on_domain":true,"user_agents":["Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"]}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("stealth_ua_rotation_single_domain");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages[0].statusCode, equals(200));
     expect(result.pages.length, equals(1));
   });

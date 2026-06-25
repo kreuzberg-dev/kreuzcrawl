@@ -1,6 +1,6 @@
 ```zig title="Zig"
 const std = @import("std");
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 pub fn main() !void {
     var gpa: std.heap.DebugAllocator(.{}) = .init;
@@ -8,7 +8,7 @@ pub fn main() !void {
     const allocator = gpa.allocator();
 
     // Simplest case: scrape a single page with default settings.
-    const scrape_json = try kreuzcrawl.scrape(null, "https://example.com/");
+    const scrape_json = try crawlberg.scrape(null, "https://example.com/");
     defer std.heap.c_allocator.free(scrape_json);
     var scrape_parsed = try std.json.parseFromSlice(std.json.Value, allocator, scrape_json, .{});
     defer scrape_parsed.deinit();
@@ -19,7 +19,7 @@ pub fn main() !void {
     std.debug.print("Links found: {d}\n", .{result.object.get("links").?.array.items.len});
 
     // Crawl from a seed URL, limited to one hop and a handful of pages.
-    const crawl_json = try kreuzcrawl.crawl(
+    const crawl_json = try crawlberg.crawl(
         "{\"max_depth\":1,\"max_pages\":5}",
         "https://en.wikipedia.org/wiki/Web_scraping",
     );

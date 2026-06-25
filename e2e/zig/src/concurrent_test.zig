@@ -4,7 +4,7 @@
 // To verify freshness: alef verify --exit-code
 const std = @import("std");
 const testing = std.testing;
-const kreuzcrawl = @import("kreuzcrawl");
+const crawlberg = @import("crawlberg");
 
 // Suppress C++ global destructor aborts that break zig's --listen=- IPC
 extern "c" fn signal(sig: i32, handler: usize) usize;
@@ -28,7 +28,7 @@ test "concurrent_basic" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONCURRENT_BASIC")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/concurrent_basic", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":3,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":3,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -46,7 +46,7 @@ test "concurrent_depth_two_fan_out" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/concurrent_depth_two_fan_out", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":3,\"max_depth\":2}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":3,\"max_depth\":2}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -63,7 +63,7 @@ test "concurrent_max_pages_exact" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/concurrent_max_pages_exact", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -80,7 +80,7 @@ test "concurrent_partial_errors" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/concurrent_partial_errors", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":3,\"max_depth\":1}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":3,\"max_depth\":1}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();
@@ -97,7 +97,7 @@ test "concurrent_respects_max_pages" {
 
     const url = if (std.c.getenv("MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/concurrent_respects_max_pages", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
     defer allocator.free(url);
-    const _result_json = try kreuzcrawl.crawl("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}", url);
+    const _result_json = try crawlberg.crawl("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}", url);
     defer std.heap.c_allocator.free(_result_json);
     var _parsed = try std.json.parseFromSlice(std.json.Value, allocator, _result_json, .{});
     defer _parsed.deinit();

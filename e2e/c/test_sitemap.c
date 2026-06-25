@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_sitemap_basic(void) {
     /* Parses a standard urlset sitemap */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_BASIC");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,22 +30,22 @@ void test_sitemap_basic(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_basic", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 4 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_compressed_gzip(void) {
     /* Parses a gzip-compressed sitemap file */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_COMPRESSED_GZIP");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -56,22 +56,22 @@ void test_sitemap_compressed_gzip(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_compressed_gzip", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 3 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_empty(void) {
     /* Handles empty sitemap gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_EMPTY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -82,22 +82,22 @@ void test_sitemap_empty(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_empty", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 0 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_from_robots_txt(void) {
     /* Discovers sitemap via robots.txt Sitemap directive */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":true}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":true}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_FROM_ROBOTS_TXT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -108,22 +108,22 @@ void test_sitemap_from_robots_txt(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_from_robots_txt", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 4 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_index(void) {
     /* Follows sitemap index to discover child sitemaps */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_INDEX");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -134,22 +134,22 @@ void test_sitemap_index(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_index", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 3 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_lastmod_filter(void) {
     /* Filters sitemap URLs by lastmod date */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_LASTMOD_FILTER");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -160,22 +160,22 @@ void test_sitemap_lastmod_filter(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_lastmod_filter", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 4 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_only_mode(void) {
     /* Uses sitemap URLs exclusively without following page links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_ONLY_MODE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -186,22 +186,22 @@ void test_sitemap_only_mode(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_only_mode", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 4 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_sitemap_xhtml_links(void) {
     /* Parses sitemap with XHTML namespace alternate links */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_SITEMAP_XHTML_LINKS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -212,12 +212,12 @@ void test_sitemap_xhtml_links(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/sitemap_xhtml_links", mock_base);
     }
-    KCRAWLMapResult* result = kcrawl_map_urls(engine, url);
+    CBERGMapResult* result = cberg_map_urls(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* urls_json = kcrawl_map_result_urls(result);
+    char* urls_json = cberg_map_result_urls(result);
     int urls_length = alef_json_array_count(urls_json);
     assert(urls_length == 2 && "equals assertion failed");
-    kcrawl_free_string(urls_json);
-    kcrawl_map_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(urls_json);
+    cberg_map_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

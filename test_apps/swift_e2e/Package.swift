@@ -8,12 +8,12 @@ let package = Package(
         .iOS(.v16),
     ],
     dependencies: [
-        .package(url: "https://github.com/xberg-io/kreuzcrawl", branch: "release/swift/0.3.0"),
+        .package(url: "https://github.com/xberg-io/crawlberg", branch: "release/swift/0.3.0"),
     ],
     targets: [
         .testTarget(
-            name: "KreuzcrawlE2ETests",
-            dependencies: [.product(name: "Kreuzcrawl", package: "kreuzcrawl")]
+            name: "CrawlbergE2ETests",
+            dependencies: [.product(name: "Crawlberg", package: "crawlberg")]
         ),
     ]
 )

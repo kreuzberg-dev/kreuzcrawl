@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: robots. */
 final class RobotsTest extends TestCase
@@ -21,9 +21,9 @@ final class RobotsTest extends TestCase
     public function test_robots_allow_all(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_ALLOW_ALL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_allow_all';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -35,9 +35,9 @@ final class RobotsTest extends TestCase
     public function test_robots_allow_override(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_ALLOW_OVERRIDE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_allow_override';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -48,10 +48,10 @@ final class RobotsTest extends TestCase
     /** Correctly parses robots.txt with inline and line comments */
     public function test_robots_comments_handling(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "kreuzcrawl"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "crawlberg"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_COMMENTS_HANDLING') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_comments_handling';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -62,10 +62,10 @@ final class RobotsTest extends TestCase
     /** Respects crawl-delay directive from robots.txt */
     public function test_robots_crawl_delay(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "kreuzcrawl"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "crawlberg"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_CRAWL_DELAY') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_crawl_delay';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(2, ($result->crawlDelay ?? null));
 
@@ -77,9 +77,9 @@ final class RobotsTest extends TestCase
     public function test_robots_disallow_path(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_DISALLOW_PATH') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_disallow_path';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(false, $result->isAllowed);
 
@@ -91,9 +91,9 @@ final class RobotsTest extends TestCase
     public function test_robots_meta_nofollow(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_META_NOFOLLOW') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_meta_nofollow';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->nofollowDetected);
 
@@ -105,9 +105,9 @@ final class RobotsTest extends TestCase
     public function test_robots_meta_noindex(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_META_NOINDEX') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_meta_noindex';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->noindexDetected);
 
@@ -119,9 +119,9 @@ final class RobotsTest extends TestCase
     public function test_robots_missing_404(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_MISSING_404') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_missing_404';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -133,9 +133,9 @@ final class RobotsTest extends TestCase
     public function test_robots_multiple_user_agents(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "SpecificBot"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_MULTIPLE_USER_AGENTS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_multiple_user_agents';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -146,10 +146,10 @@ final class RobotsTest extends TestCase
     /** Parses request-rate directive from robots.txt */
     public function test_robots_request_rate(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "kreuzcrawl"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "crawlberg"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_REQUEST_RATE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_request_rate';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(5, ($result->crawlDelay ?? null));
             $this->assertEquals(true, $result->isAllowed);
@@ -162,9 +162,9 @@ final class RobotsTest extends TestCase
     public function test_robots_sitemap_directive(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_SITEMAP_DIRECTIVE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_sitemap_directive';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(true, $result->isAllowed);
 
@@ -175,10 +175,10 @@ final class RobotsTest extends TestCase
     /** Matches user-agent specific rules in robots.txt */
     public function test_robots_user_agent_specific(): void
     {
-        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "KreuzcrawlBot"]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true, "userAgent" => "CrawlbergBot"]));
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_USER_AGENT_SPECIFIC') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_user_agent_specific';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(false, $result->isAllowed);
 
@@ -190,9 +190,9 @@ final class RobotsTest extends TestCase
     public function test_robots_wildcard_paths(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_WILDCARD_PATHS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_wildcard_paths';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals(false, $result->isAllowed);
 
@@ -204,9 +204,9 @@ final class RobotsTest extends TestCase
     public function test_robots_x_robots_tag(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["respectRobotsTxt" => true]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_ROBOTS_X_ROBOTS_TAG') ?: getenv('MOCK_SERVER_URL') . '/fixtures/robots_x_robots_tag';
-        $result = Kreuzcrawl::scrape($engine, $url);
+        $result = Crawlberg::scrape($engine, $url);
 
             $this->assertEquals("noindex, nofollow", trim(($result->xRobotsTag ?? null)));
             $this->assertEquals(true, $result->noindexDetected);

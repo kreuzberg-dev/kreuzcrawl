@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,57 +166,57 @@ void main() {
 
   test('BM25 filter works during multi-page crawl, keeping relevant pages', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_bm25_crawl_integration");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'filter.remaining_contain_keyword' not available on dart result type
   });
 
   test('BM25 filter with empty query passes all pages through', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_bm25_empty_query");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 
   test('BM25 filter with very high threshold filters out all pages', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_bm25_high_threshold");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     // skipped: field 'filter.pages_after_filter' not available on dart result type
   });
 
   test('BM25 filter keeps only pages relevant to the query', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_bm25_relevant_pages");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     // skipped: field 'filter.remaining_contain_keyword' not available on dart result type
   });
 
   test('BM25 filter with zero threshold passes all pages', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_bm25_threshold_zero");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 
   test('NoopFilter keeps all pages during a multi-page crawl', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_concurrent":1,"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_noop_crawl_all_kept");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'filter.pages_after_filter' not available on dart result type
   });
 
   test('No content filter passes all crawled pages through', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("filter_noop_passes_all");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
   });
 

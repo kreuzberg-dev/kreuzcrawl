@@ -19,8 +19,8 @@ func TestMain(m *testing.M) {
 	_, filename, _, _ := runtime.Caller(0)
 	dir := filepath.Dir(filename)
 
-	if _, ok := os.LookupEnv("KREUZCRAWL_ALLOW_PRIVATE_NETWORK"); !ok {
-		_ = os.Setenv("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true")
+	if _, ok := os.LookupEnv("CRAWLBERG_ALLOW_PRIVATE_NETWORK"); !ok {
+		_ = os.Setenv("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true")
 	}
 
 	// Change to the configured test-documents directory (if it exists) so that fixture
@@ -52,8 +52,8 @@ func TestMain(m *testing.M) {
 	fixturesDir := filepath.Join(dir, "..", "..", "fixtures")
 	cmd := exec.Command(mockBin, fixturesDir)
 	cmdEnv := os.Environ()
-	if v := os.Getenv("KREUZCRAWL_ALLOW_PRIVATE_NETWORK"); v != "" {
-		cmdEnv = append(cmdEnv, "KREUZCRAWL_ALLOW_PRIVATE_NETWORK=" + v)
+	if v := os.Getenv("CRAWLBERG_ALLOW_PRIVATE_NETWORK"); v != "" {
+		cmdEnv = append(cmdEnv, "CRAWLBERG_ALLOW_PRIVATE_NETWORK=" + v)
 	}
 	cmdEnv = append(cmdEnv, "MOCK_SERVER_NO_STDIN_WATCH=1")
 	cmd.Env = cmdEnv

@@ -16,7 +16,7 @@ permissions:
 jobs:
     docker:
         name: Docker (${{ matrix.variant }})
-        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/crawlberg' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         timeout-minutes: 120
         strategy:
@@ -39,7 +39,7 @@ jobs:
                   file: docker/Dockerfile${{ matrix.variant == 'cli' && '.cli' || '' }}
                   push: false
                   load: true
-                  tags: kreuzcrawl:${{ matrix.variant }}
+                  tags: crawlberg:${{ matrix.variant }}
                   cache-from: type=gha,scope=ci-docker-${{ matrix.variant }}
                   cache-to: type=gha,mode=max,scope=ci-docker-${{ matrix.variant }}
 
@@ -47,13 +47,13 @@ jobs:
               shell: bash
               run: |
                   mkdir -p /tmp
-                  docker save kreuzcrawl:${{ matrix.variant }} | gzip > /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
-                  ls -lh /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
+                  docker save crawlberg:${{ matrix.variant }} | gzip > /tmp/crawlberg-${{ matrix.variant }}.tar.gz
+                  ls -lh /tmp/crawlberg-${{ matrix.variant }}.tar.gz
 
             - name: Check image size
               uses: xberg-io/actions/check-docker-image-size@v1
               with:
-                  image: kreuzcrawl:${{ matrix.variant }}
+                  image: crawlberg:${{ matrix.variant }}
                   warn-mb: ${{ matrix.variant == 'cli' && '200' || '' }}
                   label: "${{ matrix.variant }} image"
 

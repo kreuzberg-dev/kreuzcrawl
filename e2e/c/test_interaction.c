@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_interact_action_sequence(void) {
     /* Execute a sequence of multiple actions (click, type, click) and verify all succeed with correct indices */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_ACTION_SEQUENCE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -31,9 +31,9 @@ void test_interact_action_sequence(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_action_sequence", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#open\",\"type\":\"click\"},{\"selector\":\"#field\",\"text\":\"test_data\",\"type\":\"type\"},{\"selector\":\"#submit\",\"type\":\"click\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_action_index = alef_json_get_string(action_results_0_json, "action_index");
@@ -68,17 +68,17 @@ void test_interact_action_sequence(void) {
     free(action_results_2_json);
     free(action_results_1_json);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_click_element(void) {
     /* Click a button element and verify success */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_CLICK_ELEMENT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -90,9 +90,9 @@ void test_interact_click_element(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_click_element", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#submit\",\"type\":\"click\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -105,17 +105,17 @@ void test_interact_click_element(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_action_index);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_execute_js(void) {
     /* Execute JavaScript that returns document.title and verify success with data */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_EXECUTE_JS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -127,9 +127,9 @@ void test_interact_execute_js(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_execute_js", mock_base);
     }
     const char* actions_json = "[{\"script\":\"document.title\",\"type\":\"executeJs\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -142,17 +142,17 @@ void test_interact_execute_js(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_data);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_invalid_selector(void) {
     /* Click on a non-existent selector and verify error in action_results */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_INVALID_SELECTOR");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -164,9 +164,9 @@ void test_interact_invalid_selector(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_invalid_selector", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#nonexistent\",\"type\":\"click\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -179,17 +179,17 @@ void test_interact_invalid_selector(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_error);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_max_actions_exceeded(void) {
     /* Submit 101 actions (exceeds MAX_ACTIONS=100) and verify validation error */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     if (config_handle == NULL) { return; }
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     if (engine == NULL) { return; }
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_MAX_ACTIONS_EXCEEDED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -201,17 +201,17 @@ void test_interact_max_actions_exceeded(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_max_actions_exceeded", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"},{\"selector\":\"#btn\",\"type\":\"click\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
-    if (result != NULL) kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
+    if (result != NULL) cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_press_key(void) {
     /* Press a keyboard key (Enter) and verify success */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_PRESS_KEY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -223,9 +223,9 @@ void test_interact_press_key(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_press_key", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#searchbox\",\"type\":\"click\"},{\"selector\":\"#searchbox\",\"text\":\"test\",\"type\":\"type\"},{\"key\":\"Enter\",\"type\":\"press\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_2_json = alef_json_array_get_index(action_results_json, 2);
     char* interaction_action_results_2_success = alef_json_get_string(action_results_2_json, "success");
@@ -238,17 +238,17 @@ void test_interact_press_key(void) {
     free(interaction_action_results_2_action_type);
     free(interaction_action_results_2_action_index);
     free(action_results_2_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_scrape_default(void) {
     /* Execute default Scrape action and verify extracted content */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_SCRAPE_DEFAULT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -260,9 +260,9 @@ void test_interact_scrape_default(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_scrape_default", mock_base);
     }
     const char* actions_json = "[{\"type\":\"scrape\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -275,17 +275,17 @@ void test_interact_scrape_default(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_data);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_screenshot(void) {
     /* Screenshot a specific element via selector and verify image data */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_SCREENSHOT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -297,9 +297,9 @@ void test_interact_screenshot(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_screenshot", mock_base);
     }
     const char* actions_json = "[{\"full_page\":false,\"type\":\"screenshot\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -312,17 +312,17 @@ void test_interact_screenshot(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_data);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_screenshot_full_page(void) {
     /* Screenshot full page and verify image data */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_SCREENSHOT_FULL_PAGE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -334,9 +334,9 @@ void test_interact_screenshot_full_page(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_screenshot_full_page", mock_base);
     }
     const char* actions_json = "[{\"full_page\":true,\"type\":\"screenshot\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -349,17 +349,17 @@ void test_interact_screenshot_full_page(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_data);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_scroll_down(void) {
     /* Scroll down on the page and verify success */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_SCROLL_DOWN");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -371,9 +371,9 @@ void test_interact_scroll_down(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_scroll_down", mock_base);
     }
     const char* actions_json = "[{\"amount\":500,\"direction\":\"down\",\"type\":\"scroll\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -386,17 +386,17 @@ void test_interact_scroll_down(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_action_index);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_type_input(void) {
     /* Type text into an input field and verify success */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_TYPE_INPUT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -408,9 +408,9 @@ void test_interact_type_input(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_type_input", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#username\",\"text\":\"john_doe\",\"type\":\"type\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -423,17 +423,17 @@ void test_interact_type_input(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_action_index);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_interact_wait_selector(void) {
     /* Wait for a CSS selector that exists on the page */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"browser\":{\"mode\":\"always\"}}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_INTERACT_WAIT_SELECTOR");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -445,9 +445,9 @@ void test_interact_wait_selector(void) {
         snprintf(url, sizeof(url), "%s/fixtures/interact_wait_selector", mock_base);
     }
     const char* actions_json = "[{\"selector\":\"#content\",\"type\":\"wait\"}]";
-    KCRAWLInteractionResult* result = kcrawl_interact(engine, url, actions_json);
+    CBERGInteractionResult* result = cberg_interact(engine, url, actions_json);
     assert(result != NULL && "expected call to succeed");
-    char* action_results_json = kcrawl_interaction_result_action_results(result);
+    char* action_results_json = cberg_interaction_result_action_results(result);
     assert(action_results_json != NULL);
     char* action_results_0_json = alef_json_array_get_index(action_results_json, 0);
     char* interaction_action_results_0_success = alef_json_get_string(action_results_0_json, "success");
@@ -460,7 +460,7 @@ void test_interact_wait_selector(void) {
     free(interaction_action_results_0_action_type);
     free(interaction_action_results_0_action_index);
     free(action_results_0_json);
-    kcrawl_free_string(action_results_json);
-    kcrawl_interaction_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(action_results_json);
+    cberg_interaction_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

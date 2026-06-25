@@ -1,7 +1,7 @@
-# kreuzcrawl-cli
+# crawlberg-cli
 
-CLI proxy for [`kreuzcrawl`](https://github.com/xberg-io/kreuzcrawl). Installing
-this package provides a `kreuzcrawl` command that downloads the matching native
+CLI proxy for [`crawlberg`](https://github.com/xberg-io/crawlberg). Installing
+this package provides a `crawlberg` command that downloads the matching native
 binary from GitHub releases and runs it.
 
-Pin a specific release tag with the `KREUZCRAWL_CLI_VERSION` environment variable.
+Pin a specific release tag with the `CRAWLBERG_CLI_VERSION` environment variable.

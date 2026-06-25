@@ -13,11 +13,11 @@ cd "$REPO_ROOT"
 
 echo "=== Unpacking and installing Node bindings ==="
 
-cd "$REPO_ROOT/crates/kreuzcrawl-node"
+cd "$REPO_ROOT/crates/crawlberg-node"
 
-pkg=$(find . -maxdepth 1 -name "kreuzcrawl-node-*.tgz" -print | head -n 1)
+pkg=$(find . -maxdepth 1 -name "crawlberg-node-*.tgz" -print | head -n 1)
 if [ -z "$pkg" ]; then
-  echo "No kreuzcrawl-node tarball found" >&2
+  echo "No crawlberg-node tarball found" >&2
   exit 1
 fi
 

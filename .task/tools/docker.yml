@@ -4,18 +4,18 @@ tasks:
     build:
         desc: Build Docker image (API server)
         cmds:
-            - docker build -f docker/Dockerfile -t kreuzcrawl:dev .
+            - docker build -f docker/Dockerfile -t crawlberg:dev .
 
     build:cli:
         desc: Build Docker image (CLI only)
         cmds:
-            - docker build -f docker/Dockerfile.cli -t kreuzcrawl:cli .
+            - docker build -f docker/Dockerfile.cli -t crawlberg:cli .
 
     run:
         desc: Run API server in Docker
         deps: [build]
         cmds:
-            - docker run -p 3000:3000 kreuzcrawl:dev
+            - docker run -p 3000:3000 crawlberg:dev
 
     schemathesis:
         desc: Run schemathesis API contract tests (auto-starts server)

@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,42 +166,42 @@ void main() {
 
   test('Download a basic PDF document with download_documents enabled', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_documents":true,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("download_basic_pdf");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.downloadedDocument?.mimeType.toString().trim(), equals('application/pdf'.toString().trim()));
   });
 
   test('Extract filename from Content-Disposition header', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_documents":true,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("download_filename_extraction");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.downloadedDocument?.mimeType.toString().trim(), equals('application/pdf'.toString().trim()));
     expect(result.statusCode, equals(200));
   });
 
   test('Only download documents matching specified MIME types (PDF only, not DOCX)', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"document_mime_types":["application/pdf"],"download_documents":true,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("download_mime_filter");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.downloadedDocument?.mimeType.toString().trim(), equals('application/pdf'.toString().trim()));
   });
 
   test('HTML pages are not downloaded as documents even when download_documents is enabled', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"download_documents":true,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("download_no_document");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
   });
 
   test('Reject documents exceeding the configured size limit', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"document_max_size":100,"download_documents":true,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("download_size_limit");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
   });
 

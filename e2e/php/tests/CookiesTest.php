@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\CrawlConfig;
+use Crawlberg\Crawlberg;
+use Crawlberg\CrawlConfig;
 
 /** E2e tests for category: cookies. */
 final class CookiesTest extends TestCase
@@ -21,9 +21,9 @@ final class CookiesTest extends TestCase
     public function test_cookies_per_domain(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["cookiesEnabled" => true, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_COOKIES_PER_DOMAIN') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cookies_per_domain';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
         $cookies = $result->getCookies();
 
             $this->assertEquals(1, count($result->getCookies()));
@@ -42,9 +42,9 @@ final class CookiesTest extends TestCase
     public function test_cookies_persistence(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["cookiesEnabled" => true, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_COOKIES_PERSISTENCE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cookies_persistence';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
         $cookies = $result->getCookies();
 
             $found = false;
@@ -62,9 +62,9 @@ final class CookiesTest extends TestCase
     public function test_cookies_set_cookie_response(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["cookiesEnabled" => true, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_COOKIES_SET_COOKIE_RESPONSE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/cookies_set_cookie_response';
-        $result = Kreuzcrawl::crawl($engine, $url);
+        $result = Crawlberg::crawl($engine, $url);
         $cookies = $result->getCookies();
 
             $found = false;

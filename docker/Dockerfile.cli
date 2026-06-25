@@ -10,38 +10,38 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY Cargo.toml Cargo.lock ./
-COPY crates/kreuzcrawl/ crates/kreuzcrawl/
-COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
+COPY crates/crawlberg/ crates/crawlberg/
+COPY crates/crawlberg-cli/ crates/crawlberg-cli/
 
-RUN sed -i 's|^members = .*|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli"]|' Cargo.toml && \
+RUN sed -i 's|^members = .*|members = ["crates/crawlberg", "crates/crawlberg-cli"]|' Cargo.toml && \
     sed -i '/^exclude/,/^\]/d' Cargo.toml
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/build/target \
-    cargo build --release --package kreuzcrawl-cli \
-        --features "kreuzcrawl/warc" && \
-    cp target/release/kreuzcrawl /build/kreuzcrawl && \
-    strip /build/kreuzcrawl
+    cargo build --release --package crawlberg-cli \
+        --features "crawlberg/warc" && \
+    cp target/release/crawlberg /build/crawlberg && \
+    strip /build/crawlberg
 
 # =============================================================================
 # Runtime Stage - Chainguard minimal
 # =============================================================================
 FROM debian:bookworm-slim
 
-LABEL org.opencontainers.image.source="https://github.com/xberg-io/kreuzcrawl"
-LABEL org.opencontainers.image.description="Kreuzcrawl CLI — lightweight web crawler"
+LABEL org.opencontainers.image.source="https://github.com/xberg-io/crawlberg"
+LABEL org.opencontainers.image.description="Crawlberg CLI — lightweight web crawler"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
+COPY --from=builder /build/crawlberg /usr/local/bin/crawlberg
 
-RUN groupadd -r kreuzcrawl && \
-    useradd -r -g kreuzcrawl -d /app -s /sbin/nologin kreuzcrawl
+RUN groupadd -r crawlberg && \
+    useradd -r -g crawlberg -d /app -s /sbin/nologin crawlberg
 
-USER kreuzcrawl
+USER crawlberg
 
-ENTRYPOINT ["kreuzcrawl"]
+ENTRYPOINT ["crawlberg"]

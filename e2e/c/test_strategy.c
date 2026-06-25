@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_strategy_adaptive_saturation(void) {
     /* Adaptive strategy stops early when encountering saturation (duplicate content) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,17 +30,17 @@ void test_strategy_adaptive_saturation(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/strategy_adaptive_saturation", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_strategy_adaptive_window(void) {
     /* Adaptive strategy crawls more pages when content is diverse */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -51,17 +51,17 @@ void test_strategy_adaptive_window(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/strategy_adaptive_window", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_strategy_best_first_seed(void) {
     /* BestFirst strategy always processes the seed URL first */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":1}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STRATEGY_BEST_FIRST_SEED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -72,17 +72,17 @@ void test_strategy_best_first_seed(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/strategy_best_first_seed", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_strategy_bfs_default_order(void) {
     /* BFS strategy visits pages in breadth-first order */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -93,17 +93,17 @@ void test_strategy_bfs_default_order(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/strategy_bfs_default_order", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_strategy_dfs_depth_first(void) {
     /* DFS strategy visits pages in depth-first order */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_concurrent\":1,\"max_depth\":2}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -114,7 +114,7 @@ void test_strategy_dfs_depth_first(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/strategy_dfs_depth_first", mock_base);
     }
-    KCRAWLCrawlResult* result = kcrawl_crawl(engine, url);
-    if (result != NULL) kcrawl_crawl_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGCrawlResult* result = cberg_crawl(engine, url);
+    if (result != NULL) cberg_crawl_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

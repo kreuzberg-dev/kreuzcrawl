@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: links.</summary>
     public class LinksTests
@@ -26,10 +26,10 @@ namespace Kreuzcrawl
         public async Task Test_LinksAnchorFragment()
         {
             // Identifies fragment-only links as anchor type
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_LINKS_ANCHOR_FRAGMENT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_anchor_fragment";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Contains("anchor", result.Links[0].LinkType.ToString().ToLower());
 
         }
@@ -38,9 +38,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksBaseTag()
         {
             // Resolves relative URLs using base tag href
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_base_tag";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 2, "expected > 2");
     Assert.Contains("example.com", result.Links[0].Url.ToString().ToLower());
 
@@ -50,10 +50,10 @@ namespace Kreuzcrawl
         public async Task Test_LinksDocumentTypes()
         {
             // Detects PDF, DOCX, XLSX links as document type
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_LINKS_DOCUMENT_TYPES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_document_types";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.Contains("document", result.Links[0].LinkType.ToString().ToLower());
 
         }
@@ -62,9 +62,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksEmptyHref()
         {
             // Handles empty href attributes without errors
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_empty_href";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 0, "expected > 0");
     Assert.Contains("/valid", result.Links[0].Url.ToString().ToLower());
 
@@ -74,9 +74,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksInternalExternalClassification()
         {
             // Correctly classifies internal vs external links by domain
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_internal_external_classification";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 4, "expected > 4");
     Assert.False(string.IsNullOrEmpty(result.Links[0].Url?.ToString()));
 
@@ -86,9 +86,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksMailtoJavascriptSkip()
         {
             // Skips mailto:, javascript:, and tel: scheme links
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_mailto_javascript_skip";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 0, "expected > 0");
     Assert.DoesNotContain("mailto:", result.Links[0].Url.ToString());
 
@@ -98,9 +98,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksProtocolRelative()
         {
             // Handles protocol-relative URLs (//example.com) correctly
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_protocol_relative";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 1, "expected > 1");
     Assert.Contains("//", result.Links[0].Url.ToString().ToLower());
 
@@ -110,9 +110,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksRelAttributes()
         {
             // Preserves rel=nofollow and rel=canonical attributes
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_rel_attributes";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 0, "expected > 0");
 
         }
@@ -121,9 +121,9 @@ namespace Kreuzcrawl
         public async Task Test_LinksRelativeParent()
         {
             // Resolves ../ and ./ relative parent path links correctly
-            var engine = KreuzcrawlConverter.CreateEngine(null);
+            var engine = CrawlbergConverter.CreateEngine(null);
             var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_relative_parent";
-            var result = await KreuzcrawlConverter.ScrapeAsync(engine, url);
+            var result = await CrawlbergConverter.ScrapeAsync(engine, url);
     Assert.True(result.Links.Count > 3, "expected > 3");
 
         }

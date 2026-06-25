@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Kreuzcrawl CLI installer
-# Usage: curl -fsSL https://kreuzcrawl.dev/install.sh | bash
+# Crawlberg CLI installer
+# Usage: curl -fsSL https://crawlberg.dev/install.sh | bash
 #
 # Environment variables:
 #   KREUZBERG_VERSION  - Specific version to install (default: latest)
-#   KREUZBERG_INSTALL  - Installation directory (default: ~/.kreuzcrawl/bin or /usr/local/bin)
+#   KREUZBERG_INSTALL  - Installation directory (default: ~/.crawlberg/bin or /usr/local/bin)
 
 set -euo pipefail
 
-REPO="xberg-io/kreuzcrawl"
-BINARY_NAME="kreuzcrawl"
+REPO="xberg-io/crawlberg"
+BINARY_NAME="crawlberg"
 
 # --- Helpers ---
 
@@ -102,7 +102,7 @@ install() {
     version="$(get_latest_version)"
   fi
 
-  info "Installing kreuzcrawl ${version} for ${target}"
+  info "Installing crawlberg ${version} for ${target}"
 
   # Determine install directory
   if [ -n "${KREUZBERG_INSTALL:-}" ]; then
@@ -110,13 +110,13 @@ install() {
   elif [ "$(id -u)" -eq 0 ]; then
     install_dir="/usr/local/bin"
   else
-    install_dir="${HOME}/.kreuzcrawl/bin"
+    install_dir="${HOME}/.crawlberg/bin"
   fi
 
   mkdir -p "$install_dir"
 
   # Download
-  local artifact="kreuzcrawl-cli-${target}.tar.gz"
+  local artifact="crawlberg-cli-${target}.tar.gz"
   local url="https://github.com/${REPO}/releases/download/${version}/${artifact}"
 
   info "Downloading ${url}"
@@ -130,7 +130,7 @@ install() {
   tar -xzf "${tmpdir}/${artifact}" -C "$tmpdir"
 
   # Install binary
-  local stage_dir="${tmpdir}/kreuzcrawl-cli-${target}"
+  local stage_dir="${tmpdir}/crawlberg-cli-${target}"
   local binary_path="${stage_dir}/${BINARY_NAME}"
   if [ ! -f "$binary_path" ]; then
     error "binary not found in archive at ${binary_path}"

@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -166,9 +166,9 @@ void main() {
 
   test('Browser mode \'never\' prevents browser use even when JS render hint is set', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_config_auto_no_feature");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(false));
@@ -176,9 +176,9 @@ void main() {
 
   test('Browser mode \'never\' prevents browser fallback even for SPA shell content', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_config_never_mode");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(false));
@@ -186,25 +186,25 @@ void main() {
 
   test('Crawl with browser mode \'always\' follows links using browser rendering', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"},"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_crawl_mode_always");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(2));
     // skipped: field 'browser_used' not available on dart result type
   });
 
   test('Crawl with browser mode \'auto\' falls back to browser when encountering WAF 403', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"auto"},"max_depth":1,"respect_robots_txt":false}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_crawl_waf_fallback");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     expect(result.pages.length, greaterThanOrEqualTo(1));
   });
 
   test('Does NOT flag a short but real content page as needing JS rendering', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("browser_detect_minimal_page");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(false));
     expect(result.browserUsed, equals(false));
@@ -212,18 +212,18 @@ void main() {
 
   test('Detects Next.js page with __NEXT_DATA__ but no rendered content as needing JS rendering', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_detect_next_empty");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(false));
   });
 
   test('Does NOT flag Next.js page with full SSR content as needing JS rendering', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("browser_detect_next_rendered");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.html, isNotNull);
     expect(result.jsRenderHint, equals(false));
@@ -231,9 +231,9 @@ void main() {
   });
 
   test('Does NOT flag a normal server-rendered page as needing JS rendering', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("browser_detect_normal_page");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(false));
     expect(result.browserUsed, equals(false));
@@ -241,9 +241,9 @@ void main() {
 
   test('Detects Nuxt SPA shell with empty #__nuxt div as needing JS rendering', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_detect_nuxt_shell");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(false));
@@ -251,9 +251,9 @@ void main() {
 
   test('Detects React SPA shell with empty #root div as needing JS rendering', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_detect_react_shell");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.html, isNotNull);
     expect(result.jsRenderHint, equals(true));
@@ -262,9 +262,9 @@ void main() {
 
   test('Detects Vue SPA shell with empty #app div as needing JS rendering', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"never"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_detect_vue_shell");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(false));
@@ -272,60 +272,60 @@ void main() {
 
   test('Browser extra_wait adds additional time after network_idle to ensure all async operations complete', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"extra_wait":200,"mode":"always","wait":"network_idle"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_extra_wait");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
   });
 
   test('Browser auto re-fetches SPA shell when JS rendering is detected', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_fallback_spa_render");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.jsRenderHint, equals(true));
     expect(result.browserUsed, equals(true));
   });
 
   test('Browser fallback is used when browser mode is always, simulating WAF-blocked scenario', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_fallback_waf_blocked");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
   });
 
   test('Browser mode \'always\' uses browser even for normal server-rendered pages', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_mode_always");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
   });
 
   test('Browser profile configuration persists and reuses browser state across crawl sessions', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always"},"browser_profile":"test-profile"}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_profile_basic");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
     expect(result.statusCode, equals(200));
   });
 
   test('Browser wait strategy \'fixed\' waits for a specific duration after page navigation', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"extra_wait":100,"mode":"always","wait":"fixed"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_wait_fixed");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
     expect(result.statusCode, equals(200));
   });
 
   test('Browser wait strategy \'selector\' waits for specific CSS selector before considering page loaded', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"browser":{"mode":"always","wait":"selector","wait_selector":"#content"}}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("browser_wait_selector");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.browserUsed, equals(true));
     expect(result.statusCode, equals(200));
   });

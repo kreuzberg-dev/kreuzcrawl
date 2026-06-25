@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Kreuzcrawl\E2e;
+namespace Crawlberg\E2e;
 
 use PHPUnit\Framework\TestCase;
-use Kreuzcrawl\Kreuzcrawl;
-use Kreuzcrawl\BatchCrawlStreamRequest;
-use Kreuzcrawl\CrawlConfig;
-use Kreuzcrawl\CrawlStreamRequest;
+use Crawlberg\Crawlberg;
+use Crawlberg\BatchCrawlStreamRequest;
+use Crawlberg\CrawlConfig;
+use Crawlberg\CrawlStreamRequest;
 
 /** E2e tests for category: stream. */
 final class StreamTest extends TestCase
@@ -23,7 +23,7 @@ final class StreamTest extends TestCase
     public function test_batch_crawl_stream_events(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_CRAWL_STREAM_EVENTS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_crawl_stream_events';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/page1", "/page2", "/page3"]);
         $urls_req = new BatchCrawlStreamRequest($urls);
@@ -42,7 +42,7 @@ final class StreamTest extends TestCase
     public function test_batch_crawl_stream_partial_failure(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $urls_base = getenv('MOCK_SERVER_BATCH_CRAWL_STREAM_PARTIAL_FAILURE') ?: getenv('MOCK_SERVER_URL') . '/fixtures/batch_crawl_stream_partial_failure';
         $urls = array_map(fn($p) => str_starts_with($p, 'http') ? $p : $urls_base . $p, ["/success1", "/fail", "/success2"]);
         $urls_req = new BatchCrawlStreamRequest($urls);
@@ -61,7 +61,7 @@ final class StreamTest extends TestCase
     public function test_crawl_stream_events(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_CRAWL_STREAM_EVENTS') ?: getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stream_events';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);
@@ -79,7 +79,7 @@ final class StreamTest extends TestCase
     public function test_stream_depth_crawl(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 2]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STREAM_DEPTH_CRAWL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stream_depth_crawl';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);
@@ -97,7 +97,7 @@ final class StreamTest extends TestCase
     public function test_stream_error_event_mid_crawl(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STREAM_ERROR_EVENT_MID_CRAWL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stream_error_event_mid_crawl';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);
@@ -115,7 +115,7 @@ final class StreamTest extends TestCase
     public function test_stream_event_ordering(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STREAM_EVENT_ORDERING') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stream_event_ordering';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);
@@ -133,7 +133,7 @@ final class StreamTest extends TestCase
     public function test_stream_large_crawl(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxDepth" => 1, "respectRobotsTxt" => false]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STREAM_LARGE_CRAWL') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stream_large_crawl';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);
@@ -151,7 +151,7 @@ final class StreamTest extends TestCase
     public function test_stream_with_error_event(): void
     {
         $engine_config = CrawlConfig::from_json(json_encode(["maxConcurrent" => 1, "maxDepth" => 1]));
-        $engine = Kreuzcrawl::createEngine($engine_config);
+        $engine = Crawlberg::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_STREAM_WITH_ERROR_EVENT') ?: getenv('MOCK_SERVER_URL') . '/fixtures/stream_with_error_event';
         $url_req = new CrawlStreamRequest($url);
         $result = $engine->crawlStream($url_req);

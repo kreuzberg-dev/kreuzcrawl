@@ -12,8 +12,8 @@ int main(void) {
 
     /* Suite-level env defaults from [e2e.env]. setdefault semantics: */
     /* only applied when not already set in the process environment.   */
-    if (getenv("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") == NULL) {
-        setenv("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true", 0);
+    if (getenv("CRAWLBERG_ALLOW_PRIVATE_NETWORK") == NULL) {
+        setenv("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true", 0);
     }
 
     /* Category: auth */

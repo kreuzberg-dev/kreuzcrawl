@@ -6,8 +6,8 @@
 
 import 'package:test/test.dart';
 import 'dart:io';
-import 'package:kreuzcrawl/kreuzcrawl.dart';
-import 'package:kreuzcrawl/src/kreuzcrawl_bridge_generated/frb_generated.dart' show RustLib;
+import 'package:crawlberg/crawlberg.dart';
+import 'package:crawlberg/src/crawlberg_bridge_generated/frb_generated.dart' show RustLib;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -89,7 +89,7 @@ void main() {
   var _rustLibInitialized = false;
 
   setUpAll(() async {
-    _setEnv('KREUZCRAWL_ALLOW_PRIVATE_NETWORK', 'true');
+    _setEnv('CRAWLBERG_ALLOW_PRIVATE_NETWORK', 'true');
     await RustLib.init();
     _rustLibInitialized = true;
     if (Platform.environment['MOCK_SERVER_URL'] == null && Platform.environment['SUT_URL'] == null) {
@@ -165,33 +165,33 @@ void main() {
   });
 
   test('CrawlEngine with defaults batch scrapes like the free function', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("engine_batch_basic");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     // skipped: field 'batch.completed_count' not available on dart result type
     // skipped: field 'batch.total_count' not available on dart result type
   });
 
   test('CrawlEngine with defaults crawls multiple pages like the free function', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("engine_crawl_basic");
-    final result = await KreuzcrawlBridge.crawl(engine, url);
+    final result = await CrawlbergBridge.crawl(engine, url);
     // skipped: field 'crawl.pages_crawled' not available on dart result type
     // skipped: field 'crawl.min_pages' not available on dart result type
   });
 
   test('CrawlEngine with defaults discovers URLs like the free function', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("engine_map_basic");
-    final result = await KreuzcrawlBridge.mapUrls(engine, url);
+    final result = await CrawlbergBridge.mapUrls(engine, url);
     // skipped: field 'map.min_urls' not available on dart result type
   });
 
   test('CrawlEngine with defaults scrapes a page identically to the free function', () async {
-    final engine = await KreuzcrawlBridge.createEngine();
+    final engine = await CrawlbergBridge.createEngine();
     final url = _fixtureUrl("engine_scrape_basic");
-    final result = await KreuzcrawlBridge.scrape(engine, url);
+    final result = await CrawlbergBridge.scrape(engine, url);
     expect(result.statusCode, equals(200));
     expect(result.contentType.toString().trim(), equals('text/html'.toString().trim()));
     expect(result.metadata.title.toString().trim(), equals('Engine Test'.toString().trim()));
@@ -202,10 +202,10 @@ void main() {
 
   test('CrawlEngine with defaults streams events like the free function', () async {
     final engineConfig = await createCrawlConfigFromJson(json: r'{"max_depth":1}');
-    final engine = await KreuzcrawlBridge.createEngine(config: engineConfig);
+    final engine = await CrawlbergBridge.createEngine(config: engineConfig);
     final url = _fixtureUrl("engine_stream_basic");
     final urlReq = CrawlStreamRequest(url: url);
-    final result = await KreuzcrawlBridge.crawlStream(engine, urlReq).toList();
+    final result = await CrawlbergBridge.crawlStream(engine, urlReq).toList();
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'is_true'
     // skipped streaming assertion: 'greater_than_or_equal'

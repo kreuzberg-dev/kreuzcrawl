@@ -1,6 +1,6 @@
 ---
 title: Basic Usage
-description: Minimal scrape + crawl example for every kreuzcrawl binding
+description: Minimal scrape + crawl example for every crawlberg binding
 ---
 
 ## Basic Usage

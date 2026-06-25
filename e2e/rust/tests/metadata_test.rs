@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: metadata
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::scrape;
+use crawlberg::create_engine;
+use crawlberg::scrape;
 mod common;
 mod mock_server;
 #[allow(unused_imports)]
@@ -160,7 +160,7 @@ async fn test_metadata_keywords_author() {
     );
     assert_eq!(
         _metadata_generator.to_string().as_str().trim(),
-        r#"kreuzcrawl/1.0"#,
+        r#"crawlberg/1.0"#,
         "equals assertion failed"
     );
     assert_eq!(

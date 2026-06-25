@@ -117,16 +117,16 @@ tasks:
             - "{{.BUNDLE}} exec steep check"
 
     console:
-        desc: Open Ruby console with Kreuzcrawl loaded
+        desc: Open Ruby console with Crawlberg loaded
         dir: packages/ruby
         cmds:
-            - "{{.BUNDLE}} exec pry -r ./lib/kreuzcrawl"
+            - "{{.BUNDLE}} exec pry -r ./lib/crawlberg"
 
     clean:
         desc: Clean Ruby build artifacts
         dir: packages/ruby
         cmds:
-            - python -c "import shutil, glob, os; shutil.rmtree('tmp', ignore_errors=True); [os.remove(f) for f in glob.glob('ext/kreuzcrawl/*.o') + glob.glob('ext/kreuzcrawl/*.so')]"
+            - python -c "import shutil, glob, os; shutil.rmtree('tmp', ignore_errors=True); [os.remove(f) for f in glob.glob('ext/crawlberg/*.o') + glob.glob('ext/crawlberg/*.so')]"
             - python -c "import shutil, os; [shutil.rmtree(os.path.join(r, d), ignore_errors=True) for r, dirs, _ in os.walk('.') for d in dirs if d == '.steep']"
 
     update:

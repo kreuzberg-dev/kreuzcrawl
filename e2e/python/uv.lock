@@ -42,7 +42,7 @@ wheels = [
 ]
 
 [[package]]
-name = "kreuzcrawl"
+name = "crawlberg"
 version = "0.3.0rc61"
 source = { directory = "../../packages/python" }
 
@@ -55,11 +55,11 @@ dev = [
 ]
 
 [[package]]
-name = "kreuzcrawl-e2e"
+name = "crawlberg-e2e"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "kreuzcrawl" },
+    { name = "crawlberg" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-timeout" },
@@ -67,7 +67,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "kreuzcrawl", directory = "../../packages/python" },
+    { name = "crawlberg", directory = "../../packages/python" },
     { name = "pytest", specifier = ">=7.4" },
     { name = "pytest-asyncio", specifier = ">=0.23" },
     { name = "pytest-timeout", specifier = ">=2.1" },

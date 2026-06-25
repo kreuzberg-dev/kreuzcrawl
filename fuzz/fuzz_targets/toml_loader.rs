@@ -5,5 +5,5 @@ use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
     let Ok(s) = std::str::from_utf8(data) else { return };
-    let _ = kreuzcrawl::waf_rules_from_str(s);
+    let _ = crawlberg::waf_rules_from_str(s);
 });

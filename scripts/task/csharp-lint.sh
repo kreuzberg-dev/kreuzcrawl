@@ -7,8 +7,8 @@ root="$(git rev-parse --show-toplevel)"
 # C# directories with .csproj or .slnx files
 # Each entry is "dir:target" where target is the solution/project file
 csharp_targets=(
-  "packages/csharp:Kreuzcrawl.slnx"
-  "e2e/csharp:Kreuzcrawl.E2E.csproj"
+  "packages/csharp:Crawlberg.slnx"
+  "e2e/csharp:Crawlberg.E2E.csproj"
 )
 
 failed=0

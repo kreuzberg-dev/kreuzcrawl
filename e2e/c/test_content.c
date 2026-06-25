@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_content_204_no_content(void) {
     /* Handles 204 No Content response gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_204_NO_CONTENT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,23 +30,23 @@ void test_content_204_no_content(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_204_no_content", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
-    char* html = kcrawl_scrape_result_html(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
+    char* html = cberg_scrape_result_html(result);
     assert(status_code == 204 && "equals assertion failed");
     assert((html == NULL || strlen(html) == 0) && "expected empty value");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_charset_iso8859(void) {
     /* Handles ISO-8859-1 encoded page correctly */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_CHARSET_ISO8859");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -57,21 +57,21 @@ void test_content_charset_iso8859(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_charset_iso8859", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* content_detected_charset = kcrawl_scrape_result_detected_charset(result);
+    char* content_detected_charset = cberg_scrape_result_detected_charset(result);
     assert(str_trim_eq(content_detected_charset, "iso-8859-1") == 0 && "equals assertion failed");
-    kcrawl_free_string(content_detected_charset);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(content_detected_charset);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_empty_body(void) {
     /* Handles 200 response with empty body gracefully */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_EMPTY_BODY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -82,20 +82,20 @@ void test_content_empty_body(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_empty_body", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_gzip_compressed(void) {
     /* Handles response with Accept-Encoding gzip negotiation */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_GZIP_COMPRESSED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -106,23 +106,23 @@ void test_content_gzip_compressed(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_gzip_compressed", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
-    uint16_t status_code = kcrawl_scrape_result_status_code(result);
+    char* html = cberg_scrape_result_html(result);
+    uint16_t status_code = cberg_scrape_result_status_code(result);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
     assert(status_code == 200 && "equals assertion failed");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_large_page_limit(void) {
     /* Respects max body size limit and truncates or skips oversized pages */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"max_body_size\":1024,\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"max_body_size\":1024,\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_LARGE_PAGE_LIMIT");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -133,20 +133,20 @@ void test_content_large_page_limit(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_large_page_limit", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    uintptr_t content_body_size = kcrawl_scrape_result_body_size(result);
+    uintptr_t content_body_size = cberg_scrape_result_body_size(result);
     assert(content_body_size < 1025 && "expected less than");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_main_only(void) {
     /* Extracts content with aggressive preprocessing, excluding nav, sidebar, footer */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"content\":{\"preprocessing_preset\":\"aggressive\"},\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_MAIN_ONLY");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -157,17 +157,17 @@ void test_content_main_only(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_main_only", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
-    if (result != NULL) kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
+    if (result != NULL) cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_pdf_no_extension(void) {
     /* Detects PDF content by Content-Type header when URL has no .pdf extension */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_PDF_NO_EXTENSION");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -178,20 +178,20 @@ void test_content_pdf_no_extension(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_pdf_no_extension", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    int32_t content_is_pdf = kcrawl_scrape_result_is_pdf(result);
+    int32_t content_is_pdf = cberg_scrape_result_is_pdf(result);
     assert(content_is_pdf == 1 && "equals assertion failed");
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_remove_tags(void) {
     /* Removes specified HTML elements by CSS selector before processing */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_REMOVE_TAGS");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -202,21 +202,21 @@ void test_content_remove_tags(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_remove_tags", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
+    char* html = cberg_scrape_result_html(result);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_content_utf8_bom(void) {
     /* Handles UTF-8 content with BOM marker correctly */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"respect_robots_txt\":false}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{\"respect_robots_txt\":false}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_CONTENT_UTF8_BOM");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -227,14 +227,14 @@ void test_content_utf8_bom(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/content_utf8_bom", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* content_detected_charset = kcrawl_scrape_result_detected_charset(result);
-    char* html = kcrawl_scrape_result_html(result);
+    char* content_detected_charset = cberg_scrape_result_detected_charset(result);
+    char* html = cberg_scrape_result_html(result);
     assert(str_trim_eq(content_detected_charset, "utf-8") == 0 && "equals assertion failed");
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
-    kcrawl_free_string(content_detected_charset);
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(content_detected_charset);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

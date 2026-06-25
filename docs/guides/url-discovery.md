@@ -5,7 +5,7 @@ The map operation discovers all URLs on a website without downloading full page 
 ## Basic map operation
 
 ```rust
-use kreuzcrawl::{CrawlConfig, create_engine, map_urls};
+use crawlberg::{CrawlConfig, create_engine, map_urls};
 
 let engine = create_engine(Some(CrawlConfig {
     respect_robots_txt: true,

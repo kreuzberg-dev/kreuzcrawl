@@ -12,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
-using Kreuzcrawl;
-using static Kreuzcrawl.KreuzcrawlConverter;
+using Crawlberg;
+using static Crawlberg.CrawlbergConverter;
 
-namespace Kreuzcrawl
+namespace Crawlberg
 {
     /// <summary>E2e tests for category: concurrent.</summary>
     public class ConcurrentTests
@@ -27,10 +27,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawling fetches all pages with max_concurrent workers
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":3,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CONCURRENT_BASIC");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/concurrent_basic";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 6);
     Assert.True(result.Pages.Count >= 6, "expected >= 6");
 
@@ -41,10 +41,10 @@ namespace Kreuzcrawl
         {
             // Concurrent depth=2 crawl correctly fans out and deduplicates across levels
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":3,\"max_depth\":2}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CONCURRENT_DEPTH_TWO_FAN_OUT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/concurrent_depth_two_fan_out";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count == 4);
 
         }
@@ -54,10 +54,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawling does not exceed max_pages limit even with high concurrency
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CONCURRENT_MAX_PAGES_EXACT");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/concurrent_max_pages_exact";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count <= 3, "expected <= 3");
 
         }
@@ -67,10 +67,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawl handles partial failures gracefully
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":3,\"max_depth\":1}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CONCURRENT_PARTIAL_ERRORS");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/concurrent_partial_errors";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count >= 2, "expected >= 2");
 
         }
@@ -80,10 +80,10 @@ namespace Kreuzcrawl
         {
             // Concurrent crawling respects max_pages limit
             var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}", ConfigOptions)!;
-            var engine = KreuzcrawlConverter.CreateEngine(engineConfig);
+            var engine = CrawlbergConverter.CreateEngine(engineConfig);
             var _pfUrl_url = Environment.GetEnvironmentVariable("MOCK_SERVER_CONCURRENT_RESPECTS_MAX_PAGES");
             var url = !string.IsNullOrEmpty(_pfUrl_url) ? _pfUrl_url : Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/concurrent_respects_max_pages";
-            var result = await KreuzcrawlConverter.CrawlAsync(engine, url);
+            var result = await CrawlbergConverter.CrawlAsync(engine, url);
     Assert.True(result.Pages.Count <= 3, "expected <= 3");
 
         }

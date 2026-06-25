@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: batch
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::CrawlConfig;
-use kreuzcrawl::{batch_crawl, batch_scrape};
+use crawlberg::create_engine;
+use crawlberg::CrawlConfig;
+use crawlberg::{batch_crawl, batch_scrape};
 mod common;
 mod mock_server;
 #[allow(unused_imports)]

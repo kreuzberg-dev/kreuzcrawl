@@ -1267,7 +1267,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl"
+name = "crawlberg"
 version = "0.3.0-rc.37"
 dependencies = [
  "ahash",
@@ -1302,10 +1302,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl-fuzz"
+name = "crawlberg-fuzz"
 version = "0.0.0"
 dependencies = [
- "kreuzcrawl",
+ "crawlberg",
  "libfuzzer-sys",
 ]
 

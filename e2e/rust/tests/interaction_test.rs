@@ -4,12 +4,12 @@
 // To verify freshness: alef verify --exit-code
 //! E2e tests for category: interaction
 
-use kreuzcrawl::create_engine;
-use kreuzcrawl::interact;
-use kreuzcrawl::CrawlConfig;
+use crawlberg::create_engine;
+use crawlberg::interact;
+use crawlberg::CrawlConfig;
 mod common;
 mod mock_server;
-use kreuzcrawl::PageAction;
+use crawlberg::PageAction;
 #[allow(unused_imports)]
 use mock_server::{MockRoute, MockServer};
 

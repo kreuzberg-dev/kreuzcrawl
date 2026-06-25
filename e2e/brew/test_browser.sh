@@ -9,7 +9,7 @@ set -euo pipefail
 test_browser_config_auto_no_feature() {
   # Browser mode 'never' prevents browser use even when JS render hint is set
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_CONFIG_AUTO_NO_FEATURE:-${MOCK_SERVER_URL}/fixtures/browser_config_auto_no_feature}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_CONFIG_AUTO_NO_FEATURE:-${MOCK_SERVER_URL}/fixtures/browser_config_auto_no_feature}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -25,7 +25,7 @@ test_browser_config_auto_no_feature() {
 test_browser_config_never_mode() {
   # Browser mode 'never' prevents browser fallback even for SPA shell content
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_CONFIG_NEVER_MODE:-${MOCK_SERVER_URL}/fixtures/browser_config_never_mode}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_CONFIG_NEVER_MODE:-${MOCK_SERVER_URL}/fixtures/browser_config_never_mode}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -41,7 +41,7 @@ test_browser_config_never_mode() {
 test_browser_crawl_mode_always() {
   # Crawl with browser mode 'always' follows links using browser rendering
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_BROWSER_CRAWL_MODE_ALWAYS:-${MOCK_SERVER_URL}/fixtures/browser_crawl_mode_always}" --config '{"browser":{"mode":"always"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_BROWSER_CRAWL_MODE_ALWAYS:-${MOCK_SERVER_URL}/fixtures/browser_crawl_mode_always}" --config '{"browser":{"mode":"always"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -52,7 +52,7 @@ test_browser_crawl_mode_always() {
 test_browser_crawl_waf_fallback() {
   # Crawl with browser mode 'auto' falls back to browser when encountering WAF 403
   local output
-  output=$(kreuzcrawl crawl "${MOCK_SERVER_BROWSER_CRAWL_WAF_FALLBACK:-${MOCK_SERVER_URL}/fixtures/browser_crawl_waf_fallback}" --config '{"browser":{"mode":"auto"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
+  output=$(crawlberg crawl "${MOCK_SERVER_BROWSER_CRAWL_WAF_FALLBACK:-${MOCK_SERVER_URL}/fixtures/browser_crawl_waf_fallback}" --config '{"browser":{"mode":"auto"},"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never)
 
   local val_pages_length
   val_pages_length=$(echo "$output" | jq -r '.pages | length')
@@ -62,7 +62,7 @@ test_browser_crawl_waf_fallback() {
 test_browser_detect_minimal_page() {
   # Does NOT flag a short but real content page as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_MINIMAL_PAGE:-${MOCK_SERVER_URL}/fixtures/browser_detect_minimal_page}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_MINIMAL_PAGE:-${MOCK_SERVER_URL}/fixtures/browser_detect_minimal_page}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -78,7 +78,7 @@ test_browser_detect_minimal_page() {
 test_browser_detect_next_empty() {
   # Detects Next.js page with __NEXT_DATA__ but no rendered content as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_NEXT_EMPTY:-${MOCK_SERVER_URL}/fixtures/browser_detect_next_empty}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_NEXT_EMPTY:-${MOCK_SERVER_URL}/fixtures/browser_detect_next_empty}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -94,7 +94,7 @@ test_browser_detect_next_empty() {
 test_browser_detect_next_rendered() {
   # Does NOT flag Next.js page with full SSR content as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_NEXT_RENDERED:-${MOCK_SERVER_URL}/fixtures/browser_detect_next_rendered}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_NEXT_RENDERED:-${MOCK_SERVER_URL}/fixtures/browser_detect_next_rendered}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -113,7 +113,7 @@ test_browser_detect_next_rendered() {
 test_browser_detect_normal_page() {
   # Does NOT flag a normal server-rendered page as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_NORMAL_PAGE:-${MOCK_SERVER_URL}/fixtures/browser_detect_normal_page}" --config '{}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_NORMAL_PAGE:-${MOCK_SERVER_URL}/fixtures/browser_detect_normal_page}" --config '{}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -129,7 +129,7 @@ test_browser_detect_normal_page() {
 test_browser_detect_nuxt_shell() {
   # Detects Nuxt SPA shell with empty #__nuxt div as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_NUXT_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_nuxt_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_NUXT_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_nuxt_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -145,7 +145,7 @@ test_browser_detect_nuxt_shell() {
 test_browser_detect_react_shell() {
   # Detects React SPA shell with empty #root div as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_REACT_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_react_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_REACT_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_react_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -164,7 +164,7 @@ test_browser_detect_react_shell() {
 test_browser_detect_vue_shell() {
   # Detects Vue SPA shell with empty #app div as needing JS rendering
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_DETECT_VUE_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_vue_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_DETECT_VUE_SHELL:-${MOCK_SERVER_URL}/fixtures/browser_detect_vue_shell}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never)
 
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
@@ -180,7 +180,7 @@ test_browser_detect_vue_shell() {
 test_browser_extra_wait() {
   # Browser extra_wait adds additional time after network_idle to ensure all async operations complete
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_EXTRA_WAIT:-${MOCK_SERVER_URL}/fixtures/browser_extra_wait}" --config '{"browser":{"extra_wait":200,"mode":"always","wait":"network_idle"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_EXTRA_WAIT:-${MOCK_SERVER_URL}/fixtures/browser_extra_wait}" --config '{"browser":{"extra_wait":200,"mode":"always","wait":"network_idle"}}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')
@@ -190,7 +190,7 @@ test_browser_extra_wait() {
 test_browser_fallback_spa_render() {
   # Browser auto re-fetches SPA shell when JS rendering is detected
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_FALLBACK_SPA_RENDER:-${MOCK_SERVER_URL}/fixtures/browser_fallback_spa_render}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_FALLBACK_SPA_RENDER:-${MOCK_SERVER_URL}/fixtures/browser_fallback_spa_render}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
 
   local val_js_render_hint
   val_js_render_hint=$(echo "$output" | jq -r '.js_render_hint')
@@ -203,7 +203,7 @@ test_browser_fallback_spa_render() {
 test_browser_fallback_waf_blocked() {
   # Browser fallback is used when browser mode is always, simulating WAF-blocked scenario
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_FALLBACK_WAF_BLOCKED:-${MOCK_SERVER_URL}/fixtures/browser_fallback_waf_blocked}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_FALLBACK_WAF_BLOCKED:-${MOCK_SERVER_URL}/fixtures/browser_fallback_waf_blocked}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')
@@ -213,7 +213,7 @@ test_browser_fallback_waf_blocked() {
 test_browser_mode_always() {
   # Browser mode 'always' uses browser even for normal server-rendered pages
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_MODE_ALWAYS:-${MOCK_SERVER_URL}/fixtures/browser_mode_always}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_MODE_ALWAYS:-${MOCK_SERVER_URL}/fixtures/browser_mode_always}" --config '{"browser":{"mode":"always"}}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')
@@ -223,7 +223,7 @@ test_browser_mode_always() {
 test_browser_profile_basic() {
   # Browser profile configuration persists and reuses browser state across crawl sessions
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_PROFILE_BASIC:-${MOCK_SERVER_URL}/fixtures/browser_profile_basic}" --config '{"browser":{"mode":"always"},"browser_profile":"test-profile"}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_PROFILE_BASIC:-${MOCK_SERVER_URL}/fixtures/browser_profile_basic}" --config '{"browser":{"mode":"always"},"browser_profile":"test-profile"}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')
@@ -236,7 +236,7 @@ test_browser_profile_basic() {
 test_browser_wait_fixed() {
   # Browser wait strategy 'fixed' waits for a specific duration after page navigation
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_WAIT_FIXED:-${MOCK_SERVER_URL}/fixtures/browser_wait_fixed}" --config '{"browser":{"extra_wait":100,"mode":"always","wait":"fixed"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_WAIT_FIXED:-${MOCK_SERVER_URL}/fixtures/browser_wait_fixed}" --config '{"browser":{"extra_wait":100,"mode":"always","wait":"fixed"}}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')
@@ -249,7 +249,7 @@ test_browser_wait_fixed() {
 test_browser_wait_selector() {
   # Browser wait strategy 'selector' waits for specific CSS selector before considering page loaded
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_BROWSER_WAIT_SELECTOR:-${MOCK_SERVER_URL}/fixtures/browser_wait_selector}" --config '{"browser":{"mode":"always","wait":"selector","wait_selector":"#content"}}' --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_BROWSER_WAIT_SELECTOR:-${MOCK_SERVER_URL}/fixtures/browser_wait_selector}" --config '{"browser":{"mode":"always","wait":"selector","wait_selector":"#content"}}' --format json --browser-mode never)
 
   local val_browser_used
   val_browser_used=$(echo "$output" | jq -r '.browser_used')

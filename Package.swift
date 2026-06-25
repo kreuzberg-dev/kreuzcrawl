@@ -9,13 +9,13 @@
 import PackageDescription
 
 let package = Package(
-  name: "Kreuzcrawl",
+  name: "Crawlberg",
   platforms: [
     .macOS(.v13),
     .iOS(.v16),
   ],
   products: [
-    .library(name: "Kreuzcrawl", targets: ["Kreuzcrawl"])
+    .library(name: "Crawlberg", targets: ["Crawlberg"])
   ],
   targets: [
     // RustBridgeC: C headers target. Swift files in RustBridge import this to
@@ -33,7 +33,7 @@ let package = Package(
     // sibling RustBridge target below and link against this binary.
     .binaryTarget(
       name: "RustBridgeBinary",
-      url: "https://github.com/xberg-io/kreuzcrawl/releases/download/v0.3.0/Kreuzcrawl-rs.artifactbundle.zip",
+      url: "https://github.com/xberg-io/crawlberg/releases/download/v__ALEF_SWIFT_VERSION__/Crawlberg-rs.artifactbundle.zip",
       checksum: "__ALEF_SWIFT_CHECKSUM__"
     ),
     // RustBridge: Swift wrapper module owning the swift-bridge generated
@@ -54,9 +54,9 @@ let package = Package(
       ]
     ),
     .target(
-      name: "Kreuzcrawl",
+      name: "Crawlberg",
       dependencies: ["RustBridge", "RustBridgeC"],
-      path: "packages/swift/Sources/Kreuzcrawl"
+      path: "packages/swift/Sources/Crawlberg"
     ),
   ]
 )

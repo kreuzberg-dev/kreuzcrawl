@@ -19,17 +19,17 @@ echo "  CARGO_TERM_COLOR: ${CARGO_TERM_COLOR:-not set}"
 TEST_LOG="/tmp/cargo-test-$$.log"
 
 if ! {
-  echo "=== cargo test -p kreuzcrawl --all-features ==="
-  RUST_BACKTRACE=full cargo test -p kreuzcrawl --all-features --verbose
+  echo "=== cargo test -p crawlberg --all-features ==="
+  RUST_BACKTRACE=full cargo test -p crawlberg --all-features --verbose
 
   echo "=== cargo test --workspace (excluding bindings) ==="
   RUST_BACKTRACE=full cargo test \
     --workspace \
-    --exclude kreuzcrawl \
-    --exclude kreuzcrawl-py \
-    --exclude kreuzcrawl-node \
-    --exclude kreuzcrawl-php \
-    --exclude kreuzcrawl-wasm \
+    --exclude crawlberg \
+    --exclude crawlberg-py \
+    --exclude crawlberg-node \
+    --exclude crawlberg-php \
+    --exclude crawlberg-wasm \
     --all-features \
     --verbose
 } 2>&1 | tee "$TEST_LOG"; then

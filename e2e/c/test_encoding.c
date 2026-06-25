@@ -11,15 +11,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kreuzcrawl.h"
+#include "crawlberg.h"
 #include "test_runner.h"
 
 void test_encoding_double_encoded(void) {
     /* Handles double-encoded URL characters (%25C3%25B6) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_ENCODING_DOUBLE_ENCODED");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -30,25 +30,25 @@ void test_encoding_double_encoded(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/encoding_double_encoded", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* html = cberg_scrape_result_html(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
     assert(links_length >= 1 && "expected greater than or equal");
-    kcrawl_free_string(html);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_encoding_mixed_charset_page(void) {
     /* Handles charset mismatch between HTTP header and HTML meta tag */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_ENCODING_MIXED_CHARSET_PAGE");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -59,21 +59,21 @@ void test_encoding_mixed_charset_page(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/encoding_mixed_charset_page", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
+    char* html = cberg_scrape_result_html(result);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_encoding_percent_encoded_path(void) {
     /* Handles percent-encoded spaces and characters in URL paths */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_ENCODING_PERCENT_ENCODED_PATH");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -84,25 +84,25 @@ void test_encoding_percent_encoded_path(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/encoding_percent_encoded_path", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
-    char* links_json = kcrawl_scrape_result_links(result);
+    char* html = cberg_scrape_result_html(result);
+    char* links_json = cberg_scrape_result_links(result);
     int links_length = alef_json_array_count(links_json);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
     assert(links_length >= 2 && "expected greater than or equal");
-    kcrawl_free_string(html);
-    kcrawl_free_string(links_json);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_free_string(links_json);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }
 
 void test_encoding_unicode_url(void) {
     /* Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic) */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
+    CBERGCrawlConfig* config_handle = cberg_crawl_config_from_json("{}");
     assert(config_handle != NULL && "failed to parse config");
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
+    CBERGCrawlEngineHandle* engine = cberg_create_engine(config_handle);
+    cberg_crawl_config_free(config_handle);
     assert(engine != NULL && "failed to create engine");
     const char* mock_per_fixture = getenv("MOCK_SERVER_ENCODING_UNICODE_URL");
     const char* mock_base = getenv("MOCK_SERVER_URL");
@@ -113,11 +113,11 @@ void test_encoding_unicode_url(void) {
         assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
         snprintf(url, sizeof(url), "%s/fixtures/encoding_unicode_url", mock_base);
     }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
+    CBERGScrapeResult* result = cberg_scrape(engine, url);
     assert(result != NULL && "expected call to succeed");
-    char* html = kcrawl_scrape_result_html(result);
+    char* html = cberg_scrape_result_html(result);
     assert(html != NULL && strlen(html) > 0 && "expected non-empty value");
-    kcrawl_free_string(html);
-    kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
+    cberg_free_string(html);
+    cberg_scrape_result_free(result);
+    cberg_crawl_engine_handle_free(engine);
 }

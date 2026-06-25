@@ -1,6 +1,6 @@
 ```swift title="Swift"
 import Foundation
-import Kreuzcrawl
+import Crawlberg
 
 @main
 struct BasicUsage {

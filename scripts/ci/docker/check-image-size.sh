@@ -10,10 +10,10 @@ if [ -z "$VARIANT" ]; then
   exit 1
 fi
 
-size=$(docker images "kreuzcrawl:$VARIANT" --format "{{.Size}}")
+size=$(docker images "crawlberg:$VARIANT" --format "{{.Size}}")
 echo "Docker image size ($VARIANT): $size"
 
-size_mb=$(docker inspect "kreuzcrawl:$VARIANT" --format='{{.Size}}' | awk '{print int($1/1024/1024)}')
+size_mb=$(docker inspect "crawlberg:$VARIANT" --format='{{.Size}}' | awk '{print int($1/1024/1024)}')
 echo "Image size in MB: $size_mb"
 
 if [ "$VARIANT" = "full" ] && [ "$size_mb" -gt 2560 ]; then

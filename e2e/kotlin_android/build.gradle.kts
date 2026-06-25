@@ -7,11 +7,11 @@ plugins {
     id("com.android.library") version "9.2.1"
 }
 
-group = "dev.kreuzberg.kreuzcrawl.android"
+group = "dev.kreuzberg.crawlberg.android"
 version = "0.1.0"
 
 android {
-    namespace = "dev.kreuzberg.kreuzcrawl.android.e2e"
+    namespace = "dev.kreuzberg.crawlberg.android.e2e"
     compileSdk = 35
 
     defaultConfig {
@@ -86,14 +86,14 @@ dependencies {
 }
 
 // Build host JNI library for JVM unit tests (macOS/Linux/Windows).
-// The generated Kotlin Bridge object calls System.loadLibrary("kcrawl_jni") for JVM
+// The generated Kotlin Bridge object calls System.loadLibrary("cberg_jni") for JVM
 // unit tests running on developer machines. This task builds the host-platform binary
 // and stages it into src/test/resources/host-jni/<platform>/ for the test loader.
 // Set alef.skipHostJni=true to disable this (e.g., in CI where only source-set validation is needed).
 tasks.register("buildHostJni", Exec::class) {
     if (project.properties["alef.skipHostJni"] != "true") {
-        val jniCargoPath = "../../crates/kreuzcrawl-jni/Cargo.toml"
-        description = "Build host-platform JNI library from ../../crates/kreuzcrawl-jni"
+        val jniCargoPath = "../../crates/crawlberg-jni/Cargo.toml"
+        description = "Build host-platform JNI library from ../../crates/crawlberg-jni"
         commandLine("cargo", "build", "--release", "--manifest-path", jniCargoPath)
         errorOutput = System.err
     } else {
@@ -115,9 +115,9 @@ tasks.register("copyHostJni", Copy::class) {
             "linux"
         }
         val libName = when (hostPlatform) {
-            "darwin" -> "libkcrawl_jni.dylib"
-            "windows" -> "kcrawl_jni.dll"
-            else -> "libkcrawl_jni.so"
+            "darwin" -> "libcberg_jni.dylib"
+            "windows" -> "cberg_jni.dll"
+            else -> "libcberg_jni.so"
         }
 
         // Cargo builds to the workspace target directory by default, even when

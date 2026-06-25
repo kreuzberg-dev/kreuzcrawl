@@ -8,29 +8,37 @@ pub fn build(b: *std.Build) void {
     // layout. `alef publish package --lang zig` rewrites this file for the
     // distributed tarball so consumers link the bundled lib/ and include/ dirs.
     // Override with -Dffi_path=... and -Dffi_include_path=... if your layout differs.
-    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi.{dylib,so,dll,a}") orelse "../../target/release";
+    const ffi_path = b.option(
+        []const u8,
+        "ffi_path",
+        "Path to directory containing libcrawlberg_ffi.{dylib,so,dll,a}"
+    ) orelse "../../target/release";
 
-    const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing the FFI C header") orelse "../../crates/kreuzcrawl-ffi/include";
+    const ffi_include = b.option(
+        []const u8,
+        "ffi_include_path",
+        "Path to directory containing the FFI C header"
+    ) orelse "../../crates/crawlberg-ffi/include";
 
-    const module = b.addModule("kreuzcrawl", .{
-        .root_source_file = b.path("src/kreuzcrawl.zig"),
+    const module = b.addModule("crawlberg", .{
+        .root_source_file = b.path("src/crawlberg.zig"),
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
     module.addLibraryPath(.{ .cwd_relative = ffi_path });
     module.addIncludePath(.{ .cwd_relative = ffi_include });
-    module.linkSystemLibrary("kreuzcrawl_ffi", .{});
+    module.linkSystemLibrary("crawlberg_ffi", .{});
 
     const test_module = b.createModule(.{
-        .root_source_file = b.path("src/kreuzcrawl.zig"),
+        .root_source_file = b.path("src/crawlberg.zig"),
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
     test_module.addLibraryPath(.{ .cwd_relative = ffi_path });
     test_module.addIncludePath(.{ .cwd_relative = ffi_include });
-    test_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
+    test_module.linkSystemLibrary("crawlberg_ffi", .{});
 
     const tests = b.addTest(.{
         .root_module = test_module,

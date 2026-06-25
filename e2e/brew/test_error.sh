@@ -8,7 +8,7 @@ set -euo pipefail
 
 test_error_401_unauthorized() {
   # Handles 401 Unauthorized response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_401_UNAUTHORIZED:-${MOCK_SERVER_URL}/fixtures/error_401_unauthorized}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_401_UNAUTHORIZED:-${MOCK_SERVER_URL}/fixtures/error_401_unauthorized}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -16,7 +16,7 @@ test_error_401_unauthorized() {
 
 test_error_403_forbidden() {
   # Handles 403 Forbidden response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_403_FORBIDDEN:-${MOCK_SERVER_URL}/fixtures/error_403_forbidden}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_403_FORBIDDEN:-${MOCK_SERVER_URL}/fixtures/error_403_forbidden}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -24,7 +24,7 @@ test_error_403_forbidden() {
 
 test_error_404_page() {
   # Handles 404 response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_404_PAGE:-${MOCK_SERVER_URL}/fixtures/error_404_page}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_404_PAGE:-${MOCK_SERVER_URL}/fixtures/error_404_page}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -32,7 +32,7 @@ test_error_404_page() {
 
 test_error_408_request_timeout() {
   # Handles 408 Request Timeout response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_408_REQUEST_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_408_request_timeout}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_408_REQUEST_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_408_request_timeout}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -40,7 +40,7 @@ test_error_408_request_timeout() {
 
 test_error_410_gone() {
   # Handles 410 Gone response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_410_GONE:-${MOCK_SERVER_URL}/fixtures/error_410_gone}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_410_GONE:-${MOCK_SERVER_URL}/fixtures/error_410_gone}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -48,7 +48,7 @@ test_error_410_gone() {
 
 test_error_500_server() {
   # Handles 500 server error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_500_SERVER:-${MOCK_SERVER_URL}/fixtures/error_500_server}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_500_SERVER:-${MOCK_SERVER_URL}/fixtures/error_500_server}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -56,7 +56,7 @@ test_error_500_server() {
 
 test_error_502_bad_gateway() {
   # Handles 502 Bad Gateway response correctly
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_502_BAD_GATEWAY:-${MOCK_SERVER_URL}/fixtures/error_502_bad_gateway}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_502_BAD_GATEWAY:-${MOCK_SERVER_URL}/fixtures/error_502_bad_gateway}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -64,7 +64,7 @@ test_error_502_bad_gateway() {
 
 test_error_browser_launch_failure() {
   # Browser launch fails when browser mode is always but browser is unavailable
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_BROWSER_LAUNCH_FAILURE:-${MOCK_SERVER_URL}/fixtures/error_browser_launch_failure}" --config '{"browser":{"mode":"always","timeout":1}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_BROWSER_LAUNCH_FAILURE:-${MOCK_SERVER_URL}/fixtures/error_browser_launch_failure}" --config '{"browser":{"mode":"always","timeout":1}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -72,7 +72,7 @@ test_error_browser_launch_failure() {
 
 test_error_browser_page_timeout() {
   # Browser page load times out
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_BROWSER_PAGE_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_browser_page_timeout}" --config '{"browser":{"mode":"always","timeout":1}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_BROWSER_PAGE_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_browser_page_timeout}" --config '{"browser":{"mode":"always","timeout":1}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -80,7 +80,7 @@ test_error_browser_page_timeout() {
 
 test_error_connection_refused() {
   # Handles connection refused error gracefully
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_CONNECTION_REFUSED:-${MOCK_SERVER_URL}/fixtures/error_connection_refused}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_CONNECTION_REFUSED:-${MOCK_SERVER_URL}/fixtures/error_connection_refused}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -88,7 +88,7 @@ test_error_connection_refused() {
 
 test_error_data_loss_truncated() {
   # Content-Length mismatch causes data loss error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_DATA_LOSS_TRUNCATED:-${MOCK_SERVER_URL}/fixtures/error_data_loss_truncated}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_DATA_LOSS_TRUNCATED:-${MOCK_SERVER_URL}/fixtures/error_data_loss_truncated}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -96,7 +96,7 @@ test_error_data_loss_truncated() {
 
 test_error_dns_resolution() {
   # Handles DNS resolution failure gracefully
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_DNS_RESOLUTION:-${MOCK_SERVER_URL}/fixtures/error_dns_resolution}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_DNS_RESOLUTION:-${MOCK_SERVER_URL}/fixtures/error_dns_resolution}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -104,7 +104,7 @@ test_error_dns_resolution() {
 
 test_error_empty_batch_urls() {
   # Scraping a URL that cannot be found returns an error containing the URL path
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_EMPTY_BATCH_URLS:-${MOCK_SERVER_URL}/fixtures/error_empty_batch_urls}" --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_EMPTY_BATCH_URLS:-${MOCK_SERVER_URL}/fixtures/error_empty_batch_urls}" --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -113,7 +113,7 @@ test_error_empty_batch_urls() {
 test_error_empty_response() {
   # Handles 200 with completely empty body gracefully
   local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_ERROR_EMPTY_RESPONSE:-${MOCK_SERVER_URL}/fixtures/error_empty_response}" --format json --browser-mode never)
+  output=$(crawlberg scrape "${MOCK_SERVER_ERROR_EMPTY_RESPONSE:-${MOCK_SERVER_URL}/fixtures/error_empty_response}" --format json --browser-mode never)
 
   local val_html
   val_html=$(echo "$output" | jq -r '.html // empty')
@@ -122,7 +122,7 @@ test_error_empty_response() {
 
 test_error_invalid_proxy() {
   # Proxy pointing to unreachable address causes connection error during scrape
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_INVALID_PROXY:-${MOCK_SERVER_URL}/fixtures/error_invalid_proxy}" --config '{"proxy":{"url":"http://127.0.0.1:1"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_INVALID_PROXY:-${MOCK_SERVER_URL}/fixtures/error_invalid_proxy}" --config '{"proxy":{"url":"http://127.0.0.1:1"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -130,7 +130,7 @@ test_error_invalid_proxy() {
 
 test_error_partial_response() {
   # Handles incomplete or truncated HTTP response
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_PARTIAL_RESPONSE:-${MOCK_SERVER_URL}/fixtures/error_partial_response}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_PARTIAL_RESPONSE:-${MOCK_SERVER_URL}/fixtures/error_partial_response}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -138,7 +138,7 @@ test_error_partial_response() {
 
 test_error_rate_limited() {
   # Handles 429 rate limiting with Retry-After
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_RATE_LIMITED:-${MOCK_SERVER_URL}/fixtures/error_rate_limited}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_RATE_LIMITED:-${MOCK_SERVER_URL}/fixtures/error_rate_limited}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -146,7 +146,7 @@ test_error_rate_limited() {
 
 test_error_retry_503() {
   # Retries request on 503 Service Unavailable response
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_RETRY_503:-${MOCK_SERVER_URL}/fixtures/error_retry_503}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_RETRY_503:-${MOCK_SERVER_URL}/fixtures/error_retry_503}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -154,7 +154,7 @@ test_error_retry_503() {
 
 test_error_retry_backoff() {
   # Implements exponential backoff when retrying failed requests
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_RETRY_BACKOFF:-${MOCK_SERVER_URL}/fixtures/error_retry_backoff}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_RETRY_BACKOFF:-${MOCK_SERVER_URL}/fixtures/error_retry_backoff}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -162,7 +162,7 @@ test_error_retry_backoff() {
 
 test_error_ssl_invalid_cert() {
   # Handles SSL certificate validation error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_SSL_INVALID_CERT:-${MOCK_SERVER_URL}/fixtures/error_ssl_invalid_cert}" --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_SSL_INVALID_CERT:-${MOCK_SERVER_URL}/fixtures/error_ssl_invalid_cert}" --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -170,7 +170,7 @@ test_error_ssl_invalid_cert() {
 
 test_error_timeout() {
   # Mock server delays response longer than request_timeout, surfacing a timeout error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_timeout}" --config '{"request_timeout":500}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_TIMEOUT:-${MOCK_SERVER_URL}/fixtures/error_timeout}" --config '{"request_timeout":500}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -178,7 +178,7 @@ test_error_timeout() {
 
 test_error_unsupported_scheme() {
   # Unsupported URL scheme (gopher) is rejected
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_UNSUPPORTED_SCHEME:-${MOCK_SERVER_URL}/fixtures/error_unsupported_scheme}" --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_UNSUPPORTED_SCHEME:-${MOCK_SERVER_URL}/fixtures/error_unsupported_scheme}" --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -186,7 +186,7 @@ test_error_unsupported_scheme() {
 
 test_error_waf_akamai() {
   # Akamai WAF detection returns WafBlocked error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_WAF_AKAMAI:-${MOCK_SERVER_URL}/fixtures/error_waf_akamai}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_WAF_AKAMAI:-${MOCK_SERVER_URL}/fixtures/error_waf_akamai}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -194,7 +194,7 @@ test_error_waf_akamai() {
 
 test_error_waf_blocked() {
   # WAF challenge/block detection returns WafBlocked error
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_WAF_BLOCKED:-${MOCK_SERVER_URL}/fixtures/error_waf_blocked}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_WAF_BLOCKED:-${MOCK_SERVER_URL}/fixtures/error_waf_blocked}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -202,7 +202,7 @@ test_error_waf_blocked() {
 
 test_error_waf_false_403() {
   # Detects WAF/bot protection false 403 (Cloudflare challenge page)
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_WAF_FALSE_403:-${MOCK_SERVER_URL}/fixtures/error_waf_false_403}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_WAF_FALSE_403:-${MOCK_SERVER_URL}/fixtures/error_waf_false_403}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi
@@ -210,7 +210,7 @@ test_error_waf_false_403() {
 
 test_error_waf_imperva() {
   # Imperva/Incapsula WAF detection
-  if kreuzcrawl scrape "${MOCK_SERVER_ERROR_WAF_IMPERVA:-${MOCK_SERVER_URL}/fixtures/error_waf_imperva}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
+  if crawlberg scrape "${MOCK_SERVER_ERROR_WAF_IMPERVA:-${MOCK_SERVER_URL}/fixtures/error_waf_imperva}" --config '{"browser":{"mode":"never"}}' --format json --browser-mode never >/dev/null 2>&1; then
     echo 'FAIL [error]: expected command to fail but it succeeded' >&2
     return 1
   fi

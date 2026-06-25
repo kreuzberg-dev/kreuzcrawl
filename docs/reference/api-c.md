@@ -6,7 +6,7 @@ title: "C API Reference"
 
 ### Functions
 
-#### kcrawl_generate_citations()
+#### cberg_generate_citations()
 
 Convert markdown links to numbered citations.
 
@@ -17,13 +17,13 @@ Images `![alt](url)` are preserved unchanged.
 **Signature:**
 
 ```c
-KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
+CbergCitationResult* cberg_generate_citations(const char* markdown);
 ```
 
 **Example:**
 
 ```c
-KcrawlCitationResult *result = kcrawl_generate_citations("value");
+CbergCitationResult *result = cberg_generate_citations("value");
 ```
 
 **Parameters:**
@@ -32,11 +32,11 @@ KcrawlCitationResult *result = kcrawl_generate_citations("value");
 |------|------|----------|-------------|
 | `markdown` | `const char*` | Yes | The markdown |
 
-**Returns:** `KcrawlCitationResult`
+**Returns:** `CbergCitationResult`
 
 ---
 
-#### kcrawl_create_engine()
+#### cberg_create_engine()
 
 Create a new crawl engine with the given configuration.
 
@@ -46,197 +46,197 @@ Returns an error if the configuration is invalid.
 **Signature:**
 
 ```c
-KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
+CbergCrawlEngineHandle* cberg_create_engine(CbergCrawlConfig config);
 ```
 
 **Example:**
 
 ```c
-KcrawlCrawlEngineHandle *result = kcrawl_create_engine(NULL);
+CbergCrawlEngineHandle *result = cberg_create_engine(NULL);
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `KcrawlCrawlConfig*` | No | The configuration options |
+| `config` | `CbergCrawlConfig*` | No | The configuration options |
 
-**Returns:** `KcrawlCrawlEngineHandle`
+**Returns:** `CbergCrawlEngineHandle`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_scrape()
+#### cberg_scrape()
 
 Scrape a single URL, returning extracted page data.
 
 **Signature:**
 
 ```c
-KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* url);
+CbergScrapeResult* cberg_scrape(CbergCrawlEngineHandle engine, const char* url);
 ```
 
 **Example:**
 
 ```c
-KcrawlScrapeResult *result = kcrawl_scrape(NULL, "value");
+CbergScrapeResult *result = cberg_scrape(NULL, "value");
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `url` | `const char*` | Yes | The URL to fetch |
 
-**Returns:** `KcrawlScrapeResult`
+**Returns:** `CbergScrapeResult`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_crawl()
+#### cberg_crawl()
 
 Crawl a website starting from `url`, following links up to the configured depth.
 
 **Signature:**
 
 ```c
-KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url);
+CbergCrawlResult* cberg_crawl(CbergCrawlEngineHandle engine, const char* url);
 ```
 
 **Example:**
 
 ```c
-KcrawlCrawlResult *result = kcrawl_crawl(NULL, "value");
+CbergCrawlResult *result = cberg_crawl(NULL, "value");
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `url` | `const char*` | Yes | The URL to fetch |
 
-**Returns:** `KcrawlCrawlResult`
+**Returns:** `CbergCrawlResult`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_map_urls()
+#### cberg_map_urls()
 
 Discover all pages on a website by following links and sitemaps.
 
 **Signature:**
 
 ```c
-KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url);
+CbergMapResult* cberg_map_urls(CbergCrawlEngineHandle engine, const char* url);
 ```
 
 **Example:**
 
 ```c
-KcrawlMapResult *result = kcrawl_map_urls(NULL, "value");
+CbergMapResult *result = cberg_map_urls(NULL, "value");
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `url` | `const char*` | Yes | The URL to fetch |
 
-**Returns:** `KcrawlMapResult`
+**Returns:** `CbergMapResult`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_interact()
+#### cberg_interact()
 
 Execute browser actions on a single page.
 
 **Signature:**
 
 ```c
-KcrawlInteractionResult* kcrawl_interact(KcrawlCrawlEngineHandle engine, const char* url, KcrawlPageAction* actions);
+CbergInteractionResult* cberg_interact(CbergCrawlEngineHandle engine, const char* url, CbergPageAction* actions);
 ```
 
 **Example:**
 
 ```c
-KcrawlInteractionResult *result = kcrawl_interact(NULL, "value", NULL);
+CbergInteractionResult *result = cberg_interact(NULL, "value", NULL);
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `url` | `const char*` | Yes | The URL to fetch |
-| `actions` | `KcrawlPageAction*` | Yes | The actions |
+| `actions` | `CbergPageAction*` | Yes | The actions |
 
-**Returns:** `KcrawlInteractionResult`
+**Returns:** `CbergInteractionResult`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_batch_scrape()
+#### cberg_batch_scrape()
 
 Scrape multiple URLs concurrently.
 
 **Signature:**
 
 ```c
-KcrawlBatchScrapeResults* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
+CbergBatchScrapeResults* cberg_batch_scrape(CbergCrawlEngineHandle engine, const char** urls);
 ```
 
 **Example:**
 
 ```c
-KcrawlBatchScrapeResults *result = kcrawl_batch_scrape(NULL, NULL);
+CbergBatchScrapeResults *result = cberg_batch_scrape(NULL, NULL);
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `urls` | `const char**` | Yes | The urls |
 
-**Returns:** `KcrawlBatchScrapeResults`
+**Returns:** `CbergBatchScrapeResults`
 
 **Errors:** Returns `NULL` on error.
 
 ---
 
-#### kcrawl_batch_crawl()
+#### cberg_batch_crawl()
 
 Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 **Signature:**
 
 ```c
-KcrawlBatchCrawlResults* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
+CbergBatchCrawlResults* cberg_batch_crawl(CbergCrawlEngineHandle engine, const char** urls);
 ```
 
 **Example:**
 
 ```c
-KcrawlBatchCrawlResults *result = kcrawl_batch_crawl(NULL, NULL);
+CbergBatchCrawlResults *result = cberg_batch_crawl(NULL, NULL);
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `engine` | `CbergCrawlEngineHandle` | Yes | The crawl engine handle |
 | `urls` | `const char**` | Yes | The urls |
 
-**Returns:** `KcrawlBatchCrawlResults`
+**Returns:** `CbergBatchCrawlResults`
 
 **Errors:** Returns `NULL` on error.
 
@@ -244,7 +244,7 @@ KcrawlBatchCrawlResults *result = kcrawl_batch_crawl(NULL, NULL);
 
 ### Types
 
-#### KcrawlActionResult
+#### CbergActionResult
 
 Result from a single page action execution.
 
@@ -258,7 +258,7 @@ Result from a single page action execution.
 
 ---
 
-#### KcrawlArticleMetadata
+#### CbergArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
 
@@ -272,19 +272,19 @@ Article metadata extracted from `article:*` Open Graph tags.
 
 ---
 
-#### KcrawlBatchCrawlResult
+#### CbergBatchCrawlResult
 
 Result from a single URL in a batch crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `const char*` | — | The seed URL that was crawled. |
-| `result` | `KcrawlCrawlResult*` | `NULL` | The crawl result, if successful. |
+| `result` | `CbergCrawlResult*` | `NULL` | The crawl result, if successful. |
 | `error` | `const char**` | `NULL` | The error message, if the crawl failed. |
 
 ---
 
-#### KcrawlBatchCrawlResults
+#### CbergBatchCrawlResults
 
 Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
 
@@ -293,14 +293,14 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `results` | `KcrawlBatchCrawlResult*` | `NULL` | Per-URL crawl results, in the order seed URLs were submitted. |
+| `results` | `CbergBatchCrawlResult*` | `NULL` | Per-URL crawl results, in the order seed URLs were submitted. |
 | `total_count` | `uintptr_t` | — | Total number of seed URLs in the batch (equal to `results.len()`). |
 | `completed_count` | `uintptr_t` | — | Number of seed URLs whose crawl succeeded (`error` is `NULL`). |
 | `failed_count` | `uintptr_t` | — | Number of seed URLs whose crawl failed (`error` is `Some`). |
 
 ---
 
-#### KcrawlBatchCrawlStreamRequest
+#### CbergBatchCrawlStreamRequest
 
 Request to begin a multi-URL streaming crawl.
 
@@ -314,19 +314,19 @@ named request type — primitives are not supported.
 
 ---
 
-#### KcrawlBatchScrapeResult
+#### CbergBatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `const char*` | — | The URL that was scraped. |
-| `result` | `KcrawlScrapeResult*` | `NULL` | The scrape result, if successful. |
+| `result` | `CbergScrapeResult*` | `NULL` | The scrape result, if successful. |
 | `error` | `const char**` | `NULL` | The error message, if the scrape failed. |
 
 ---
 
-#### KcrawlBatchScrapeResults
+#### CbergBatchScrapeResults
 
 Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
 
@@ -335,54 +335,54 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `results` | `KcrawlBatchScrapeResult*` | `NULL` | Per-URL scrape results, in the order URLs were submitted. |
+| `results` | `CbergBatchScrapeResult*` | `NULL` | Per-URL scrape results, in the order URLs were submitted. |
 | `total_count` | `uintptr_t` | — | Total number of URLs in the batch (equal to `results.len()`). |
 | `completed_count` | `uintptr_t` | — | Number of URLs whose scrape succeeded (`error` is `NULL`). |
 | `failed_count` | `uintptr_t` | — | Number of URLs whose scrape failed (`error` is `Some`). |
 
 ---
 
-#### KcrawlBrowserConfig
+#### CbergBrowserConfig
 
 Browser fallback configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `mode` | `KcrawlBrowserMode` | `KCRAWL_KCRAWL_AUTO` | When to use the headless browser fallback. |
-| `backend` | `KcrawlBrowserBackend` | `KCRAWL_KCRAWL_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages. |
+| `mode` | `CbergBrowserMode` | `CBERG_CBERG_AUTO` | When to use the headless browser fallback. |
+| `backend` | `CbergBrowserBackend` | `CBERG_CBERG_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `const char**` | `NULL` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `uint64_t` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
-| `wait` | `KcrawlBrowserWait` | `KCRAWL_KCRAWL_NETWORK_IDLE` | Wait strategy after browser navigation. |
+| `wait` | `CbergBrowserWait` | `CBERG_CBERG_NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `const char**` | `NULL` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `uint64_t*` | `NULL` | Extra time to wait after the wait condition is met. |
-| `proxy` | `KcrawlProxyConfig*` | `NULL` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `proxy` | `CbergProxyConfig*` | `NULL` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
 | `block_url_patterns` | `const char**` | `NULL` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `const char**` | `NULL` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
-| `robots_user_agent` | `const char**` | `NULL` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `robots_user_agent` | `const char**` | `NULL` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or crawlberg's default) if unset. Native only. |
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
 ##### Methods
 
-###### kcrawl_default()
+###### cberg_default()
 
 **Signature:**
 
 ```c
-KcrawlBrowserConfig kcrawl_default();
+CbergBrowserConfig cberg_default();
 ```
 
 **Example:**
 
 ```c
-KcrawlBrowserConfig *result = kcrawl_default();
+CbergBrowserConfig *result = cberg_default();
 ```
 
-**Returns:** `KcrawlBrowserConfig`
+**Returns:** `CbergBrowserConfig`
 
 ---
 
-#### KcrawlBrowserExtras
+#### CbergBrowserExtras
 
 Browser-specific extras populated when the native browser backend was used.
 
@@ -391,12 +391,12 @@ Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the req
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `eval_result` | `void**` | `NULL` | Return value of `BrowserConfig.eval_script`, if provided. |
-| `network_events` | `KcrawlResponseMeta*` | `NULL` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
-| `cookies` | `KcrawlCookieInfo*` | `NULL` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+| `network_events` | `CbergResponseMeta*` | `NULL` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `CbergCookieInfo*` | `NULL` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
 
 ---
 
-#### KcrawlCitationReference
+#### CbergCitationReference
 
 A single numbered reference in a citation list — produced by the citation
 extractor when content uses inline `[N]`-style markers.
@@ -409,18 +409,18 @@ extractor when content uses inline `[N]`-style markers.
 
 ---
 
-#### KcrawlCitationResult
+#### CbergCitationResult
 
 Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `content` | `const char*` | — | Markdown with links replaced by numbered citations. |
-| `references` | `KcrawlCitationReference*` | `NULL` | Numbered reference list: (index, url, text). |
+| `references` | `CbergCitationReference*` | `NULL` | Numbered reference list: (index, url, text). |
 
 ---
 
-#### KcrawlContentConfig
+#### CbergContentConfig
 
 Content extraction and conversion configuration.
 
@@ -445,25 +445,25 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ##### Methods
 
-###### kcrawl_default()
+###### cberg_default()
 
 **Signature:**
 
 ```c
-KcrawlContentConfig kcrawl_default();
+CbergContentConfig cberg_default();
 ```
 
 **Example:**
 
 ```c
-KcrawlContentConfig *result = kcrawl_default();
+CbergContentConfig *result = cberg_default();
 ```
 
-**Returns:** `KcrawlContentConfig`
+**Returns:** `CbergContentConfig`
 
 ---
 
-#### KcrawlCookieInfo
+#### CbergCookieInfo
 
 Information about an HTTP cookie received from a response.
 
@@ -476,7 +476,7 @@ Information about an HTTP cookie received from a response.
 
 ---
 
-#### KcrawlCrawlConfig
+#### CbergCrawlConfig
 
 Configuration for crawl, scrape, and map operations.
 
@@ -499,17 +499,17 @@ Configuration for crawl, scrape, and map operations.
 | `retry_count` | `uintptr_t` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `uint16_t*` | `NULL` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `bool` | `false` | Whether to enable cookie handling. |
-| `auth` | `KcrawlAuthConfig*` | `NULL` | Authentication configuration. |
+| `auth` | `CbergAuthConfig*` | `NULL` | Authentication configuration. |
 | `max_body_size` | `uintptr_t*` | `NULL` | Maximum response body size in bytes. |
 | `remove_tags` | `const char**` | `NULL` | CSS selectors for tags to remove from HTML before processing. |
-| `content` | `KcrawlContentConfig` | — | Content extraction and conversion configuration. |
+| `content` | `CbergContentConfig` | — | Content extraction and conversion configuration. |
 | `map_limit` | `uintptr_t*` | `NULL` | Maximum number of URLs to return from a map operation. |
 | `map_search` | `const char**` | `NULL` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
-| `asset_types` | `KcrawlAssetCategory*` | `NULL` | Filter for asset categories to download. |
+| `asset_types` | `CbergAssetCategory*` | `NULL` | Filter for asset categories to download. |
 | `max_asset_size` | `uintptr_t*` | `NULL` | Maximum size in bytes for individual asset downloads. |
-| `browser` | `KcrawlBrowserConfig` | — | Browser configuration. |
-| `proxy` | `KcrawlProxyConfig*` | `NULL` | Proxy configuration for HTTP requests. |
+| `browser` | `CbergBrowserConfig` | — | Browser configuration. |
+| `proxy` | `CbergProxyConfig*` | `NULL` | Proxy configuration for HTTP requests. |
 | `user_agents` | `const char**` | `NULL` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
 | `follow_document_urls` | `bool` | `false` | Re-enqueue discovered `LinkType.Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `false` (documents terminate at materialisation). |
@@ -520,40 +520,40 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `const char**` | `NULL` | Path to write WARC output. If `NULL`, WARC output is disabled. |
 | `browser_profile` | `const char**` | `NULL` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `KcrawlSsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
+| `ssrf` | `CbergSsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 
 ##### Methods
 
-###### kcrawl_default()
+###### cberg_default()
 
 **Signature:**
 
 ```c
-KcrawlCrawlConfig kcrawl_default();
+CbergCrawlConfig cberg_default();
 ```
 
 **Example:**
 
 ```c
-KcrawlCrawlConfig *result = kcrawl_default();
+CbergCrawlConfig *result = cberg_default();
 ```
 
-**Returns:** `KcrawlCrawlConfig`
+**Returns:** `CbergCrawlConfig`
 
-###### kcrawl_validate()
+###### cberg_validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
 **Signature:**
 
 ```c
-void kcrawl_validate();
+void cberg_validate();
 ```
 
 **Example:**
 
 ```c
-kcrawl_validate(instance);
+cberg_validate(instance);
 ```
 
 **Returns:** No return value.
@@ -562,7 +562,7 @@ kcrawl_validate(instance);
 
 ---
 
-#### KcrawlCrawlEngineHandle
+#### CbergCrawlEngineHandle
 
 Opaque handle to a configured crawl engine.
 
@@ -571,7 +571,7 @@ Default implementations for all pluggable components are used internally.
 
 ---
 
-#### KcrawlCrawlPageResult
+#### CbergCrawlPageResult
 
 The result of crawling a single page during a crawl operation.
 
@@ -583,62 +583,62 @@ The result of crawling a single page during a crawl operation.
 | `content_type` | `const char*` | — | The Content-Type header value. |
 | `html` | `const char*` | — | The HTML body of the response. |
 | `body_size` | `uintptr_t` | — | The size of the response body in bytes. |
-| `metadata` | `KcrawlPageMetadata` | — | Extracted metadata from the page. |
-| `links` | `KcrawlLinkInfo*` | `NULL` | Links found on the page. |
-| `images` | `KcrawlImageInfo*` | `NULL` | Images found on the page. |
-| `feeds` | `KcrawlFeedInfo*` | `NULL` | Feed links found on the page. |
-| `json_ld` | `KcrawlJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
+| `metadata` | `CbergPageMetadata` | — | Extracted metadata from the page. |
+| `links` | `CbergLinkInfo*` | `NULL` | Links found on the page. |
+| `images` | `CbergImageInfo*` | `NULL` | Images found on the page. |
+| `feeds` | `CbergFeedInfo*` | `NULL` | Feed links found on the page. |
+| `json_ld` | `CbergJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
 | `depth` | `uintptr_t` | — | The depth of this page from the start URL. |
 | `stayed_on_domain` | `bool` | — | Whether this page is on the same domain as the start URL. |
 | `was_skipped` | `bool` | — | Whether this page was skipped (binary or PDF content). |
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `const char**` | `NULL` | The detected character set encoding. |
-| `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
+| `markdown` | `CbergMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
 | `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when extraction is configured. |
-| `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `extraction_meta` | `CbergExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
+| `downloaded_document` | `CbergDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 
 ---
 
-#### KcrawlCrawlResult
+#### CbergCrawlResult
 
 The result of a multi-page crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pages` | `KcrawlCrawlPageResult*` | `NULL` | The list of crawled pages. |
+| `pages` | `CbergCrawlPageResult*` | `NULL` | The list of crawled pages. |
 | `final_url` | `const char*` | — | The final URL after following redirects. |
 | `redirect_count` | `uintptr_t` | — | The number of redirects followed. |
 | `was_skipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `error` | `const char**` | `NULL` | An error message, if the crawl encountered an issue. |
-| `cookies` | `KcrawlCookieInfo*` | `NULL` | Cookies collected during the crawl. |
+| `cookies` | `CbergCookieInfo*` | `NULL` | Cookies collected during the crawl. |
 | `stayed_on_domain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 
 ##### Methods
 
-###### kcrawl_unique_normalized_urls()
+###### cberg_unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
 **Signature:**
 
 ```c
-uintptr_t kcrawl_unique_normalized_urls();
+uintptr_t cberg_unique_normalized_urls();
 ```
 
 **Example:**
 
 ```c
-uintptr_t result = kcrawl_unique_normalized_urls(instance);
+uintptr_t result = cberg_unique_normalized_urls(instance);
 ```
 
 **Returns:** `uintptr_t`
 
 ---
 
-#### KcrawlCrawlStreamRequest
+#### CbergCrawlStreamRequest
 
 Request to begin a single-URL streaming crawl.
 
@@ -652,7 +652,7 @@ named request type — primitives are not supported.
 
 ---
 
-#### KcrawlDownloadedAsset
+#### CbergDownloadedAsset
 
 A downloaded asset from a page.
 
@@ -662,12 +662,12 @@ A downloaded asset from a page.
 | `content_hash` | `const char*` | — | The SHA-256 content hash of the asset. |
 | `mime_type` | `const char**` | `NULL` | The MIME type from the Content-Type header. |
 | `size` | `uintptr_t` | — | The size of the asset in bytes. |
-| `asset_category` | `KcrawlAssetCategory` | `KCRAWL_KCRAWL_IMAGE` | The category of the asset. |
+| `asset_category` | `CbergAssetCategory` | `CBERG_CBERG_IMAGE` | The category of the asset. |
 | `html_tag` | `const char**` | `NULL` | The HTML tag that referenced this asset (e.g., "link", "script", "img"). |
 
 ---
 
-#### KcrawlDownloadedDocument
+#### CbergDownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 
@@ -686,7 +686,7 @@ skipping the resource.
 
 ---
 
-#### KcrawlExtractionMeta
+#### CbergExtractionMeta
 
 Metadata about an LLM extraction pass.
 
@@ -700,7 +700,7 @@ Metadata about an LLM extraction pass.
 
 ---
 
-#### KcrawlFaviconInfo
+#### CbergFaviconInfo
 
 Information about a favicon or icon link.
 
@@ -713,7 +713,7 @@ Information about a favicon or icon link.
 
 ---
 
-#### KcrawlFeedInfo
+#### CbergFeedInfo
 
 Information about a feed link found on a page.
 
@@ -721,11 +721,11 @@ Information about a feed link found on a page.
 |-------|------|---------|-------------|
 | `url` | `const char*` | — | The feed URL. |
 | `title` | `const char**` | `NULL` | The feed title, if present. |
-| `feed_type` | `KcrawlFeedType` | `KCRAWL_KCRAWL_RSS` | The type of feed. |
+| `feed_type` | `CbergFeedType` | `CBERG_CBERG_RSS` | The type of feed. |
 
 ---
 
-#### KcrawlHeadingInfo
+#### CbergHeadingInfo
 
 A heading element extracted from the page.
 
@@ -736,7 +736,7 @@ A heading element extracted from the page.
 
 ---
 
-#### KcrawlHreflangEntry
+#### CbergHreflangEntry
 
 An hreflang alternate link entry.
 
@@ -747,7 +747,7 @@ An hreflang alternate link entry.
 
 ---
 
-#### KcrawlImageInfo
+#### CbergImageInfo
 
 Information about an image found on a page.
 
@@ -757,23 +757,23 @@ Information about an image found on a page.
 | `alt` | `const char**` | `NULL` | The alt text, if present. |
 | `width` | `uint32_t*` | `NULL` | The width attribute, if present and parseable. |
 | `height` | `uint32_t*` | `NULL` | The height attribute, if present and parseable. |
-| `source` | `KcrawlImageSource` | `KCRAWL_KCRAWL_IMG` | The source of the image reference. |
+| `source` | `CbergImageSource` | `CBERG_CBERG_IMG` | The source of the image reference. |
 
 ---
 
-#### KcrawlInteractionResult
+#### CbergInteractionResult
 
 Result of executing a sequence of page interaction actions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `action_results` | `KcrawlActionResult*` | `NULL` | Results from each executed action. |
+| `action_results` | `CbergActionResult*` | `NULL` | Results from each executed action. |
 | `final_html` | `const char*` | — | Final page HTML after all actions completed. |
 | `final_url` | `const char*` | — | Final page URL (may have changed due to navigation). |
 
 ---
 
-#### KcrawlJsonLdEntry
+#### CbergJsonLdEntry
 
 A JSON-LD structured data entry found on a page.
 
@@ -785,7 +785,7 @@ A JSON-LD structured data entry found on a page.
 
 ---
 
-#### KcrawlLinkInfo
+#### CbergLinkInfo
 
 Information about a link found on a page.
 
@@ -793,23 +793,23 @@ Information about a link found on a page.
 |-------|------|---------|-------------|
 | `url` | `const char*` | — | The resolved URL of the link. |
 | `text` | `const char*` | — | The visible text of the link. |
-| `link_type` | `KcrawlLinkType` | `KCRAWL_KCRAWL_INTERNAL` | The classification of the link. |
+| `link_type` | `CbergLinkType` | `CBERG_CBERG_INTERNAL` | The classification of the link. |
 | `rel` | `const char**` | `NULL` | The `rel` attribute value, if present. |
 | `nofollow` | `bool` | — | Whether the link has `rel="nofollow"`. |
 
 ---
 
-#### KcrawlMapResult
+#### CbergMapResult
 
 The result of a map operation, containing discovered URLs.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `urls` | `KcrawlSitemapUrl*` | `NULL` | The list of discovered URLs. |
+| `urls` | `CbergSitemapUrl*` | `NULL` | The list of discovered URLs. |
 
 ---
 
-#### KcrawlMarkdownResult
+#### CbergMarkdownResult
 
 Rich markdown conversion result from HTML processing.
 
@@ -824,7 +824,7 @@ Rich markdown conversion result from HTML processing.
 
 ---
 
-#### KcrawlPageMetadata
+#### CbergPageMetadata
 
 Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
@@ -868,15 +868,15 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 | `dc_identifier` | `const char**` | `NULL` | Dublin Core identifier. |
 | `dc_language` | `const char**` | `NULL` | Dublin Core language. |
 | `dc_rights` | `const char**` | `NULL` | Dublin Core rights. |
-| `article` | `KcrawlArticleMetadata*` | `NULL` | Article metadata from `article:*` Open Graph tags. |
-| `hreflangs` | `KcrawlHreflangEntry**` | `NULL` | Hreflang alternate links. |
-| `favicons` | `KcrawlFaviconInfo**` | `NULL` | Favicon and icon links. |
-| `headings` | `KcrawlHeadingInfo**` | `NULL` | Heading elements (h1-h6). |
+| `article` | `CbergArticleMetadata*` | `NULL` | Article metadata from `article:*` Open Graph tags. |
+| `hreflangs` | `CbergHreflangEntry**` | `NULL` | Hreflang alternate links. |
+| `favicons` | `CbergFaviconInfo**` | `NULL` | Favicon and icon links. |
+| `headings` | `CbergHeadingInfo**` | `NULL` | Heading elements (h1-h6). |
 | `word_count` | `uintptr_t*` | `NULL` | Computed word count of the page body text. |
 
 ---
 
-#### KcrawlProxyConfig
+#### CbergProxyConfig
 
 Proxy configuration for HTTP requests.
 
@@ -888,7 +888,7 @@ Proxy configuration for HTTP requests.
 
 ---
 
-#### KcrawlResponseMeta
+#### CbergResponseMeta
 
 Response metadata extracted from HTTP headers.
 
@@ -904,7 +904,7 @@ Response metadata extracted from HTTP headers.
 
 ---
 
-#### KcrawlScrapeResult
+#### CbergScrapeResult
 
 The result of a single-page scrape operation.
 
@@ -915,11 +915,11 @@ The result of a single-page scrape operation.
 | `content_type` | `const char*` | — | The Content-Type header value. |
 | `html` | `const char*` | — | The HTML body of the response. |
 | `body_size` | `uintptr_t` | — | The size of the response body in bytes. |
-| `metadata` | `KcrawlPageMetadata` | — | Extracted metadata from the page. |
-| `links` | `KcrawlLinkInfo*` | `NULL` | Links found on the page. |
-| `images` | `KcrawlImageInfo*` | `NULL` | Images found on the page. |
-| `feeds` | `KcrawlFeedInfo*` | `NULL` | Feed links found on the page. |
-| `json_ld` | `KcrawlJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
+| `metadata` | `CbergPageMetadata` | — | Extracted metadata from the page. |
+| `links` | `CbergLinkInfo*` | `NULL` | Links found on the page. |
+| `images` | `CbergImageInfo*` | `NULL` | Images found on the page. |
+| `feeds` | `CbergFeedInfo*` | `NULL` | Feed links found on the page. |
+| `json_ld` | `CbergJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
 | `is_allowed` | `bool` | — | Whether the URL is allowed by robots.txt. |
 | `crawl_delay` | `uint64_t*` | `NULL` | The crawl delay from robots.txt, in seconds. |
 | `noindex_detected` | `bool` | — | Whether a noindex directive was detected. |
@@ -929,19 +929,19 @@ The result of a single-page scrape operation.
 | `was_skipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `const char**` | `NULL` | The detected character set encoding. |
 | `auth_header_sent` | `bool` | — | Whether an authentication header was sent with the request. |
-| `response_meta` | `KcrawlResponseMeta*` | `NULL` | Response metadata extracted from HTTP headers. |
-| `assets` | `KcrawlDownloadedAsset*` | `NULL` | Downloaded assets from the page. |
+| `response_meta` | `CbergResponseMeta*` | `NULL` | Response metadata extracted from HTTP headers. |
+| `assets` | `CbergDownloadedAsset*` | `NULL` | Downloaded assets from the page. |
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
-| `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
+| `markdown` | `CbergMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
 | `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when extraction is configured. |
-| `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
-| `browser` | `KcrawlBrowserExtras*` | `NULL` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
+| `extraction_meta` | `CbergExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
+| `downloaded_document` | `CbergDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `CbergBrowserExtras*` | `NULL` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
-#### KcrawlSitemapUrl
+#### CbergSitemapUrl
 
 A URL entry from a sitemap.
 
@@ -954,7 +954,7 @@ A URL entry from a sitemap.
 
 ---
 
-#### KcrawlSsrfPolicy
+#### CbergSsrfPolicy
 
 SSRF policy configuration.
 
@@ -965,27 +965,27 @@ SSRF policy configuration.
 
 ##### Methods
 
-###### kcrawl_default()
+###### cberg_default()
 
 **Signature:**
 
 ```c
-KcrawlSsrfPolicy kcrawl_default();
+CbergSsrfPolicy cberg_default();
 ```
 
 **Example:**
 
 ```c
-KcrawlSsrfPolicy *result = kcrawl_default();
+CbergSsrfPolicy *result = cberg_default();
 ```
 
-**Returns:** `KcrawlSsrfPolicy`
+**Returns:** `CbergSsrfPolicy`
 
-###### kcrawl_from_env()
+###### cberg_from_env()
 
 Create a policy from environment variables.
 
-On native platforms, reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
+On native platforms, reads `CRAWLBERG_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
 (case-insensitive), sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
 
 On wasm32 targets (browser/Node.js), environment variables are not accessible to the
@@ -998,127 +998,127 @@ compiled module. Defaults to `deny_private = false` because:
 **Signature:**
 
 ```c
-KcrawlSsrfPolicy kcrawl_from_env();
+CbergSsrfPolicy cberg_from_env();
 ```
 
 **Example:**
 
 ```c
-KcrawlSsrfPolicy *result = kcrawl_from_env();
+CbergSsrfPolicy *result = cberg_from_env();
 ```
 
-**Returns:** `KcrawlSsrfPolicy`
+**Returns:** `CbergSsrfPolicy`
 
 ---
 
 ### Enums
 
-#### KcrawlBrowserMode
+#### CbergBrowserMode
 
 When to use the headless browser fallback.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_AUTO` | Automatically detect when JS rendering is needed and fall back to browser. |
-| `KCRAWL_ALWAYS` | Always use the browser for every request. |
-| `KCRAWL_NEVER` | Never use the browser fallback. |
-| `KCRAWL_STEALTH` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
+| `CBERG_AUTO` | Automatically detect when JS rendering is needed and fall back to browser. |
+| `CBERG_ALWAYS` | Always use the browser for every request. |
+| `CBERG_NEVER` | Never use the browser fallback. |
+| `CBERG_STEALTH` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 
-#### KcrawlBrowserWait
+#### CbergBrowserWait
 
 Wait strategy for browser page rendering.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_NETWORK_IDLE` | Wait until network activity is idle. |
-| `KCRAWL_SELECTOR` | Wait for a specific CSS selector to appear in the DOM. |
-| `KCRAWL_FIXED` | Wait for a fixed duration after navigation. |
+| `CBERG_NETWORK_IDLE` | Wait until network activity is idle. |
+| `CBERG_SELECTOR` | Wait for a specific CSS selector to appear in the DOM. |
+| `CBERG_FIXED` | Wait for a fixed duration after navigation. |
 
 ---
 
-#### KcrawlBrowserBackend
+#### CbergBrowserBackend
 
 Browser backend used for JavaScript rendering.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_CHROMIUMOXIDE` | Existing Chromium/CDP backend powered by chromiumoxide. |
-| `KCRAWL_NATIVE` | Kreuzcrawl-owned native browser backend derived from Obscura. |
+| `CBERG_CHROMIUMOXIDE` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `CBERG_NATIVE` | Crawlberg-owned native browser backend derived from Obscura. |
 
 ---
 
-#### KcrawlAuthConfig
+#### CbergAuthConfig
 
 Authentication configuration.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_BASIC` | HTTP Basic authentication. — Fields: `username`: `const char*`, `password`: `const char*` |
-| `KCRAWL_BEARER` | Bearer token authentication. — Fields: `token`: `const char*` |
-| `KCRAWL_HEADER` | Custom authentication header. — Fields: `name`: `const char*`, `value`: `const char*` |
+| `CBERG_BASIC` | HTTP Basic authentication. — Fields: `username`: `const char*`, `password`: `const char*` |
+| `CBERG_BEARER` | Bearer token authentication. — Fields: `token`: `const char*` |
+| `CBERG_HEADER` | Custom authentication header. — Fields: `name`: `const char*`, `value`: `const char*` |
 
 ---
 
-#### KcrawlLinkType
+#### CbergLinkType
 
 The classification of a link.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_INTERNAL` | A link to the same domain. |
-| `KCRAWL_EXTERNAL` | A link to a different domain. |
-| `KCRAWL_ANCHOR` | A fragment-only link (e.g., `#section`). |
-| `KCRAWL_DOCUMENT` | A link to a downloadable document (PDF, DOC, etc.). |
+| `CBERG_INTERNAL` | A link to the same domain. |
+| `CBERG_EXTERNAL` | A link to a different domain. |
+| `CBERG_ANCHOR` | A fragment-only link (e.g., `#section`). |
+| `CBERG_DOCUMENT` | A link to a downloadable document (PDF, DOC, etc.). |
 
 ---
 
-#### KcrawlImageSource
+#### CbergImageSource
 
 The source of an image reference.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_IMG` | An `<img>` tag. |
-| `KCRAWL_PICTURE_SOURCE` | A `<source>` tag inside `<picture>`. |
-| `KCRAWL_OG_IMAGE` | An `og:image` meta tag. |
-| `KCRAWL_TWITTER_IMAGE` | A `twitter:image` meta tag. |
+| `CBERG_IMG` | An `<img>` tag. |
+| `CBERG_PICTURE_SOURCE` | A `<source>` tag inside `<picture>`. |
+| `CBERG_OG_IMAGE` | An `og:image` meta tag. |
+| `CBERG_TWITTER_IMAGE` | A `twitter:image` meta tag. |
 
 ---
 
-#### KcrawlFeedType
+#### CbergFeedType
 
 The type of a feed (RSS, Atom, or JSON Feed).
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_RSS` | RSS feed. |
-| `KCRAWL_ATOM` | Atom feed. |
-| `KCRAWL_JSON_FEED` | JSON Feed. |
+| `CBERG_RSS` | RSS feed. |
+| `CBERG_ATOM` | Atom feed. |
+| `CBERG_JSON_FEED` | JSON Feed. |
 
 ---
 
-#### KcrawlAssetCategory
+#### CbergAssetCategory
 
 The category of a downloaded asset.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_DOCUMENT` | A document file (PDF, DOC, etc.). |
-| `KCRAWL_IMAGE` | An image file. |
-| `KCRAWL_AUDIO` | An audio file. |
-| `KCRAWL_VIDEO` | A video file. |
-| `KCRAWL_FONT` | A font file. |
-| `KCRAWL_STYLESHEET` | A CSS stylesheet. |
-| `KCRAWL_SCRIPT` | A JavaScript file. |
-| `KCRAWL_ARCHIVE` | An archive file (ZIP, TAR, etc.). |
-| `KCRAWL_DATA` | A data file (JSON, XML, CSV, etc.). |
-| `KCRAWL_OTHER` | An unrecognized asset type. |
+| `CBERG_DOCUMENT` | A document file (PDF, DOC, etc.). |
+| `CBERG_IMAGE` | An image file. |
+| `CBERG_AUDIO` | An audio file. |
+| `CBERG_VIDEO` | A video file. |
+| `CBERG_FONT` | A font file. |
+| `CBERG_STYLESHEET` | A CSS stylesheet. |
+| `CBERG_SCRIPT` | A JavaScript file. |
+| `CBERG_ARCHIVE` | An archive file (ZIP, TAR, etc.). |
+| `CBERG_DATA` | A data file (JSON, XML, CSV, etc.). |
+| `CBERG_OTHER` | An unrecognized asset type. |
 
 ---
 
-#### KcrawlCrawlEvent
+#### CbergCrawlEvent
 
 An event emitted during a streaming crawl operation.
 
@@ -1129,13 +1129,13 @@ Delivered to bindings through each target's native streaming idiom.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_PAGE` | A single page has been crawled. — Fields: `result`: `KcrawlCrawlPageResult` |
-| `KCRAWL_ERROR` | An error occurred while crawling a URL. — Fields: `url`: `const char*`, `error`: `const char*` |
-| `KCRAWL_COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `uintptr_t` |
+| `CBERG_PAGE` | A single page has been crawled. — Fields: `result`: `CbergCrawlPageResult` |
+| `CBERG_ERROR` | An error occurred while crawling a URL. — Fields: `url`: `const char*`, `error`: `const char*` |
+| `CBERG_COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `uintptr_t` |
 
 ---
 
-#### KcrawlPageAction
+#### CbergPageAction
 
 A single page interaction action.
 
@@ -1144,69 +1144,69 @@ except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_CLICK` | Click on an element matching the given CSS selector. — Fields: `selector`: `const char*` |
-| `KCRAWL_TYPE_TEXT` | Type text into an element matching the given CSS selector. — Fields: `selector`: `const char*`, `text`: `const char*` |
-| `KCRAWL_PRESS` | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `const char*` |
-| `KCRAWL_SCROLL` | Scroll the page or a specific element. — Fields: `direction`: `KcrawlScrollDirection`, `selector`: `const char*`, `amount`: `int64_t` |
-| `KCRAWL_WAIT` | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `int64_t`, `selector`: `const char*` |
-| `KCRAWL_SCREENSHOT` | Take a screenshot of the current page. — Fields: `full_page`: `bool` |
-| `KCRAWL_EXECUTE_JS` | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `const char*` |
-| `KCRAWL_SCRAPE` | Scrape the current page HTML. |
+| `CBERG_CLICK` | Click on an element matching the given CSS selector. — Fields: `selector`: `const char*` |
+| `CBERG_TYPE_TEXT` | Type text into an element matching the given CSS selector. — Fields: `selector`: `const char*`, `text`: `const char*` |
+| `CBERG_PRESS` | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `const char*` |
+| `CBERG_SCROLL` | Scroll the page or a specific element. — Fields: `direction`: `CbergScrollDirection`, `selector`: `const char*`, `amount`: `int64_t` |
+| `CBERG_WAIT` | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `int64_t`, `selector`: `const char*` |
+| `CBERG_SCREENSHOT` | Take a screenshot of the current page. — Fields: `full_page`: `bool` |
+| `CBERG_EXECUTE_JS` | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `const char*` |
+| `CBERG_SCRAPE` | Scrape the current page HTML. |
 
 ---
 
-#### KcrawlScrollDirection
+#### CbergScrollDirection
 
 Direction for a scroll action.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_UP` | Scroll upward. |
-| `KCRAWL_DOWN` | Scroll downward. |
+| `CBERG_UP` | Scroll upward. |
+| `CBERG_DOWN` | Scroll downward. |
 
 ---
 
 ### Errors
 
-#### KcrawlCrawlError
+#### CbergCrawlError
 
 Errors that can occur during crawling, scraping, or mapping operations.
 
 | Variant | Description |
 |---------|-------------|
-| `KCRAWL_NOT_FOUND` | The requested page was not found (HTTP 404). |
-| `KCRAWL_UNAUTHORIZED` | The request was unauthorized (HTTP 401). |
-| `KCRAWL_FORBIDDEN` | The request was forbidden (HTTP 403). |
-| `KCRAWL_WAF_BLOCKED` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: MESSAGE` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
-| `KCRAWL_TIMEOUT` | The request timed out. |
-| `KCRAWL_RATE_LIMITED` | The request was rate-limited (HTTP 429). |
-| `KCRAWL_SERVER_ERROR` | A server error occurred (HTTP 5xx). |
-| `KCRAWL_BAD_GATEWAY` | A bad gateway error occurred (HTTP 502). |
-| `KCRAWL_GONE` | The resource is permanently gone (HTTP 410). |
-| `KCRAWL_CONNECTION` | A connection error occurred. |
-| `KCRAWL_DNS` | A DNS resolution error occurred. |
-| `KCRAWL_SSL` | An SSL/TLS error occurred. |
-| `KCRAWL_DATA_LOSS` | Data was lost or truncated during transfer. |
-| `KCRAWL_BROWSER_ERROR` | The browser failed to launch, connect, or navigate. |
-| `KCRAWL_BROWSER_TIMEOUT` | The browser page load or rendering timed out. |
-| `KCRAWL_INVALID_CONFIG` | The provided configuration is invalid. |
-| `KCRAWL_UNSUPPORTED` | The requested capability is not supported by the active backend or build. |
-| `KCRAWL_SSRF_POLICY_VIOLATION` | A URL was rejected by SSRF policy (private IP, metadata, disallowed scheme, etc). |
-| `KCRAWL_OTHER` | An unclassified error occurred. |
+| `CBERG_NOT_FOUND` | The requested page was not found (HTTP 404). |
+| `CBERG_UNAUTHORIZED` | The request was unauthorized (HTTP 401). |
+| `CBERG_FORBIDDEN` | The request was forbidden (HTTP 403). |
+| `CBERG_WAF_BLOCKED` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: MESSAGE` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
+| `CBERG_TIMEOUT` | The request timed out. |
+| `CBERG_RATE_LIMITED` | The request was rate-limited (HTTP 429). |
+| `CBERG_SERVER_ERROR` | A server error occurred (HTTP 5xx). |
+| `CBERG_BAD_GATEWAY` | A bad gateway error occurred (HTTP 502). |
+| `CBERG_GONE` | The resource is permanently gone (HTTP 410). |
+| `CBERG_CONNECTION` | A connection error occurred. |
+| `CBERG_DNS` | A DNS resolution error occurred. |
+| `CBERG_SSL` | An SSL/TLS error occurred. |
+| `CBERG_DATA_LOSS` | Data was lost or truncated during transfer. |
+| `CBERG_BROWSER_ERROR` | The browser failed to launch, connect, or navigate. |
+| `CBERG_BROWSER_TIMEOUT` | The browser page load or rendering timed out. |
+| `CBERG_INVALID_CONFIG` | The provided configuration is invalid. |
+| `CBERG_UNSUPPORTED` | The requested capability is not supported by the active backend or build. |
+| `CBERG_SSRF_POLICY_VIOLATION` | A URL was rejected by SSRF policy (private IP, metadata, disallowed scheme, etc). |
+| `CBERG_OTHER` | An unclassified error occurred. |
 
 ---
 
-#### KcrawlSsrfError
+#### CbergSsrfError
 
 SSRF validation error.
 
 | Variant | Description |
 |---------|-------------|
-| `KCRAWL_DENIED_BY_POLICY` | URL denied by SSRF policy: private IP, metadata IP, etc. |
-| `KCRAWL_NOT_ON_ALLOWLIST` | Host not on allowlist when an allowlist is configured. |
-| `KCRAWL_DNS_RESOLUTION_FAILED` | DNS resolution failed for hostname. |
-| `KCRAWL_INVALID_URL` | Invalid URL format. |
-| `KCRAWL_DISALLOWED_SCHEME` | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
-| `KCRAWL_TOO_MANY_REDIRECTS` | Too many HTTP redirects encountered during validation. |
+| `CBERG_DENIED_BY_POLICY` | URL denied by SSRF policy: private IP, metadata IP, etc. |
+| `CBERG_NOT_ON_ALLOWLIST` | Host not on allowlist when an allowlist is configured. |
+| `CBERG_DNS_RESOLUTION_FAILED` | DNS resolution failed for hostname. |
+| `CBERG_INVALID_URL` | Invalid URL format. |
+| `CBERG_DISALLOWED_SCHEME` | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
+| `CBERG_TOO_MANY_REDIRECTS` | Too many HTTP redirects encountered during validation. |
 
 ---

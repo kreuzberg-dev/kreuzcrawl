@@ -4,9 +4,9 @@
 // To verify freshness: alef verify --exit-code
 
 import { describe, expect, it } from "vitest";
-import { scrape, crawl, createEngine } from "@kreuzberg/kreuzcrawl";
+import { scrape, crawl, createEngine } from "@kreuzberg/crawlberg";
 
-process.env.KREUZCRAWL_ALLOW_PRIVATE_NETWORK ??= "true";
+process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK ??= "true";
 
 async function _alefE2eDecompressAndParseJson(response: Response): Promise<unknown> {
 	const contentEncoding = response.headers.get("content-encoding");
@@ -66,7 +66,7 @@ function _alefE2eFormatMetadataDisplay(fm: unknown): string {
 
 describe("warc", () => {
 	it("warc_basic_output: Scrape single page with WARC output enabled writes to file", async () => {
-		const engineConfig = { respectRobotsTxt: false, warcOutput: "/tmp/kreuzcrawl_test.warc" };
+		const engineConfig = { respectRobotsTxt: false, warcOutput: "/tmp/crawlberg_test.warc" };
 		const engine = createEngine(engineConfig);
 		const url = `${process.env.MOCK_SERVER_URL}/fixtures/warc_basic_output`;
 		const result = await crawl(engine, url);
@@ -74,7 +74,7 @@ describe("warc", () => {
 		expect(result.pages.length).toBe(1);
 	}, 30000);
 	it("warc_multi_page_crawl: Crawl multiple pages with depth=1 and WARC output enabled", async () => {
-		const engineConfig = { maxDepth: 1, respectRobotsTxt: false, warcOutput: "/tmp/kreuzcrawl_crawl.warc" };
+		const engineConfig = { maxDepth: 1, respectRobotsTxt: false, warcOutput: "/tmp/crawlberg_crawl.warc" };
 		const engine = createEngine(engineConfig);
 		const url =
 			process.env.MOCK_SERVER_WARC_MULTI_PAGE_CRAWL ??
