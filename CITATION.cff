@@ -7,7 +7,7 @@ abstract: "Web crawling and scraping with HTML→Markdown and headless-Chrome fa
 authors:
   - family-names: Hirschfeld
     given-names: "Na'aman"
-    email: "naaman@kreuzberg.dev"
+    email: "naaman@xberg.io"
     orcid: "https://orcid.org/0009-0000-2247-5072"
   - name: "Kreuzberg, Inc."
 repository-code: "https://github.com/xberg-io/crawlberg"
