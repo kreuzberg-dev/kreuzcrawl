@@ -7,11 +7,11 @@ plugins {
     id("com.android.library") version "9.2.1"
 }
 
-group = "dev.kreuzberg.crawlberg.android"
+group = "io.xberg.crawlberg.android"
 version = "0.1.0"
 
 android {
-    namespace = "dev.kreuzberg.crawlberg.android.e2e"
+    namespace = "io.xberg.crawlberg.android.e2e"
     compileSdk = 35
 
     defaultConfig {
@@ -47,7 +47,7 @@ kotlin {
 
 dependencies {
     // Published Android AAR from Maven Central (verifies artifact resolution)
-    implementation("dev.kreuzberg.crawlberg.android:crawlberg-android:0.3.0")
+    implementation("io.xberg.crawlberg.android:crawlberg-android:0.3.0")
     // Jackson for JSON assertion helpers
     testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
@@ -80,7 +80,7 @@ dependencies {
 tasks.register("verifyAarPublished") {
     description = "Verify the published Android AAR contains jni and classes.jar"
     doLast {
-        val aarCoord = "dev.kreuzberg.crawlberg.android:crawlberg-android:0.3.0"
+        val aarCoord = "io.xberg.crawlberg.android:crawlberg-android:0.3.0"
         val (groupId, artifactId, version) = run {
             val parts = aarCoord.split(':')
             Triple(parts[0], parts[1], parts[2])

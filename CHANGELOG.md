@@ -8,8 +8,11 @@ All notable changes to crawlberg are documented here.
 
 - **Renamed the project from `kreuzcrawl` to `crawlberg`.** The crate (`crawlberg`), every
   per-language package, the C FFI symbol prefix (`kcrawl_*` → `cberg_*`), the Go module
-  (`github.com/xberg-io/crawlberg`), and the docs domain (`docs.crawlberg.xberg.io`) follow. The
-  npm scope `@kreuzberg`, Java groupId `dev.kreuzberg`, and Composer vendor `xberg-io` are unchanged.
+  (`github.com/xberg-io/crawlberg`), and the docs domain (`docs.crawlberg.xberg.io`) follow.
+- **Rebranded the `kreuzberg` namespace to `xberg`.** npm scope `@kreuzberg` → `@xberg-io`, JVM/Maven
+  groupId `dev.kreuzberg` → `io.xberg`, ecosystem links and badges move to `github.com/xberg-io/xberg`
+  and the `Xberg.dev` brand, and `KREUZBERG_*` env vars become `CRAWLBERG_*`. The legal entity name
+  (`Kreuzberg, Inc.`) is unchanged.
 
 ### Fixed
 

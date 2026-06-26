@@ -108,11 +108,11 @@ repos:
           - id: golangci-lint
             exclude: ^(e2e/|test_apps/)
             env:
-                KREUZBERG_GO_MOD_DIRS: packages/go
+                CRAWLBERG_GO_MOD_DIRS: packages/go
           - id: govulncheck
             exclude: ^(e2e/|test_apps/)
             env:
-                KREUZBERG_GO_MOD_DIRS: packages/go
+                CRAWLBERG_GO_MOD_DIRS: packages/go
           - id: godoc-lint
 
           - id: checkstyle

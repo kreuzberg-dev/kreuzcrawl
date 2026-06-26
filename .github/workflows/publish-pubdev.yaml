@@ -108,7 +108,7 @@ jobs:
                 # Linux ARM64 stable SDK, which broke the linux-arm64 leg) and FRB
                 # codegen is not run here (packages/dart/rust/src/frb_generated.rs is
                 # committed). Each runner is native to its target, so no --target/cross
-                # toolchain is required. Mirrors liter-llm / kreuzberg dart natives.
+                # toolchain is required. Mirrors liter-llm / xberg dart natives.
                 cargo build --locked -p crawlberg-dart --release
                 case "$TARGET" in
                   *windows*) lib="crawlberg_dart.dll" ;;

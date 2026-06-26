@@ -6,7 +6,7 @@
 // and run `task alef:generate` to replace this file with alef-generated output.
 
 import { beforeAll, describe, expect, it } from "vitest";
-import { scrape, createEngine } from "@kreuzberg/crawlberg";
+import { scrape, createEngine } from "@xberg-io/crawlberg";
 
 // SSRF rejection tests must observe the *default* policy
 // (deny_private=true). All other e2e tests opt in to

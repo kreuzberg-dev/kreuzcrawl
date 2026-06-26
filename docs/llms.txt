@@ -58,9 +58,9 @@ Crawlberg is built around a trait-based crawl engine and a Tower middleware stac
 - [Types](https://docs.crawlberg.xberg.io/reference/types/): `CrawlResult`, `ScrapeResult`, `MapResult`, `PageMetadata`, and related types
 - [Errors](https://docs.crawlberg.xberg.io/reference/errors/): `CrawlError` variants and FFI error codes
 
-## Kreuzberg Ecosystem
+## Xberg Ecosystem
 
-- [Kreuzberg](https://docs.xberg.io): Document intelligence: text, tables, metadata from 91+ formats with optional OCR
+- [Xberg](https://docs.xberg.io): Document intelligence: text, tables, metadata from 91+ formats with optional OCR
 - [Xberg Enterprise](https://enterprise.xberg.io): Managed extraction API with SDKs, dashboards, and observability
 - [html-to-markdown](https://docs.html-to-markdown.xberg.io): Fast, lossless HTML to Markdown engine
 - [liter-llm](https://docs.liter-llm.xberg.io): Universal LLM API client with native bindings for 14 languages and 143 providers

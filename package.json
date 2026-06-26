@@ -3,8 +3,8 @@
 	"version": "0.3.0",
 	"private": true,
 	"devDependencies": {
-		"@kreuzberg/crawlberg": "workspace:*",
 		"@napi-rs/cli": "^3.7.2",
+		"@xberg-io/crawlberg": "workspace:*",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.9"
 	},

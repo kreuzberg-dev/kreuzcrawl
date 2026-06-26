@@ -95,16 +95,16 @@ crawlberg --version
 
 === "TypeScript"
 
-    Install the `@kreuzberg/crawlberg` package:
+    Install the `@xberg-io/crawlberg` package:
 
     ```bash
-    npm install @kreuzberg/crawlberg
+    npm install @xberg-io/crawlberg
     ```
 
     Or with pnpm:
 
     ```bash
-    pnpm add @kreuzberg/crawlberg
+    pnpm add @xberg-io/crawlberg
     ```
 
     The package includes pre-built native binaries via [NAPI-RS](https://napi.rs/) and ships with TypeScript type definitions (`.d.ts`).
@@ -148,7 +148,7 @@ crawlberg --version
 
     ```xml title="pom.xml"
     <dependency>
-        <groupId>dev.kreuzberg.crawlberg</groupId>
+        <groupId>io.xberg.crawlberg</groupId>
         <artifactId>crawlberg</artifactId>
         <version>0.3.0</version>
     </dependency>
@@ -162,7 +162,7 @@ crawlberg --version
 
     ```kotlin title="build.gradle.kts"
     dependencies {
-        implementation("dev.kreuzberg.crawlberg:crawlberg-android:0.3.0")
+        implementation("io.xberg.crawlberg:crawlberg-android:0.3.0")
     }
     ```
 
@@ -225,11 +225,11 @@ crawlberg --version
     For browser or Node.js environments via wasm-bindgen:
 
     ```bash
-    npm install @kreuzberg/crawlberg-wasm
+    npm install @xberg-io/crawlberg-wasm
     ```
 
     ```typescript
-    import init from "@kreuzberg/crawlberg-wasm";
+    import init from "@xberg-io/crawlberg-wasm";
     await init();
     ```
 

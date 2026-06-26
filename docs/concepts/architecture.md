@@ -43,15 +43,15 @@ Every binding consumes the same Rust core via FFI. The per-binding glue is gener
 | Binding crate                | Distribution                                                | Mechanism                 |
 | ---------------------------- | ----------------------------------------------------------- | ------------------------- |
 | `crates/crawlberg-py`       | PyPI `crawlberg`                                           | PyO3 + maturin            |
-| `crates/crawlberg-node`     | npm `@kreuzberg/crawlberg`                                 | NAPI-RS                   |
+| `crates/crawlberg-node`     | npm `@xberg-io/crawlberg`                                 | NAPI-RS                   |
 | `crates/crawlberg-php`      | Composer `xberg-io/crawlberg`                         | ext-php-rs                |
-| `crates/crawlberg-wasm`     | npm `@kreuzberg/crawlberg-wasm`                            | wasm-bindgen              |
+| `crates/crawlberg-wasm`     | npm `@xberg-io/crawlberg-wasm`                            | wasm-bindgen              |
 | `crates/crawlberg-ffi`      | Shared library + cbindgen header                            | C FFI                     |
 | `packages/ruby/ext/...`      | RubyGems `crawlberg`                                       | Magnus + rb-sys           |
 | `packages/elixir/native/...` | Hex `crawlberg`                                            | Rustler NIF               |
 | `packages/go`                | Go module `github.com/xberg-io/crawlberg/packages/go` | cgo over C FFI            |
-| `packages/java`              | Maven Central `dev.kreuzberg.crawlberg:crawlberg`         | Java 25 Panama FFM        |
-| `packages/kotlin-android`    | Maven Central `dev.kreuzberg.crawlberg:crawlberg-android` | Android AAR with JNI .sos |
+| `packages/java`              | Maven Central `io.xberg.crawlberg:crawlberg`         | Java 25 Panama FFM        |
+| `packages/kotlin-android`    | Maven Central `io.xberg.crawlberg:crawlberg-android` | Android AAR with JNI .sos |
 | `packages/csharp`            | NuGet `Crawlberg`                                          | .NET 10 P/Invoke          |
 | `packages/dart`              | pub.dev `crawlberg`                                        | Dart FFI                  |
 | `packages/swift`             | Swift Package Manager                                       | Swift over C FFI          |

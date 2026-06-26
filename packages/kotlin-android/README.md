@@ -18,14 +18,14 @@
   <a href="https://pypi.org/project/crawlberg/">
     <img src="https://img.shields.io/pypi/v/crawlberg?label=Python&color=007ec6" alt="Python">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg-wasm">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg-wasm">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg/crawlberg">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg/crawlberg">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
   </a>
   <a href="https://pkg.go.dev/github.com/xberg-io/crawlberg/packages/go">
     <img src="https://img.shields.io/github/v/tag/xberg-io/crawlberg?label=Go&color=007ec6" alt="Go">
@@ -45,8 +45,8 @@
   <a href="https://pub.dev/packages/crawlberg">
     <img src="https://img.shields.io/pub/v/crawlberg?label=Dart&color=007ec6" alt="Dart">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg.android/crawlberg-android">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg.android/crawlberg-android">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
   </a>
   <a href="https://github.com/xberg-io/crawlberg/tree/main/packages/swift">
     <img src="https://img.shields.io/badge/Swift-SPM-007ec6" alt="Swift">
@@ -78,7 +78,7 @@
 
 Android (AAR) bindings for **crawlberg** — a high-performance Rust web crawling engine.
 JNI-based with bundled per-ABI native libraries and a coroutine-friendly Kotlin facade.
-JVM consumers should use the canonical `dev.kreuzberg.crawlberg:crawlberg` artifact directly.
+JVM consumers should use the canonical `io.xberg.crawlberg:crawlberg` artifact directly.
 
 ## What This Package Provides
 
@@ -91,7 +91,7 @@ JVM consumers should use the canonical `dev.kreuzberg.crawlberg:crawlberg` artif
 ## Installation
 
 ```bash
-implementation("dev.kreuzberg.crawlberg:crawlberg-android:0.3.0")
+implementation("io.xberg.crawlberg:crawlberg-android:0.3.0")
 
 ```
 
@@ -101,7 +101,7 @@ The `crawlberg` plugin is available via the `xberg-io/plugins` marketplace.
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install crawlberg@kreuzberg
+/plugin install crawlberg@xberg
 ```
 
 Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot CLI, and opencode. See [the marketplace README](https://github.com/xberg-io/plugins) for harness-specific install instructions.
@@ -112,8 +112,8 @@ Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import dev.kreuzberg.crawlberg.android.CrawlConfig
-import dev.kreuzberg.crawlberg.android.Crawlberg
+import io.xberg.crawlberg.android.CrawlConfig
+import io.xberg.crawlberg.android.Crawlberg
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
@@ -158,9 +158,9 @@ Key functions:
 
 Contributions are welcome! Please see our [Contributing Guide](https://github.com/xberg-io/crawlberg/blob/main/CONTRIBUTING.md) for details.
 
-## Part of Kreuzberg.dev
+## Part of Xberg.dev
 
-- [Kreuzberg](https://github.com/xberg-io/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
+- [Xberg](https://github.com/xberg-io/xberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Xberg Enterprise](https://github.com/xberg-io/xberg-enterprise) — managed extraction API with SDKs, dashboards, and observability.
 - [crawlberg](https://github.com/xberg-io/crawlberg) — web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 - [html-to-markdown](https://github.com/xberg-io/html-to-markdown) — fast, lossless HTML→Markdown engine.

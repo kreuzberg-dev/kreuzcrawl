@@ -16,7 +16,7 @@ use utoipa::OpenApi;
         version = env!("CARGO_PKG_VERSION"),
         description = "High-performance web crawling and scraping API. Firecrawl v1-compatible endpoints for scraping, crawling, URL discovery, batch operations, and document downloads.",
         contact(
-            name = "Kreuzberg",
+            name = "Xberg",
             url = "https://xberg.io"
         ),
         license(

@@ -128,7 +128,7 @@ docker run \
 ```bash
 docker run \
   -v /local/config.toml:/etc/crawlberg/crawlberg.toml:ro \
-  -e KREUZBERG_SERVER_PORT=8000 \
+  -e CRAWLBERG_SERVER_PORT=8000 \
   crawlberg:full
 ```
 

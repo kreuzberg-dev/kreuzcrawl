@@ -18,14 +18,14 @@
   <a href="https://pypi.org/project/crawlberg/">
     <img src="https://img.shields.io/pypi/v/crawlberg?label=Python&color=007ec6" alt="Python">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg-wasm">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg-wasm">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg/crawlberg">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg/crawlberg">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
   </a>
   <a href="https://pkg.go.dev/github.com/xberg-io/crawlberg/packages/go">
     <img src="https://img.shields.io/github/v/tag/xberg-io/crawlberg?label=Go&color=007ec6" alt="Go">
@@ -45,8 +45,8 @@
   <a href="https://pub.dev/packages/crawlberg">
     <img src="https://img.shields.io/pub/v/crawlberg?label=Dart&color=007ec6" alt="Dart">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg.android/crawlberg-android">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg.android/crawlberg-android">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
   </a>
   <a href="https://github.com/xberg-io/crawlberg/tree/main/packages/swift">
     <img src="https://img.shields.io/badge/Swift-SPM-007ec6" alt="Swift">
@@ -130,7 +130,7 @@ See [Python README](https://github.com/xberg-io/crawlberg/tree/main/packages/pyt
 <summary><strong>Node.js</strong></summary>
 
 ```sh
-npm install @kreuzberg/crawlberg
+npm install @xberg-io/crawlberg
 ```
 
 See [Node.js README](https://github.com/xberg-io/crawlberg/tree/main/crates/crawlberg-node) for full documentation.
@@ -162,7 +162,7 @@ See [Go README](https://github.com/xberg-io/crawlberg/tree/main/packages/go) for
 <details>
 <summary><strong>Java</strong></summary>
 
-Available on Maven Central as `dev.kreuzberg.crawlberg:crawlberg`. See [Java README](https://github.com/xberg-io/crawlberg/tree/main/packages/java) for the dependency snippet and current version.
+Available on Maven Central as `io.xberg.crawlberg:crawlberg`. See [Java README](https://github.com/xberg-io/crawlberg/tree/main/packages/java) for the dependency snippet and current version.
 
 </details>
 
@@ -220,7 +220,7 @@ See [Dart README](https://github.com/xberg-io/crawlberg/tree/main/packages/dart)
 <details>
 <summary><strong>Kotlin (Android)</strong></summary>
 
-Available on Maven Central as `dev.kreuzberg.crawlberg.android:crawlberg-android`. See [Kotlin README](https://github.com/xberg-io/crawlberg/tree/main/packages/kotlin-android) for the dependency snippet and current version.
+Available on Maven Central as `io.xberg.crawlberg.android:crawlberg-android`. See [Kotlin README](https://github.com/xberg-io/crawlberg/tree/main/packages/kotlin-android) for the dependency snippet and current version.
 
 </details>
 
@@ -242,7 +242,7 @@ See [Zig README](https://github.com/xberg-io/crawlberg/tree/main/packages/zig) f
 <summary><strong>WebAssembly</strong></summary>
 
 ```sh
-npm install @kreuzberg/crawlberg-wasm
+npm install @xberg-io/crawlberg-wasm
 ```
 
 See [WebAssembly README](https://github.com/xberg-io/crawlberg/tree/main/crates/crawlberg-wasm) for full documentation.
@@ -280,7 +280,7 @@ Install the Crawlberg plugin from the [`xberg-io/plugins`](https://github.com/xb
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install crawlberg@kreuzberg
+/plugin install crawlberg@xberg
 ```
 
 </details>
@@ -317,7 +317,7 @@ gemini extensions install https://github.com/xberg-io/plugins
 
 ```text
 droid plugin marketplace add https://github.com/xberg-io/plugins
-droid plugin install crawlberg@kreuzberg
+droid plugin install crawlberg@xberg
 ```
 
 </details>
@@ -327,7 +327,7 @@ droid plugin install crawlberg@kreuzberg
 
 ```text
 copilot plugin marketplace add https://github.com/xberg-io/plugins
-copilot plugin install crawlberg@kreuzberg
+copilot plugin install crawlberg@xberg
 ```
 
 </details>
@@ -340,7 +340,7 @@ Add the package to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@kreuzberg/opencode-crawlberg"]
+  "plugin": ["@xberg-io/opencode-crawlberg"]
 }
 ```
 
@@ -354,9 +354,9 @@ Full guides, per-language API references, the substrate/operational model, antib
 
 Contributions are welcome! See our [Contributing Guide](https://github.com/xberg-io/crawlberg/blob/main/CONTRIBUTING.md).
 
-## Part of Kreuzberg.dev
+## Part of Xberg.dev
 
-- [Kreuzberg](https://github.com/xberg-io/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
+- [Xberg](https://github.com/xberg-io/xberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Xberg Enterprise](https://github.com/xberg-io/xberg-enterprise) — managed extraction API with SDKs, dashboards, and observability.
 - [crawlberg](https://github.com/xberg-io/crawlberg) — web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 - [html-to-markdown](https://github.com/xberg-io/html-to-markdown) — fast, lossless HTML→Markdown engine.

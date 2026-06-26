@@ -13,7 +13,7 @@ Pick your harness below.
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install crawlberg@kreuzberg
+/plugin install crawlberg@xberg
 ```
 
 </details>
@@ -48,7 +48,7 @@ gemini extensions install https://github.com/xberg-io/plugins
 
 ```text
 droid plugin marketplace add https://github.com/xberg-io/plugins
-droid plugin install crawlberg@kreuzberg
+droid plugin install crawlberg@xberg
 ```
 
 </details>
@@ -58,7 +58,7 @@ droid plugin install crawlberg@kreuzberg
 
 ```text
 copilot plugin marketplace add https://github.com/xberg-io/plugins
-copilot plugin install crawlberg@kreuzberg
+copilot plugin install crawlberg@xberg
 ```
 
 </details>
@@ -71,7 +71,7 @@ Add the package to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@kreuzberg/opencode-crawlberg"]
+  "plugin": ["@xberg-io/opencode-crawlberg"]
 }
 ```
 

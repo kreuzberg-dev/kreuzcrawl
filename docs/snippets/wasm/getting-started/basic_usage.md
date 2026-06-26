@@ -1,5 +1,5 @@
 ```javascript title="WASM"
-import { CrawlConfig, crawl, createEngine, scrape } from "@kreuzberg/crawlberg-wasm";
+import { CrawlConfig, crawl, createEngine, scrape } from "@xberg-io/crawlberg-wasm";
 
 async function main() {
   // Simplest case: scrape a single page with default settings.

@@ -64,7 +64,7 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 === "TypeScript"
 
     ```typescript title="scrape.ts"
-    import { createEngine, scrape } from "@kreuzberg/crawlberg";
+    import { createEngine, scrape } from "@xberg-io/crawlberg";
 
     const engine = createEngine();
     const result = await scrape(engine, "https://example.com");
@@ -164,7 +164,7 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 === "TypeScript"
 
     ```typescript title="crawl.ts"
-    import { createEngine, crawl } from "@kreuzberg/crawlberg";
+    import { createEngine, crawl } from "@xberg-io/crawlberg";
 
     const engine = createEngine({
         maxDepth: 2,
@@ -262,7 +262,7 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 === "TypeScript"
 
     ```typescript title="map.ts"
-    import { createEngine, mapUrls } from "@kreuzberg/crawlberg";
+    import { createEngine, mapUrls } from "@xberg-io/crawlberg";
 
     const engine = createEngine({
         respectRobotsTxt: true,

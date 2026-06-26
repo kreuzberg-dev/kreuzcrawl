@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@kreuzberg/crawlberg-wasm':
+      '@xberg-io/crawlberg-wasm':
         specifier: file:../../crates/crawlberg-wasm/pkg/nodejs
         version: crawlberg-wasm@file:../../crates/crawlberg-wasm/pkg/nodejs
       rollup:

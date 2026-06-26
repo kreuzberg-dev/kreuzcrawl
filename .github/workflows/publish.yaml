@@ -6,7 +6,7 @@ name: Publish Release
 #   crates · python · node · wasm · ruby · php · cli · homebrew · go · c-ffi
 #   java · csharp · elixir · kotlin-android · dart · swift · zig
 #
-# Mirrors kreuzberg's publish.yaml composition: every registry interaction,
+# Mirrors xberg's publish.yaml composition: every registry interaction,
 # every multi-platform build, and every release-asset upload routes through
 # a shared xberg-io/actions composite. Inline bash is reserved for
 # repo-quirky orchestration only (homebrew bottle assembly, Node platform
@@ -97,7 +97,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - name: Checkout
               uses: actions/checkout@v6
@@ -179,7 +179,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/crawlberg"
+                  package: "@xberg-io/crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-wasm:
@@ -194,7 +194,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/crawlberg-wasm"
+                  package: "@xberg-io/crawlberg-wasm"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-rubygems:
@@ -224,7 +224,7 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
-                  package: "dev.kreuzberg.crawlberg:crawlberg"
+                  package: "io.xberg.crawlberg:crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
 
     check-nuget:
@@ -341,10 +341,10 @@ jobs:
               uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
-                  package: dev.kreuzberg:crawlberg
+                  package: io.xberg:crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   extra-packages: |
-                      kotlin_android_exists=dev.kreuzberg:crawlberg-android
+                      kotlin_android_exists=io.xberg:crawlberg-android
 
     check-homebrew:
         name: Check Homebrew tap for formula
@@ -715,7 +715,7 @@ jobs:
 
             - name: Install Ruby dependencies
               # Inline: bundle config + install in the package dir; trivially small
-              # and identical across crawlberg/kreuzberg/html-to-markdown.
+              # and identical across crawlberg/xberg/html-to-markdown.
               shell: bash
               working-directory: packages/ruby
               run: |
@@ -756,7 +756,7 @@ jobs:
                     # resolves outside `packages/ruby/` and would not exist in a
                     # container mounted at the gem dir. `--directory packages/ruby`
                     # sets the container WORKDIR to packages/ruby while preserving
-                    # the workspace-root mount, matching the sibling kreuzberg pattern.
+                    # the workspace-root mount, matching the sibling xberg pattern.
                     # The previous `cd packages/ruby` inside `bash -c` did not work
                     # because rb-sys-dock 0.9.127 mounts the gem dir (auto-detected
                     # by walking up for a Gemfile) — `--directory` overrides that.
@@ -1464,7 +1464,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/download-artifact@v8
               with:
@@ -1491,7 +1491,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/checkout@v5
               with:
@@ -1503,8 +1503,8 @@ jobs:
             - name: Push Go subdir tag
               shell: bash
               run: |
-                  git config user.name "kreuzberg-dev-publisher[bot]"
-                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
+                  git config user.name "xberg-dev-publisher[bot]"
+                  git config user.email "291994444+xberg-dev-publisher[bot]@users.noreply.github.com"
                   TAG_NAME="packages/go/v${{ needs.prepare.outputs.version }}"
                   git tag -a "$TAG_NAME" -m "Go module release ${{ needs.prepare.outputs.version }}"
                   git push origin "$TAG_NAME"
@@ -1520,7 +1520,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/download-artifact@v8
               with:
@@ -1547,7 +1547,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/download-artifact@v8
               with:
@@ -1579,7 +1579,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/checkout@v6
               with:
@@ -1612,8 +1612,8 @@ jobs:
                     echo "Package.swift unchanged — skipping retag"
                     exit 0
                   fi
-                  git config user.name "kreuzberg-dev-publisher[bot]"
-                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
+                  git config user.name "xberg-dev-publisher[bot]"
+                  git config user.email "291994444+xberg-dev-publisher[bot]@users.noreply.github.com"
                   git add Package.swift
                   git commit -m "chore: inject Swift artifactbundle checksum for ${TAG}"
                   # Recreate the annotated release tag on this commit. Pushing the tag also
@@ -1639,7 +1639,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/download-artifact@v8
               with:
@@ -1666,7 +1666,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/download-artifact@v8
               with:
@@ -1713,7 +1713,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
             - uses: xberg-io/actions/verify-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
@@ -1889,10 +1889,10 @@ jobs:
             - name: Publish platform sub-packages
               # Tolerate per-platform publish failures so the main package and
               # other platforms still ship. RC.45–RC.48 each hit ENEEDAUTH on
-              # `@kreuzberg/crawlberg-linux-x64-musl` (npm Trusted Publisher
+              # `@xberg-io/crawlberg-linux-x64-musl` (npm Trusted Publisher
               # not configured for that specific sub-package — see task #93);
               # without continue-on-error the failure aborted the whole job and
-              # blocked the main `@kreuzberg/crawlberg` publish too, leaving
+              # blocked the main `@xberg-io/crawlberg` publish too, leaving
               # consumers unable to install on any platform.
               continue-on-error: true
               uses: xberg-io/actions/publish-npm@v1
@@ -1906,7 +1906,7 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/crawlberg-linux-x64-gnu"
+                  package: "@xberg-io/crawlberg-linux-x64-gnu"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "60"
 
@@ -1915,11 +1915,11 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/crawlberg-linux-arm64-gnu"
+                  package: "@xberg-io/crawlberg-linux-arm64-gnu"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "60"
 
-            - name: Publish main @kreuzberg/crawlberg package
+            - name: Publish main @xberg-io/crawlberg package
               uses: xberg-io/actions/publish-npm@v1
               with:
                   package-dir: crates/crawlberg-node
@@ -1931,7 +1931,7 @@ jobs:
               uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
-                  package: "@kreuzberg/crawlberg"
+                  package: "@xberg-io/crawlberg"
                   version: ${{ needs.prepare.outputs.version }}
                   max-attempts: "25"
 
@@ -2007,7 +2007,7 @@ jobs:
         steps:
             - uses: xberg-io/actions/publish-packagist@v1
               with:
-                  packagist-username: kreuzberg-dev
+                  packagist-username: xberg-io
                   package-name: xberg-io/crawlberg
                   version: ${{ needs.prepare.outputs.version }}
                   repository-url: https://github.com/xberg-io/crawlberg
@@ -2146,7 +2146,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/checkout@v6
               with:
@@ -2177,8 +2177,8 @@ jobs:
             - name: Commit updated checksum file to main
               if: needs.prepare.outputs.dry_run != 'true'
               run: |
-                  git config user.name "kreuzberg-dev-publisher[bot]"
-                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
+                  git config user.name "xberg-dev-publisher[bot]"
+                  git config user.email "291994444+xberg-dev-publisher[bot]@users.noreply.github.com"
                   git add packages/elixir/checksum-Elixir.Crawlberg.Native.exs
                   if git diff --cached --quiet; then
                     echo "No checksum changes to commit — skipping"
@@ -2321,7 +2321,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             - uses: actions/checkout@v6
               with:
@@ -2429,7 +2429,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
                   repositories: homebrew-tap
 
             - name: Checkout source repo
@@ -2458,8 +2458,8 @@ jobs:
                   GH_TOKEN: ${{ steps.tap-token.outputs.token }}
               # Inline: tap-side commit/push — bot identity is repo-specific.
               run: |
-                  git config user.name "kreuzberg-dev-publisher[bot]"
-                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
+                  git config user.name "xberg-dev-publisher[bot]"
+                  git config user.email "291994444+xberg-dev-publisher[bot]@users.noreply.github.com"
                   if git diff --quiet Formula/; then
                     echo "No formula changes; skipping commit."
                     exit 0
@@ -2491,7 +2491,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
 
             # actions/checkout@v6 regression on macos-15-intel: the includeIf-gated
             # credential helper isn't honored by git 2.54 on that runner image, so
@@ -2545,7 +2545,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
                   repositories: homebrew-tap
 
             - name: Checkout source repo
@@ -2585,8 +2585,8 @@ jobs:
                   GH_TOKEN: ${{ steps.tap-token.outputs.token }}
               # Inline: tap-side commit/push — bot identity is repo-specific.
               run: |
-                  git config user.name "kreuzberg-dev-publisher[bot]"
-                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
+                  git config user.name "xberg-dev-publisher[bot]"
+                  git config user.email "291994444+xberg-dev-publisher[bot]@users.noreply.github.com"
                   if git diff --quiet Formula/; then
                     echo "No bottle DSL changes; skipping commit."
                     exit 0
@@ -2639,7 +2639,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
             - uses: xberg-io/actions/finalize-release@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
@@ -2685,7 +2685,7 @@ jobs:
               with:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
+                  owner: xberg-io
             - uses: xberg-io/actions/announce-release-discord@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}

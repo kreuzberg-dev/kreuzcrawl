@@ -9,14 +9,14 @@
   <a href="https://pypi.org/project/crawlberg/">
     <img src="https://img.shields.io/pypi/v/crawlberg?label=Python&color=007ec6" alt="Python">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg?label=Node.js&color=007ec6" alt="Node.js">
   </a>
-  <a href="https://www.npmjs.com/package/@kreuzberg/crawlberg-wasm">
-    <img src="https://img.shields.io/npm/v/@kreuzberg/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
+  <a href="https://www.npmjs.com/package/@xberg-io/crawlberg-wasm">
+    <img src="https://img.shields.io/npm/v/@xberg-io/crawlberg-wasm?label=WASM&color=007ec6" alt="WASM">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg/crawlberg">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg/crawlberg">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg/crawlberg?label=Java&color=007ec6" alt="Java">
   </a>
   <a href="https://pkg.go.dev/github.com/xberg-io/crawlberg/packages/go">
     <img src="https://img.shields.io/github/v/tag/xberg-io/crawlberg?label=Go&color=007ec6" alt="Go">
@@ -36,8 +36,8 @@
   <a href="https://pub.dev/packages/crawlberg">
     <img src="https://img.shields.io/pub/v/crawlberg?label=Dart&color=007ec6" alt="Dart">
   </a>
-  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.crawlberg.android/crawlberg-android">
-    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
+  <a href="https://central.sonatype.com/artifact/io.xberg.crawlberg.android/crawlberg-android">
+    <img src="https://img.shields.io/maven-central/v/io.xberg.crawlberg.android/crawlberg-android?label=Kotlin&color=007ec6" alt="Kotlin">
   </a>
   <a href="https://github.com/xberg-io/crawlberg/tree/main/packages/swift">
     <img src="https://img.shields.io/badge/Swift-SPM-007ec6" alt="Swift">

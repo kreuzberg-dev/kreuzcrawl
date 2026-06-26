@@ -1,5 +1,5 @@
 {
-	"name": "@kreuzberg/crawlberg-linux-arm64-musl",
+	"name": "@xberg-io/crawlberg-linux-arm64-musl",
 	"version": "0.3.0",
 	"license": "MIT",
 	"repository": {

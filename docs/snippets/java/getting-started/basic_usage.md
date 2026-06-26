@@ -1,11 +1,11 @@
 ```java title="Java"
 import java.util.Optional;
 
-import dev.kreuzberg.crawlberg.CrawlConfig;
-import dev.kreuzberg.crawlberg.CrawlEngineHandle;
-import dev.kreuzberg.crawlberg.CrawlResult;
-import dev.kreuzberg.crawlberg.Crawlberg;
-import dev.kreuzberg.crawlberg.ScrapeResult;
+import io.xberg.crawlberg.CrawlConfig;
+import io.xberg.crawlberg.CrawlEngineHandle;
+import io.xberg.crawlberg.CrawlResult;
+import io.xberg.crawlberg.Crawlberg;
+import io.xberg.crawlberg.ScrapeResult;
 
 public final class BasicUsage {
     private BasicUsage() { }

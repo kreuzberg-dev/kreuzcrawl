@@ -301,7 +301,7 @@ jobs:
 
             - name: Setup Swift
               if: matrix.swift-version
-              # kreuzberg-dev wrapper around SwiftyLab/setup-swift — supports
+              # xberg-io wrapper around SwiftyLab/setup-swift — supports
               # ubuntu-24.04-arm; swift-actions/setup-swift@v2 returns a corrupt
               # binary on that runner.
               uses: xberg-io/actions/setup-swift@v1

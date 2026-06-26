@@ -4,11 +4,11 @@
 
 ### Node Platform Packages OIDC Configuration
 
-The Node platform sub-package `@kreuzberg/crawlberg-linux-x64-musl` requires manual OIDC trusted-publisher setup on npm.
+The Node platform sub-package `@xberg-io/crawlberg-linux-x64-musl` requires manual OIDC trusted-publisher setup on npm.
 
 **Issue**: The package publishes `0.0.0-bootstrap` only because npm doesn't recognize the GitHub Actions workflow as a trusted publisher.
 
-**Fix**: Go to <https://www.npmjs.com/package/@kreuzberg/crawlberg-linux-x64-musl/access> → Settings → Trusted Publishers → **Add a new trusted publisher**:
+**Fix**: Go to <https://www.npmjs.com/package/@xberg-io/crawlberg-linux-x64-musl/access> → Settings → Trusted Publishers → **Add a new trusted publisher**:
 
 - Provider: GitHub
 - Repository: xberg-io/crawlberg

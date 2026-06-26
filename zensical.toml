@@ -220,7 +220,7 @@ name = "View on GitHub Container Registry"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/npm"
-link = "https://www.npmjs.com/package/@kreuzberg/crawlberg"
+link = "https://www.npmjs.com/package/@xberg-io/crawlberg"
 name = "View on npm"
 
 [[project.extra.social]]

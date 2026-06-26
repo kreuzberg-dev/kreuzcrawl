@@ -86,7 +86,7 @@ pub struct ReachabilityReport {
 
 /// Quality metrics computed for a single scrape result against a fixture.
 ///
-/// Uses kreuzberg's TF1 scoring: multiset token-level F1 with separate
+/// Uses xberg's TF1 scoring: multiset token-level F1 with separate
 /// numeric scoring and lie_text noise penalty.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScrapeQualityMetrics {

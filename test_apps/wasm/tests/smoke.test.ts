@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import * as pkg from "@kreuzberg/crawlberg-wasm";
+import * as pkg from "@xberg-io/crawlberg-wasm";
 
 describe("smoke", () => {
     it("imports the published wasm package", () => {

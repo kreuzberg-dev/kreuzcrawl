@@ -78,7 +78,7 @@ tasks:
         desc: >
             Run kotlin-android instrumented e2e tests on a running emulator.
             Requires ANDROID_HOME (and an emulator already started, e.g. via
-            `emulator -avd kreuzberg-test-34 -no-window` or the GHA
+            `emulator -avd xberg-test-34 -no-window` or the GHA
             `reactivecircus/android-emulator-runner` action). Fails fast if the
             SDK is not available.
         dir: packages/kotlin-android

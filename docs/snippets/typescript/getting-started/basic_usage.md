@@ -1,5 +1,5 @@
 ```typescript title="TypeScript"
-import { crawl, createEngine, scrape } from "@kreuzberg/crawlberg";
+import { crawl, createEngine, scrape } from "@xberg-io/crawlberg";
 
 async function main(): Promise<void> {
   // Simplest case: scrape a single page with default settings.

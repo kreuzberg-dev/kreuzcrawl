@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@kreuzberg/crawlberg-wasm':
+      '@xberg-io/crawlberg-wasm':
         specifier: ^0.3.0-rc.84
         version: 0.3.0-rc.85
       rollup:
@@ -32,7 +32,7 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@kreuzberg/crawlberg-wasm@0.3.0-rc.85':
+  '@xberg-io/crawlberg-wasm@0.3.0-rc.85':
     resolution: {integrity: sha512-H2xnxFMaeZmkDoxkfgYg1XXDE3rG9JohRIvM8YsIcTZRuqNI7Sk1TkIFK4Spb5r6U907HnMXZm7xVJHH84i7MA==}
 
   '@napi-rs/wasm-runtime@1.1.4':
@@ -613,7 +613,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@kreuzberg/crawlberg-wasm@0.3.0-rc.85': {}
+  '@xberg-io/crawlberg-wasm@0.3.0-rc.85': {}
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:

@@ -1,7 +1,7 @@
 //! Tower-based service stack for HTTP request processing.
 //!
 //! Provides composable middleware layers following the Tower Service pattern,
-//! consistent with liter-llm and kreuzberg.
+//! consistent with liter-llm and xberg.
 //!
 //! The Tower service stack (cache, rate_limit, service, ua_rotation layers)
 //! requires `Send` bounds and is not available on `wasm32` targets.

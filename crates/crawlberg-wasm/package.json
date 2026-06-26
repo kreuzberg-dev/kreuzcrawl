@@ -1,5 +1,5 @@
 {
-	"name": "@kreuzberg/crawlberg-wasm",
+	"name": "@xberg-io/crawlberg-wasm",
 	"version": "0.3.0",
 	"private": false,
 	"description": "High-performance web crawling engine",

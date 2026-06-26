@@ -1,5 +1,5 @@
 {
-	"name": "@kreuzberg/crawlberg-cli",
+	"name": "@xberg-io/crawlberg-cli",
 	"version": "0.0.1",
 	"description": "CLI proxy for crawlberg — downloads and runs the native crawlberg binary from GitHub releases.",
 	"license": "MIT",

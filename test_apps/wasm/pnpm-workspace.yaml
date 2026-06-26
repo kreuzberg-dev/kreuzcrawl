@@ -4,4 +4,4 @@ allowBuilds:
   esbuild: true
   tree-sitter: true
 minimumReleaseAgeExclude:
-  - '@kreuzberg/crawlberg-wasm@0.3.0'
+  - '@xberg-io/crawlberg-wasm@0.3.0'

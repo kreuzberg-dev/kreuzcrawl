@@ -491,7 +491,7 @@ test_env_var_overrides() {
   # Run container with config mount and environment variable override
   if ! run_container "$container_name" "$image" "$port" \
     --volume "$config_file:/etc/crawlberg/crawlberg.toml:ro" \
-    --env "KREUZBERG_SERVER_PORT=$port"; then
+    --env "CRAWLBERG_SERVER_PORT=$port"; then
     fail_test "Failed to start container with env var override"
     log_error "  Container logs:\n$(get_container_logs "$container_name" 2>/dev/null || echo 'N/A')"
     return 1

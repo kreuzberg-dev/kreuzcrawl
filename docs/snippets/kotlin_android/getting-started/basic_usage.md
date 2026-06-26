@@ -2,8 +2,8 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import dev.kreuzberg.crawlberg.android.CrawlConfig
-import dev.kreuzberg.crawlberg.android.Crawlberg
+import io.xberg.crawlberg.android.CrawlConfig
+import io.xberg.crawlberg.android.Crawlberg
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {

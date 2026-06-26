@@ -8,12 +8,12 @@ importers:
 
   .:
     devDependencies:
-      '@kreuzberg/crawlberg':
-        specifier: workspace:*
-        version: link:crates/crawlberg-node
       '@napi-rs/cli':
         specifier: ^3.7.2
         version: 3.7.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@26.0.1)
+      '@xberg-io/crawlberg':
+        specifier: workspace:*
+        version: link:crates/crawlberg-node
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -31,12 +31,12 @@ importers:
 
   e2e/node:
     devDependencies:
-      '@kreuzberg/crawlberg':
-        specifier: workspace:*
-        version: link:../../crates/crawlberg-node
       '@types/node':
         specifier: ^22.10.2
         version: 22.20.0
+      '@xberg-io/crawlberg':
+        specifier: workspace:*
+        version: link:../../crates/crawlberg-node
       vitest:
         specifier: ^4.1.5
         version: 4.1.9(@types/node@22.20.0)(vite@8.0.10(@types/node@22.20.0))

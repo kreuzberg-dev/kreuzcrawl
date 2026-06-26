@@ -1,5 +1,5 @@
 {
-	"name": "@kreuzberg/crawlberg",
+	"name": "@xberg-io/crawlberg",
 	"version": "0.3.0",
 	"description": "High-performance web crawling engine",
 	"license": "MIT",
@@ -33,18 +33,18 @@
 		"@napi-rs/cli": "^3.6.2"
 	},
 	"optionalDependencies": {
-		"@kreuzberg/crawlberg-darwin-arm64": "0.3.0",
-		"@kreuzberg/crawlberg-darwin-x64": "0.3.0",
-		"@kreuzberg/crawlberg-linux-arm64-gnu": "0.3.0",
-		"@kreuzberg/crawlberg-linux-arm64-musl": "0.3.0",
-		"@kreuzberg/crawlberg-linux-x64-gnu": "0.3.0",
-		"@kreuzberg/crawlberg-linux-x64-musl": "0.3.0",
-		"@kreuzberg/crawlberg-win32-arm64-msvc": "0.3.0",
-		"@kreuzberg/crawlberg-win32-x64-msvc": "0.3.0"
+		"@xberg-io/crawlberg-darwin-arm64": "0.3.0",
+		"@xberg-io/crawlberg-darwin-x64": "0.3.0",
+		"@xberg-io/crawlberg-linux-arm64-gnu": "0.3.0",
+		"@xberg-io/crawlberg-linux-arm64-musl": "0.3.0",
+		"@xberg-io/crawlberg-linux-x64-gnu": "0.3.0",
+		"@xberg-io/crawlberg-linux-x64-musl": "0.3.0",
+		"@xberg-io/crawlberg-win32-arm64-msvc": "0.3.0",
+		"@xberg-io/crawlberg-win32-x64-msvc": "0.3.0"
 	},
 	"napi": {
 		"binaryName": "crawlberg-node",
-		"packageName": "@kreuzberg/crawlberg",
+		"packageName": "@xberg-io/crawlberg",
 		"targets": [
 			"x86_64-unknown-linux-gnu",
 			"aarch64-unknown-linux-gnu",

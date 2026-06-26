@@ -21,6 +21,7 @@ extend-ignore-re = [
 [default.extend-words]
 # Project-specific terms that are not typos.
 kreuzberg = "kreuzberg"
+xberg = "xberg"
 zensical = "zensical"
 pdfium = "pdfium"
 tesseract = "tesseract"

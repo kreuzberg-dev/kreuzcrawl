@@ -219,15 +219,15 @@ echo ""
 
 print_section "Dependency Status"
 print_status INFO "Checking PDFium..."
-if [ -n "${KREUZBERG_PDFIUM_PREBUILT:-}" ] && [ -d "$KREUZBERG_PDFIUM_PREBUILT" ]; then
-  print_status OK "PDFium found at $KREUZBERG_PDFIUM_PREBUILT"
-  if find "$KREUZBERG_PDFIUM_PREBUILT/lib" -maxdepth 1 -type f 2>/dev/null | head -3 | xargs -r ls -lh 2>/dev/null; then
+if [ -n "${CRAWLBERG_PDFIUM_PREBUILT:-}" ] && [ -d "$CRAWLBERG_PDFIUM_PREBUILT" ]; then
+  print_status OK "PDFium found at $CRAWLBERG_PDFIUM_PREBUILT"
+  if find "$CRAWLBERG_PDFIUM_PREBUILT/lib" -maxdepth 1 -type f 2>/dev/null | head -3 | xargs -r ls -lh 2>/dev/null; then
     :
   else
     echo "  Could not list PDFium libs"
   fi
 else
-  print_status WARN "PDFium not configured (KREUZBERG_PDFIUM_PREBUILT not set or invalid)"
+  print_status WARN "PDFium not configured (CRAWLBERG_PDFIUM_PREBUILT not set or invalid)"
 fi
 
 print_status INFO "Checking ONNX Runtime..."

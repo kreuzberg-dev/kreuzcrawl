@@ -3,8 +3,8 @@
 # Usage: curl -fsSL https://crawlberg.dev/install.sh | bash
 #
 # Environment variables:
-#   KREUZBERG_VERSION  - Specific version to install (default: latest)
-#   KREUZBERG_INSTALL  - Installation directory (default: ~/.crawlberg/bin or /usr/local/bin)
+#   CRAWLBERG_VERSION  - Specific version to install (default: latest)
+#   CRAWLBERG_INSTALL  - Installation directory (default: ~/.crawlberg/bin or /usr/local/bin)
 
 set -euo pipefail
 
@@ -90,8 +90,8 @@ install() {
   arch="$(detect_arch)"
   target="$(detect_target)"
 
-  if [ -n "${KREUZBERG_VERSION:-}" ]; then
-    version="${KREUZBERG_VERSION}"
+  if [ -n "${CRAWLBERG_VERSION:-}" ]; then
+    version="${CRAWLBERG_VERSION}"
     # Ensure 'v' prefix
     case "$version" in
     v*) ;;
@@ -105,8 +105,8 @@ install() {
   info "Installing crawlberg ${version} for ${target}"
 
   # Determine install directory
-  if [ -n "${KREUZBERG_INSTALL:-}" ]; then
-    install_dir="${KREUZBERG_INSTALL}"
+  if [ -n "${CRAWLBERG_INSTALL:-}" ]; then
+    install_dir="${CRAWLBERG_INSTALL}"
   elif [ "$(id -u)" -eq 0 ]; then
     install_dir="/usr/local/bin"
   else

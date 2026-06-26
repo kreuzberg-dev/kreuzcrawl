@@ -55,7 +55,7 @@ The `crawlberg` plugin is available via the `xberg-io/plugins` marketplace.
 
 ```text
 /plugin marketplace add xberg-io/plugins
-/plugin install crawlberg@kreuzberg
+/plugin install crawlberg@xberg
 ```
 
 Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot CLI, and opencode. See [the marketplace README](https://github.com/xberg-io/plugins) for harness-specific install instructions.

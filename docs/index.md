@@ -58,11 +58,11 @@ High-performance web crawling and scraping with a Rust core and generated langua
 | :-------------------- | :---------------------------------------------------------- | :----------------------------------------------- |
 | **Rust**              | `cargo add crawlberg`                                      | [API Reference](reference/api-rust.md)           |
 | **Python**            | `pip install crawlberg`                                    | [API Reference](reference/api-python.md)         |
-| **TypeScript / Node** | `npm install @kreuzberg/crawlberg`                         | [API Reference](reference/api-typescript.md)     |
-| **WebAssembly**       | `npm install @kreuzberg/crawlberg-wasm`                    | [API Reference](reference/api-wasm.md)           |
+| **TypeScript / Node** | `npm install @xberg-io/crawlberg`                         | [API Reference](reference/api-typescript.md)     |
+| **WebAssembly**       | `npm install @xberg-io/crawlberg-wasm`                    | [API Reference](reference/api-wasm.md)           |
 | **Go**                | `go get github.com/xberg-io/crawlberg/packages/go`    | [API Reference](reference/api-go.md)             |
-| **Java**              | Maven Central `dev.kreuzberg.crawlberg:crawlberg`         | [API Reference](reference/api-java.md)           |
-| **Kotlin (Android)**  | Maven Central `dev.kreuzberg.crawlberg:crawlberg-android` | [API Reference](reference/api-kotlin-android.md) |
+| **Java**              | Maven Central `io.xberg.crawlberg:crawlberg`         | [API Reference](reference/api-java.md)           |
+| **Kotlin (Android)**  | Maven Central `io.xberg.crawlberg:crawlberg-android` | [API Reference](reference/api-kotlin-android.md) |
 | **C#**                | `dotnet add package Crawlberg`                             | [API Reference](reference/api-csharp.md)         |
 | **Ruby**              | `gem install crawlberg`                                    | [API Reference](reference/api-ruby.md)           |
 | **PHP**               | `composer require xberg-io/crawlberg`                 | [API Reference](reference/api-php.md)            |
@@ -76,9 +76,9 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 !!! tip "Choosing between TypeScript packages"
 
-    **`@kreuzberg/crawlberg`** — Native NAPI-RS bindings. Use for Node.js servers and CLI tools. Full feature set including the browser fallback.
+    **`@xberg-io/crawlberg`** — Native NAPI-RS bindings. Use for Node.js servers and CLI tools. Full feature set including the browser fallback.
 
-    **`@kreuzberg/crawlberg-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No native browser backend, REST server, MCP server, or native streaming crawl wrappers.
+    **`@xberg-io/crawlberg-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No native browser backend, REST server, MCP server, or native streaming crawl wrappers.
 
 ---
 
@@ -126,7 +126,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 === "TypeScript"
 
     ```typescript title="index.ts"
-    import { createEngine, crawl } from "@kreuzberg/crawlberg";
+    import { createEngine, crawl } from "@xberg-io/crawlberg";
 
     const engine = createEngine({ maxDepth: 2, maxPages: 50 });
     const result = await crawl(engine, "https://example.com");
@@ -138,11 +138,11 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 ---
 
-### Part of Kreuzberg.dev
+### Part of Xberg.dev
 
 <div class="grid cards" markdown>
 
-- :material-file-document-multiple:{ .lg .middle } **[Kreuzberg](https://github.com/xberg-io/kreuzberg)**
+- :material-file-document-multiple:{ .lg .middle } **[Xberg](https://github.com/xberg-io/xberg)**
 
   Document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 

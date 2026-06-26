@@ -15,7 +15,7 @@ _get_path_separator() {
 }
 
 setup_pdfium_paths() {
-  local pdfium_lib="${KREUZBERG_PDFIUM_PREBUILT:-}"
+  local pdfium_lib="${CRAWLBERG_PDFIUM_PREBUILT:-}"
   [ -z "$pdfium_lib" ] && return 0
 
   local platform="${RUNNER_OS:-$(uname -s)}"

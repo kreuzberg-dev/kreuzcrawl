@@ -141,4 +141,4 @@ Stack this with `crawl_pages_duration_seconds_bucket` (latency percentiles) to c
 
 ## Cloud alignment note
 
-Kreuzberg-cloud currently emits ~12 duplicate `crawl_*` metrics and one manual `crawl.engine.batch` span at `services/worker/src/observability/metrics.rs:131-272` and `crawl_handler.rs:281-286`. Once crawlberg's observability lands, cloud will delete its duplicate emitters in a follow-up PR. No user-facing changes — cloud's observability dashboards and alerts continue to work unchanged.
+Xberg-cloud currently emits ~12 duplicate `crawl_*` metrics and one manual `crawl.engine.batch` span at `services/worker/src/observability/metrics.rs:131-272` and `crawl_handler.rs:281-286`. Once crawlberg's observability lands, cloud will delete its duplicate emitters in a follow-up PR. No user-facing changes — cloud's observability dashboards and alerts continue to work unchanged.
