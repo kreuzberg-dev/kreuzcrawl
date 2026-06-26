@@ -8,8 +8,8 @@
 	},
 	"devDependencies": {
 		"@kreuzberg/crawlberg": "workspace:*",
-		"@types/node": "^26.0.1",
-		"vitest": "^4.1.9"
+		"@types/node": "^22.10.2",
+		"vitest": "^4.1.5"
 	},
 	"engines": {
 		"node": "^22 || ^24"
