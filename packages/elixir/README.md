@@ -91,7 +91,7 @@ NIFs for native BEAM integration with OTP-compatible error tuples and ResourceAr
 
 ```bash
 def deps do
-  [{:crawlberg, "~> 0.3.0"}]
+  [{:crawlberg, "~> 1.0.0-rc.1"}]
 end
 
 ```

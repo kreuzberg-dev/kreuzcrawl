@@ -91,7 +91,7 @@ JVM consumers should use the canonical `io.xberg.crawlberg:crawlberg` artifact d
 ## Installation
 
 ```bash
-implementation("io.xberg.crawlberg:crawlberg-android:0.3.0")
+implementation("io.xberg.crawlberg:crawlberg-android:1.0.0-rc.1")
 
 ```
 
