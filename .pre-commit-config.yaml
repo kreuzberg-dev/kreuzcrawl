@@ -14,7 +14,7 @@ repos:
             stages:
                 - commit-msg
     - repo: https://github.com/xberg-io/pre-commit-hooks
-      rev: v2.3.0
+      rev: v3.0.0
       hooks:
           # Alef verification
           - id: alef-verify
