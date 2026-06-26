@@ -150,9 +150,9 @@ Content:
 
             // Parse response.
             if let Some(choice) = response.choices.first()
-                && let Some(ref text) = choice.message.content
+                && let Some(text) = choice.message.content.as_ref().and_then(|content| content.as_text())
             {
-                let extracted: Value = serde_json::from_str(text).unwrap_or_else(|_| Value::String(text.clone()));
+                let extracted: Value = serde_json::from_str(&text).unwrap_or_else(|_| Value::String(text.clone()));
                 page.extracted_data = Some(extracted);
             }
 

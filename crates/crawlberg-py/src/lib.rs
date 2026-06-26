@@ -3252,7 +3252,9 @@ impl CrawlEvent {
     #[staticmethod]
     pub fn _factory_page(result: CrawlPageResult) -> Self {
         Self {
-            inner: crawlberg::CrawlEvent::Page { result: result.into() },
+            inner: crawlberg::CrawlEvent::Page {
+                result: Box::new(result.into()),
+            },
         }
     }
 
