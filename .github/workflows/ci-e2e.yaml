@@ -72,9 +72,6 @@ jobs:
                   cache-key-prefix: build-ffi-${{ matrix.target }}
                   target: ${{ matrix.target }}
 
-            - name: Setup OpenSSL
-              uses: xberg-io/actions/setup-openssl@v1
-
             - name: Build FFI library
               uses: xberg-io/actions/build-rust-ffi@v1
               with:
@@ -242,9 +239,6 @@ jobs:
                   chmod +x target/release/libcrawlberg_ffi.so 2>/dev/null || true
                   chmod +x target/release/crawlberg 2>/dev/null || true
                   chmod +x e2e/rust/target/release/mock-server 2>/dev/null || true
-
-            - name: Setup OpenSSL
-              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Setup Python
               if: matrix.python-version

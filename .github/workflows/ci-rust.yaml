@@ -65,9 +65,6 @@ jobs:
                   cache-key-prefix: rust-${{ matrix.os }}
                   use-sccache: "true"
 
-            - name: Setup OpenSSL
-              uses: xberg-io/actions/setup-openssl@v1
-
             - name: Install Task
               uses: xberg-io/actions/install-task@v1
 
@@ -106,9 +103,6 @@ jobs:
               with:
                   cache-key-prefix: validate-rust
                   use-sccache: "true"
-
-            - name: Setup OpenSSL
-              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Install Task
               uses: xberg-io/actions/install-task@v1
