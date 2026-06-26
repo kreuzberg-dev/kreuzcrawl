@@ -1198,5 +1198,4 @@ void* __swift_bridge__$__alef_phantom_vec_batch_crawl_stream_request(void);
 void* __swift_bridge__$__alef_phantom_vec_crawl_event(void);
 
 
-
 #endif /* RUST_BRIDGE_C_H */
