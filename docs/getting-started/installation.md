@@ -30,6 +30,14 @@ The fastest way to get started. No Rust toolchain needed if you use Homebrew.
     cargo install crawlberg-cli --features "api,mcp"
     ```
 
+=== "npm"
+
+    ```bash
+    npm install -g @xberg-io/crawlberg-cli
+    ```
+
+    Installs a thin proxy that downloads and runs the native `crawlberg` binary from GitHub releases. Requires Node.js 18+; no Rust toolchain needed.
+
 Verify:
 
 ```bash
