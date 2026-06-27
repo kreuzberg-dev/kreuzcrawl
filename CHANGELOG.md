@@ -2,6 +2,10 @@
 
 All notable changes to crawlberg are documented here.
 
+## [1.0.0-rc.2] - 2026-06-27
+
+Release candidate 2. Maintenance release with version bump.
+
 ## [Unreleased]
 
 ### Changed
