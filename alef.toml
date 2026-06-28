@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.29.5"
+alef_version = "0.30.0"
 languages = [
   "python",
   "node",
@@ -43,6 +43,27 @@ kotlin_android = "data-class"
 
 [workspace.format]
 enabled = false
+
+[workspace.docs]
+reference_output = "docs/reference"
+
+[workspace.docs.cli]
+sources = ["crates/crawlberg-cli/src/main.rs"]
+
+[workspace.docs.mcp]
+sources = ["crates/crawlberg/src/mcp/server.rs"]
+
+[workspace.docs.llms]
+template = "templates/docs/llms.txt.jinja"
+output = "docs/llms.txt"
+adopt_existing = true
+
+[workspace.docs.skills]
+template_dir = "templates/docs/skills"
+outputs = [".codex/skills", ".agents/skills", ".github/skills", ".claude/skills"]
+
+[workspace.docs.snippets]
+dirs = ["docs/snippets"]
 
 # Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
 # `java-verify` hook. alef's default `google-java-format` produces different
