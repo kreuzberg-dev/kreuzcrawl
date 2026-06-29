@@ -255,15 +255,6 @@ e2e/ruby/.bundle/
 # basemind local code-map index (machine-local, do not commit)
 .basemind/
 
-# BEGIN ai-rulez (DO NOT EDIT - managed by ai-rulez)
-.agents/
-.ai-rulez/.generated-manifest.json
-.cursor/
-.github/agents/
-.github/commands/
-.github/copilot-instructions.md
-.github/skills/
-# END ai-rulez
 
 # Alef-generated skills are source-controlled; other agent-local state stays ignored.
 !.codex/
@@ -304,3 +295,11 @@ e2e/ruby/.bundle/
 !.github/skills/cli/SKILL.md
 !.github/skills/mcp/
 !.github/skills/mcp/SKILL.md
+
+# BEGIN ai-rulez (DO NOT EDIT - managed by ai-rulez)
+.ai-rulez/.generated-manifest.json
+.cursor/
+.github/agents/
+.github/commands/
+.github/copilot-instructions.md
+# END ai-rulez
