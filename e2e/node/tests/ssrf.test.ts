@@ -14,7 +14,7 @@ import { scrape, createEngine } from "@xberg-io/crawlberg";
 // mock-server; that override would defeat these assertions, so clear it
 // before constructing any engine in this file.
 beforeAll(() => {
-	delete process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK;
+  delete process.env.CRAWLBERG_ALLOW_PRIVATE_NETWORK;
 });
 
 // Port 9 (discard) is deliberately chosen: SSRF policy rejects the URL
@@ -24,17 +24,17 @@ const LOOPBACK_URL = "http://127.0.0.1:9/";
 const PRIVATE_URL = "http://10.0.0.1:9/";
 
 describe("ssrf", () => {
-	it("ssrf_loopback_denied_by_default: default config rejects loopback URLs before any network connect", async () => {
-		await expect(async () => {
-			const engine = createEngine(null);
-			await scrape(engine, LOOPBACK_URL);
-		}).rejects.toThrow(/ssrf_policy_violation/);
-	}, 30000);
+  it("ssrf_loopback_denied_by_default: default config rejects loopback URLs before any network connect", async () => {
+    await expect(async () => {
+      const engine = createEngine(null);
+      await scrape(engine, LOOPBACK_URL);
+    }).rejects.toThrow(/ssrf_policy_violation/);
+  }, 30000);
 
-	it("ssrf_private_network_class_a_denied: default config rejects RFC-1918 class-A addresses", async () => {
-		await expect(async () => {
-			const engine = createEngine(null);
-			await scrape(engine, PRIVATE_URL);
-		}).rejects.toThrow(/ssrf_policy_violation/);
-	}, 30000);
+  it("ssrf_private_network_class_a_denied: default config rejects RFC-1918 class-A addresses", async () => {
+    await expect(async () => {
+      const engine = createEngine(null);
+      await scrape(engine, PRIVATE_URL);
+    }).rejects.toThrow(/ssrf_policy_violation/);
+  }, 30000);
 });

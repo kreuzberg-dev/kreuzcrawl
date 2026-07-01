@@ -2,6 +2,9 @@
 target/
 build/
 dist/
+
+# polylint cache
+.polylint/
 *.so
 *.dylib
 *.dll

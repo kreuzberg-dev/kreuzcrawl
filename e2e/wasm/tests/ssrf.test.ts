@@ -17,13 +17,13 @@ import { describe, expect, it } from "vitest";
 import { scrape, createEngine } from "@xberg-io/crawlberg-wasm";
 
 describe("ssrf", () => {
-	it("ssrf_loopback_error_surfaces: loopback URL scrape returns an error (WASM may not surface ssrf_policy_violation specifically)", async () => {
-		// WASM cannot perform pre-flight SSRF checks the same way native targets can.
-		// This test asserts only that the call fails — the error variant may differ
-		// from the native ssrf_policy_violation error.
-		await expect(async () => {
-			const engine = createEngine(null);
-			await scrape(engine, "http://127.0.0.1:9/");
-		}).rejects.toThrow();
-	}, 30000);
+  it("ssrf_loopback_error_surfaces: loopback URL scrape returns an error (WASM may not surface ssrf_policy_violation specifically)", async () => {
+    // WASM cannot perform pre-flight SSRF checks the same way native targets can.
+    // This test asserts only that the call fails — the error variant may differ
+    // from the native ssrf_policy_violation error.
+    await expect(async () => {
+      const engine = createEngine(null);
+      await scrape(engine, "http://127.0.0.1:9/");
+    }).rejects.toThrow();
+  }, 30000);
 });

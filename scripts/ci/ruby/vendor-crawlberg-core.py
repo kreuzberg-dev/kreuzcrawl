@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Vendor crawlberg core crate into Ruby package.
+"""Vendor crawlberg core crate into Ruby package.
 
 Used by: ci-ruby.yaml - Vendor crawlberg core crate step
 
@@ -216,7 +215,6 @@ def generate_vendor_cargo_toml(
         core_version: Core version string
         copied_crates: List of crates that were successfully copied
     """
-
     deps_lines: list[str] = []
     for name, dep_spec in sorted(workspace_deps.items()):
         deps_lines.append(format_dependency(name, dep_spec))

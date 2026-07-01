@@ -51,7 +51,10 @@ async fn test_ssrf_private_network_class_a_denied() {
     // 10.0.0.1 is RFC-1918 private; must be rejected by default SSRF policy.
     let engine = create_engine(None).expect("engine creation should succeed with default config");
     let result = scrape(&engine, "http://10.0.0.1:9/").await;
-    assert!(result.is_err(), "expected SSRF policy violation for RFC-1918 address, got Ok");
+    assert!(
+        result.is_err(),
+        "expected SSRF policy violation for RFC-1918 address, got Ok"
+    );
     let error_text = format!("{}", result.as_ref().err().unwrap());
     assert!(
         error_text.contains("ssrf_policy_violation"),

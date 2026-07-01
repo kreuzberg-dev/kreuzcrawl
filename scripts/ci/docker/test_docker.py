@@ -54,7 +54,7 @@ def test_scrape_json(image: str) -> bool:
         print(f"  {'PASS' if ok else 'FAIL'}: scrape json — got valid JSON response")
         return ok
     except json.JSONDecodeError:
-        print(f"  FAIL: scrape json — invalid JSON output")
+        print("  FAIL: scrape json — invalid JSON output")
         return False
 
 
@@ -111,7 +111,7 @@ def main() -> None:
             failed += 1
             failed_names.append(name)
 
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     if failed == 0:
         print(f"{GREEN}All {passed} tests passed!{NC}")
     else:

@@ -1,26 +1,23 @@
 {
-	"name": "@xberg-io/crawlberg-cli",
-	"version": "0.0.1",
-	"description": "CLI proxy for crawlberg — downloads and runs the native crawlberg binary from GitHub releases.",
-	"license": "MIT",
-	"author": "Na'aman Hirschfeld",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/xberg-io/crawlberg.git",
-		"directory": "cli-proxy/npm"
-	},
-	"bin": {
-		"crawlberg": "bin/crawlberg.js"
-	},
-	"files": [
-		"bin/",
-		"install.js"
-	],
-	"type": "module",
-	"publishConfig": {
-		"access": "public"
-	},
-	"engines": {
-		"node": ">=18"
-	}
+  "name": "@xberg-io/crawlberg-cli",
+  "version": "0.0.1",
+  "description": "CLI proxy for crawlberg — downloads and runs the native crawlberg binary from GitHub releases.",
+  "license": "MIT",
+  "author": "Na'aman Hirschfeld",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xberg-io/crawlberg.git",
+    "directory": "cli-proxy/npm"
+  },
+  "bin": {
+    "crawlberg": "bin/crawlberg.js"
+  },
+  "files": ["bin/", "install.js"],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

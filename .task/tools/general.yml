@@ -1,36 +1,29 @@
 version: "3"
 
 includes:
-    _cfg:
-        taskfile: ../config/vars.yml
-        internal: true
+  _cfg:
+    taskfile: ../config/vars.yml
+    internal: true
 
 tasks:
-    shell:lint:
-        desc: Lint shell scripts with auto-fix (shfmt + shellcheck)
-        cmds:
-            - cmd: bash scripts/task/shell-lint.sh fix
-              platforms: [linux, darwin]
-            - cmd: echo "Shell linting not available on Windows - shell scripts are Unix-specific"
-              platforms: [windows]
+  shell:lint:
+    desc: Lint shell scripts with auto-fix (shfmt + shellcheck)
+    cmds:
+      - cmd: bash scripts/task/shell-lint.sh fix
+        platforms: [linux, darwin]
+      - cmd: echo "Shell linting not available on Windows - shell scripts are Unix-specific"
+        platforms: [windows]
 
-    shell:lint:check:
-        desc: Lint shell scripts in check-only mode (shfmt + shellcheck)
-        cmds:
-            - cmd: bash scripts/task/shell-lint.sh check
-              platforms: [linux, darwin]
-            - cmd: echo "Shell linting not available on Windows - shell scripts are Unix-specific"
-              platforms: [windows]
+  shell:lint:check:
+    desc: Lint shell scripts in check-only mode (shfmt + shellcheck)
+    cmds:
+      - cmd: bash scripts/task/shell-lint.sh check
+        platforms: [linux, darwin]
+      - cmd: echo "Shell linting not available on Windows - shell scripts are Unix-specific"
+        platforms: [windows]
 
-    github:lint:
-        desc: Lint GitHub Actions workflows (actionlint)
-        cmds:
-            - cmd: actionlint
-              ignore_error: true
-
-    update:prek:
-        desc: Update prek (pre-commit) hooks to latest versions
-        cmds:
-            - echo "Updating prek hooks to latest versions..."
-            - prek autoupdate
-            - echo "Pre-commit hooks updated successfully"
+  github:lint:
+    desc: Lint GitHub Actions workflows (actionlint)
+    cmds:
+      - cmd: actionlint
+        ignore_error: true

@@ -9,190 +9,190 @@ name: Publish pub.dev
 # push events" with tag pattern `v{{version}}`.
 
 on:
-    push:
-        tags:
-            - "v*"
+  push:
+    tags:
+      - "v*"
 
 permissions:
-    contents: read
-    id-token: write
+  contents: read
+  id-token: write
 
 env:
-    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
-    prepare:
-        name: Prepare metadata
-        runs-on: ubuntu-latest
-        outputs:
-            version: ${{ steps.meta.outputs.version }}
-            checkout_ref: ${{ steps.meta.outputs.checkout_ref }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v6
-              with:
-                  ref: ${{ github.ref }}
-                  fetch-depth: 0
-                  submodules: recursive
+  prepare:
+    name: Prepare metadata
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      checkout_ref: ${{ steps.meta.outputs.checkout_ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+          submodules: recursive
 
-            - name: Resolve release metadata
-              id: meta
-              uses: xberg-io/actions/prepare-release-metadata@v1
+      - name: Resolve release metadata
+        id: meta
+        uses: xberg-io/actions/prepare-release-metadata@v1
 
-    check-pub:
-        name: Check pub.dev for existing version
-        needs: prepare
-        runs-on: ubuntu-latest
-        outputs:
-            exists: ${{ steps.check.outputs.exists }}
-        steps:
-            - id: check
-              uses: xberg-io/actions/check-registry@v1
-              with:
-                  registry: pub
-                  package: crawlberg
-                  version: ${{ needs.prepare.outputs.version }}
+  check-pub:
+    name: Check pub.dev for existing version
+    needs: prepare
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - id: check
+        uses: xberg-io/actions/check-registry@v1
+        with:
+          registry: pub
+          package: crawlberg
+          version: ${{ needs.prepare.outputs.version }}
 
-    dart-natives:
-        name: Build Dart native (${{ matrix.target }})
-        needs: prepare
-        runs-on: ${{ matrix.os }}
-        timeout-minutes: 180
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - {
-                          os: macos-latest,
-                          target: aarch64-apple-darwin,
-                          rid: macos-arm64,
-                      }
-                    - {
-                          os: macos-15-intel,
-                          target: x86_64-apple-darwin,
-                          rid: macos-x64,
-                      }
-                    - {
-                          os: ubuntu-latest,
-                          target: x86_64-unknown-linux-gnu,
-                          rid: linux-x64,
-                      }
-                    - {
-                          os: ubuntu-24.04-arm,
-                          target: aarch64-unknown-linux-gnu,
-                          rid: linux-arm64,
-                      }
-                    - {
-                          os: windows-latest,
-                          target: x86_64-pc-windows-msvc,
-                          rid: windows-x64,
-                      }
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.checkout_ref }}
-                  fetch-depth: 0
+  dart-natives:
+    name: Build Dart native (${{ matrix.target }})
+    needs: prepare
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {
+              os: macos-latest,
+              target: aarch64-apple-darwin,
+              rid: macos-arm64,
+            }
+          - {
+              os: macos-15-intel,
+              target: x86_64-apple-darwin,
+              rid: macos-x64,
+            }
+          - {
+              os: ubuntu-latest,
+              target: x86_64-unknown-linux-gnu,
+              rid: linux-x64,
+            }
+          - {
+              os: ubuntu-24.04-arm,
+              target: aarch64-unknown-linux-gnu,
+              rid: linux-arm64,
+            }
+          - {
+              os: windows-latest,
+              target: x86_64-pc-windows-msvc,
+              rid: windows-x64,
+            }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
 
-            - uses: xberg-io/actions/setup-rust@v1
-              with:
-                  cache-key-prefix: dart-native-${{ matrix.rid }}
+      - uses: xberg-io/actions/setup-rust@v1
+        with:
+          cache-key-prefix: dart-native-${{ matrix.rid }}
 
-            - name: Build Dart native
-              id: build
-              shell: bash
-              env:
-                  TARGET: ${{ matrix.target }}
-              run: |
-                set -euo pipefail
-                # The native dylib needs only Rust. Flutter is not used (it ships no
-                # Linux ARM64 stable SDK, which broke the linux-arm64 leg) and FRB
-                # codegen is not run here (packages/dart/rust/src/frb_generated.rs is
-                # committed). Each runner is native to its target, so no --target/cross
-                # toolchain is required. Mirrors liter-llm / xberg dart natives.
-                cargo build --locked -p crawlberg-dart --release
-                case "$TARGET" in
-                  *windows*) lib="crawlberg_dart.dll" ;;
-                  *apple*)   lib="libcrawlberg_dart.dylib" ;;
-                  *)         lib="libcrawlberg_dart.so" ;;
-                esac
-                echo "library-path=$PWD/target/release/$lib" >> "$GITHUB_OUTPUT"
+      - name: Build Dart native
+        id: build
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          # The native dylib needs only Rust. Flutter is not used (it ships no
+          # Linux ARM64 stable SDK, which broke the linux-arm64 leg) and FRB
+          # codegen is not run here (packages/dart/rust/src/frb_generated.rs is
+          # committed). Each runner is native to its target, so no --target/cross
+          # toolchain is required. Mirrors liter-llm / xberg dart natives.
+          cargo build --locked -p crawlberg-dart --release
+          case "$TARGET" in
+            *windows*) lib="crawlberg_dart.dll" ;;
+            *apple*)   lib="libcrawlberg_dart.dylib" ;;
+            *)         lib="libcrawlberg_dart.so" ;;
+          esac
+          echo "library-path=$PWD/target/release/$lib" >> "$GITHUB_OUTPUT"
 
-            - name: Extract native library for this platform
-              shell: bash
-              run: |
-                set -euo pipefail
-                library_path="${{ steps.build.outputs.library-path }}"
-                rid="${{ matrix.rid }}"
-                native_dir="native_build/$rid"
-                mkdir -p "$native_dir"
-                cp "$library_path" "$native_dir/"
-                echo "Extracted native for $rid: $native_dir/$(basename "$library_path")"
+      - name: Extract native library for this platform
+        shell: bash
+        run: |
+          set -euo pipefail
+          library_path="${{ steps.build.outputs.library-path }}"
+          rid="${{ matrix.rid }}"
+          native_dir="native_build/$rid"
+          mkdir -p "$native_dir"
+          cp "$library_path" "$native_dir/"
+          echo "Extracted native for $rid: $native_dir/$(basename "$library_path")"
 
-            - uses: actions/upload-artifact@v7
-              with:
-                  name: dart-native-${{ matrix.rid }}
-                  path: native_build
-                  retention-days: 14
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dart-native-${{ matrix.rid }}
+          path: native_build
+          retention-days: 14
 
-    dart-package:
-        name: Assemble Dart package
-        needs: [prepare, dart-natives]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.checkout_ref }}
-                  fetch-depth: 0
+  dart-package:
+    name: Assemble Dart package
+    needs: [prepare, dart-natives]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
 
-            - uses: xberg-io/actions/setup-rust@v1
+      - uses: xberg-io/actions/setup-rust@v1
 
-            - name: Rebuild Dart bindings and codegen on primary platform
-              uses: xberg-io/actions/build-dart-package@v1
-              id: build
-              with:
-                  package-dir: packages/dart/rust
-                  crate-name: crawlberg-dart
+      - name: Rebuild Dart bindings and codegen on primary platform
+        uses: xberg-io/actions/build-dart-package@v1
+        id: build
+        with:
+          package-dir: packages/dart/rust
+          crate-name: crawlberg-dart
 
-            - name: Download all native artifacts
-              uses: actions/download-artifact@v8
-              with:
-                  path: native_artifacts
+      - name: Download all native artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: native_artifacts
 
-            - name: Assemble natives from all platforms into package
-              shell: bash
-              run: |
-                set -euo pipefail
-                rids=(macos-arm64 macos-x64 linux-x64 linux-arm64 windows-x64)
-                for rid in "${rids[@]}"; do
-                  src_path="native_artifacts/dart-native-$rid/$rid"
-                  if [[ ! -d "$src_path" ]]; then
-                    echo "ERROR: Missing native for $rid at $src_path" >&2
-                    exit 1
-                  fi
-                  native_dir="packages/dart/lib/src/native/$rid"
-                  mkdir -p "$native_dir"
-                  cp "$src_path"/* "$native_dir/"
-                  echo "Staged native library for $rid: $native_dir/"
-                done
-                echo "All 5 platform natives staged successfully."
+      - name: Assemble natives from all platforms into package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rids=(macos-arm64 macos-x64 linux-x64 linux-arm64 windows-x64)
+          for rid in "${rids[@]}"; do
+            src_path="native_artifacts/dart-native-$rid/$rid"
+            if [[ ! -d "$src_path" ]]; then
+              echo "ERROR: Missing native for $rid at $src_path" >&2
+              exit 1
+            fi
+            native_dir="packages/dart/lib/src/native/$rid"
+            mkdir -p "$native_dir"
+            cp "$src_path"/* "$native_dir/"
+            echo "Staged native library for $rid: $native_dir/"
+          done
+          echo "All 5 platform natives staged successfully."
 
-            - uses: actions/upload-artifact@v7
-              with:
-                  name: dart-package
-                  path: packages/dart
-                  retention-days: 14
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dart-package
+          path: packages/dart
+          retention-days: 14
 
-    publish-pub:
-        name: Publish pub.dev
-        needs: [prepare, dart-package, check-pub]
-        if: ${{ needs.check-pub.outputs.exists != 'true' }}
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/download-artifact@v8
-              with:
-                  name: dart-package
-                  path: packages/dart
+  publish-pub:
+    name: Publish pub.dev
+    needs: [prepare, dart-package, check-pub]
+    if: ${{ needs.check-pub.outputs.exists != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dart-package
+          path: packages/dart
 
-            - uses: xberg-io/actions/publish-pub@v1
-              with:
-                  package-dir: packages/dart
+      - uses: xberg-io/actions/publish-pub@v1
+        with:
+          package-dir: packages/dart

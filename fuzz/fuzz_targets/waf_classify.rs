@@ -1,12 +1,14 @@
 //! libFuzzer target: WAF classifier robustness against random HTTP responses.
 #![no_main]
 
-use libfuzzer_sys::fuzz_target;
 use crawlberg::{TomlClassifier, WafClassifier, http::HttpResponse};
+use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
     // First byte determines the HTTP status code offset (200..599).
-    let Some((&status_byte, rest)) = data.split_first() else { return };
+    let Some((&status_byte, rest)) = data.split_first() else {
+        return;
+    };
     let status = 200u16 + (status_byte as u16 % 400);
 
     // Remaining bytes are treated as an arbitrary response body.

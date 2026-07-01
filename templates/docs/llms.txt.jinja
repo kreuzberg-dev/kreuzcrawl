@@ -3,24 +3,24 @@
 ## Generated Alef References
 
 {% for ref in references %}
-- [{{ ref.title }}]({{ ref.path }}): {{ ref.kind }} reference.
+  - [{{ ref.title }}]({{ ref.path }}): {{ ref.kind }} reference.
 {% endfor %}
 
 ## Generated CLI Inventory
 
 {% for command in cli.commands %}
-- `{{ command.path }}`{{ ": " ~ command.about if command.about else "" }}
-{% for subcommand in command.subcommands %}
-- `{{ subcommand.path }}`{{ ": " ~ subcommand.about if subcommand.about else "" }}
-{% endfor %}
+  - `{{ command.path }}`{{ ": " ~ command.about if command.about else "" }}
+  {% for subcommand in command.subcommands %}
+    - `{{ subcommand.path }}`{{ ": " ~ subcommand.about if subcommand.about else "" }}
+  {% endfor %}
 {% else %}
-- No CLI commands were discovered from the configured source paths.
+  - No CLI commands were discovered from the configured source paths.
 {% endfor %}
 
 ## Generated MCP Inventory
 
 {% for tool in mcp.tools %}
-- `{{ tool.name }}`{{ ": " ~ tool.description if tool.description else "" }}
+  - `{{ tool.name }}`{{ ": " ~ tool.description if tool.description else "" }}
 {% else %}
-- No MCP tools were discovered from the configured source paths.
+  - No MCP tools were discovered from the configured source paths.
 {% endfor %}

@@ -1,347 +1,347 @@
 name: Publish Docker Images
 
 on:
-    workflow_dispatch:
-        inputs:
-            tag:
-                description: "Release tag to build (e.g., v0.1.0)"
-                required: true
-                type: string
-            dry_run:
-                description: "Prepare artifacts without publishing"
-                required: false
-                type: boolean
-                default: false
-            ref:
-                description: "Git ref (branch, tag, or commit) to build; defaults to the tag"
-                required: false
-                type: string
-            force_republish:
-                description: "Force re-publish even if artifacts already exist"
-                required: false
-                type: boolean
-                default: false
-    release:
-        types: [published]
-    repository_dispatch:
-        types: [publish-docker]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build (e.g., v0.1.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Prepare artifacts without publishing"
+        required: false
+        type: boolean
+        default: false
+      ref:
+        description: "Git ref (branch, tag, or commit) to build; defaults to the tag"
+        required: false
+        type: string
+      force_republish:
+        description: "Force re-publish even if artifacts already exist"
+        required: false
+        type: boolean
+        default: false
+  release:
+    types: [published]
+  repository_dispatch:
+    types: [publish-docker]
 
 concurrency:
-    group: ${{ github.workflow }}-${{ (github.event_name == 'workflow_dispatch' && (github.event.inputs.ref || github.event.inputs.tag)) || github.ref || github.run_id }}
-    cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ (github.event_name == 'workflow_dispatch' && (github.event.inputs.ref || github.event.inputs.tag)) || github.ref || github.run_id }}
+  cancel-in-progress: false
 
 env:
-    CARGO_TERM_COLOR: always
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+  CARGO_TERM_COLOR: always
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
-    prepare:
-        name: Prepare metadata
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-        outputs:
-            tag: ${{ steps.meta.outputs.tag }}
-            version: ${{ steps.meta.outputs.version }}
-            ref: ${{ steps.meta.outputs.ref }}
-            dry_run: ${{ steps.meta.outputs.dry_run }}
-            force_republish: ${{ steps.meta.outputs.force_republish }}
-            checkout_ref: ${{ steps.meta.outputs.checkout_ref }}
-            target_sha: ${{ steps.meta.outputs.target_sha }}
-            is_tag: ${{ steps.meta.outputs.is_tag }}
-            release_docker: ${{ steps.meta.outputs.release_docker }}
-        steps:
-            - name: Checkout code (default)
-              uses: actions/checkout@v6
+  prepare:
+    name: Prepare metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      ref: ${{ steps.meta.outputs.ref }}
+      dry_run: ${{ steps.meta.outputs.dry_run }}
+      force_republish: ${{ steps.meta.outputs.force_republish }}
+      checkout_ref: ${{ steps.meta.outputs.checkout_ref }}
+      target_sha: ${{ steps.meta.outputs.target_sha }}
+      is_tag: ${{ steps.meta.outputs.is_tag }}
+      release_docker: ${{ steps.meta.outputs.release_docker }}
+    steps:
+      - name: Checkout code (default)
+        uses: actions/checkout@v6
 
-            - name: Resolve release metadata
-              id: meta
-              uses: xberg-io/actions/prepare-release-metadata@v1
-              with:
-                  tag: ${{ inputs.tag }}
-                  ref: ${{ inputs.ref }}
-                  targets: docker
-                  dry-run: ${{ inputs.dry_run }}
-                  force-republish: ${{ inputs.force_republish }}
+      - name: Resolve release metadata
+        id: meta
+        uses: xberg-io/actions/prepare-release-metadata@v1
+        with:
+          tag: ${{ inputs.tag }}
+          ref: ${{ inputs.ref }}
+          targets: docker
+          dry-run: ${{ inputs.dry_run }}
+          force-republish: ${{ inputs.force_republish }}
 
-            - name: Re-checkout at target ref
-              if: ${{ steps.meta.outputs.checkout_ref != '' }}
-              uses: actions/checkout@v6
-              with:
-                  ref: ${{ steps.meta.outputs.checkout_ref }}
-                  fetch-depth: 0
-                  submodules: recursive
+      - name: Re-checkout at target ref
+        if: ${{ steps.meta.outputs.checkout_ref != '' }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.meta.outputs.checkout_ref }}
+          fetch-depth: 0
+          submodules: recursive
 
-            - name: Show metadata
-              env:
-                  META_TAG: ${{ steps.meta.outputs.tag }}
-                  META_VERSION: ${{ steps.meta.outputs.version }}
-                  META_DRY_RUN: ${{ steps.meta.outputs.dry_run }}
-                  META_RELEASE_DOCKER: ${{ steps.meta.outputs.release_docker }}
-              run: |
-                  {
-                    echo "## Release Metadata"
-                    echo "- **Tag**: \`$META_TAG\`"
-                    echo "- **Version**: \`$META_VERSION\`"
-                    echo "- **Dry Run**: \`$META_DRY_RUN\`"
-                    echo "- **Release Docker**: \`$META_RELEASE_DOCKER\`"
-                  } >> "$GITHUB_STEP_SUMMARY"
+      - name: Show metadata
+        env:
+          META_TAG: ${{ steps.meta.outputs.tag }}
+          META_VERSION: ${{ steps.meta.outputs.version }}
+          META_DRY_RUN: ${{ steps.meta.outputs.dry_run }}
+          META_RELEASE_DOCKER: ${{ steps.meta.outputs.release_docker }}
+        run: |
+          {
+            echo "## Release Metadata"
+            echo "- **Tag**: \`$META_TAG\`"
+            echo "- **Version**: \`$META_VERSION\`"
+            echo "- **Dry Run**: \`$META_DRY_RUN\`"
+            echo "- **Release Docker**: \`$META_RELEASE_DOCKER\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-    check-docker:
-        name: Check if Docker image tag exists
-        needs: prepare
-        if: ${{ needs.prepare.outputs.release_docker == 'true' }}
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            packages: read
-        outputs:
-            image_exists: ${{ steps.check.outputs.exists }}
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.tag }}
+  check-docker:
+    name: Check if Docker image tag exists
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_docker == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      image_exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
 
-            - name: Log in to GitHub Container Registry
-              uses: docker/login-action@v4
-              with:
-                  registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Check image tag
-              id: check
-              env:
-                  DOCKER_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}
-                  SUMMARY_LABEL: cli
-              run: scripts/publish/check-docker-tag.sh
+      - name: Check image tag
+        id: check
+        env:
+          DOCKER_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}
+          SUMMARY_LABEL: cli
+        run: scripts/publish/check-docker-tag.sh
 
-    build-docker-arch:
-        name: Build Docker image (${{ matrix.arch }})
-        needs:
-            - prepare
-            - check-docker
-        # Build natively per architecture — arm64 on a native ARM runner instead of QEMU
-        # emulation, which previously overran the job timeout. Each leg builds, tests, and
-        # pushes its image by digest; the publish-docker job merges them into a manifest list.
-        if: ${{ needs.prepare.outputs.release_docker == 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
-        runs-on: ${{ matrix.runner }}
-        timeout-minutes: 90
-        permissions:
-            contents: read
-            packages: write
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - arch: amd64
-                      runner: ubuntu-latest
-                    - arch: arm64
-                      runner: ubuntu-24.04-arm
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.checkout_ref }}
-                  fetch-depth: 0
+  build-docker-arch:
+    name: Build Docker image (${{ matrix.arch }})
+    needs:
+      - prepare
+      - check-docker
+    # Build natively per architecture — arm64 on a native ARM runner instead of QEMU
+    # emulation, which previously overran the job timeout. Each leg builds, tests, and
+    # pushes its image by digest; the publish-docker job merges them into a manifest list.
+    if: ${{ needs.prepare.outputs.release_docker == 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
 
-            - name: Free up disk space
-              run: scripts/publish/ubuntu/free-disk-space.sh
+      - name: Free up disk space
+        run: scripts/publish/ubuntu/free-disk-space.sh
 
-            - name: Ensure target commit
-              if: ${{ needs.prepare.outputs.target_sha != '' }}
-              run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
+      - name: Ensure target commit
+        if: ${{ needs.prepare.outputs.target_sha != '' }}
+        run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
 
-            - name: Build test image (${{ matrix.arch }})
-              uses: docker/build-push-action@v7
-              with:
-                  context: .
-                  file: docker/Dockerfile.alpine
-                  load: true
-                  tags: crawlberg-test:latest
-                  platforms: linux/${{ matrix.arch }}
-                  cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
-                  cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
+      - name: Build test image (${{ matrix.arch }})
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile.alpine
+          load: true
+          tags: crawlberg-test:latest
+          platforms: linux/${{ matrix.arch }}
+          cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
 
-            - name: Check Docker image size
-              uses: xberg-io/actions/check-docker-image-size@v1
-              with:
-                  image: crawlberg-test:latest
-                  warn-mb: "200"
-                  label: crawlberg-cli
+      - name: Check Docker image size
+        uses: xberg-io/actions/check-docker-image-size@v1
+        with:
+          image: crawlberg-test:latest
+          warn-mb: "200"
+          label: crawlberg-cli
 
-            - name: Run Docker tests
-              run: python3 scripts/ci/docker/test_docker.py --image crawlberg-test:latest --variant cli --verbose
+      - name: Run Docker tests
+        run: python3 scripts/ci/docker/test_docker.py --image crawlberg-test:latest --variant cli --verbose
 
-            - name: Log in to GitHub Container Registry
-              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              uses: docker/login-action@v4
-              with:
-                  registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Build and push image by digest (${{ matrix.arch }})
-              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              id: build
-              uses: docker/build-push-action@v7
-              with:
-                  context: .
-                  file: docker/Dockerfile.alpine
-                  platforms: linux/${{ matrix.arch }}
-                  provenance: false
-                  labels: |
-                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.description=Crawlberg web crawling engine — Alpine CLI
-                      org.opencontainers.image.licenses=MIT
-                  outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
-                  cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
-                  cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
+      - name: Build and push image by digest (${{ matrix.arch }})
+        if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile.alpine
+          platforms: linux/${{ matrix.arch }}
+          provenance: false
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.description=Crawlberg web crawling engine — Alpine CLI
+            org.opencontainers.image.licenses=MIT
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
 
-            - name: Export digest
-              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              run: |
-                  mkdir -p /tmp/digests
-                  echo "${{ steps.build.outputs.digest }}" > "/tmp/digests/${{ matrix.arch }}"
+      - name: Export digest
+        if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+        run: |
+          mkdir -p /tmp/digests
+          echo "${{ steps.build.outputs.digest }}" > "/tmp/digests/${{ matrix.arch }}"
 
-            - name: Upload digest
-              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              uses: actions/upload-artifact@v7
-              with:
-                  name: digest-${{ matrix.arch }}
-                  path: /tmp/digests/${{ matrix.arch }}
-                  if-no-files-found: error
-                  retention-days: 1
+      - name: Upload digest
+        if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: digest-${{ matrix.arch }}
+          path: /tmp/digests/${{ matrix.arch }}
+          if-no-files-found: error
+          retention-days: 1
 
-            - name: Docker dry-run summary
-              if: ${{ needs.prepare.outputs.dry_run == 'true' }}
-              env:
-                  IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-                  VERSION: ${{ needs.prepare.outputs.version }}
-              run: scripts/publish/docker/dry-run-summary.sh
+      - name: Docker dry-run summary
+        if: ${{ needs.prepare.outputs.dry_run == 'true' }}
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: scripts/publish/docker/dry-run-summary.sh
 
-            - name: Clean up test images
-              if: ${{ always() }}
-              run: docker rmi crawlberg-test:latest || true
+      - name: Clean up test images
+        if: ${{ always() }}
+        run: docker rmi crawlberg-test:latest || true
 
-    publish-docker:
-        name: Publish Docker image
-        needs:
-            - prepare
-            - check-docker
-            - build-docker-arch
-        runs-on: ubuntu-latest
-        timeout-minutes: 30
-        permissions:
-            contents: read
-            packages: write
-        # Merge the per-arch images into a single multi-arch manifest list. Gated identically
-        # to build-docker-arch, and skipped for dry runs (no images were pushed).
-        if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
-        steps:
-            - name: Log in to GitHub Container Registry
-              uses: docker/login-action@v4
-              with:
-                  registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+  publish-docker:
+    name: Publish Docker image
+    needs:
+      - prepare
+      - check-docker
+      - build-docker-arch
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    # Merge the per-arch images into a single multi-arch manifest list. Gated identically
+    # to build-docker-arch, and skipped for dry runs (no images were pushed).
+    if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
 
-            - name: Download digests
-              uses: actions/download-artifact@v8
-              with:
-                  path: /tmp/digests
-                  pattern: digest-*
-                  merge-multiple: true
+      - name: Download digests
+        uses: actions/download-artifact@v8
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
 
-            - name: Extract Docker metadata
-              id: docker_meta
-              uses: docker/metadata-action@v6
-              with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-                  tags: |
-                      type=raw,value=${{ needs.prepare.outputs.version }}
-                      type=raw,value=latest
+      - name: Extract Docker metadata
+        id: docker_meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ needs.prepare.outputs.version }}
+            type=raw,value=latest
 
-            - name: Create multi-arch manifest list
-              env:
-                  IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-              run: |
-                  set -euo pipefail
-                  amd64_digest=$(cat /tmp/digests/amd64)
-                  arm64_digest=$(cat /tmp/digests/arm64)
-                  echo "amd64 digest: ${amd64_digest}"
-                  echo "arm64 digest: ${arm64_digest}"
-                  tag_args=()
-                  while IFS= read -r tag; do
-                    [ -n "$tag" ] && tag_args+=("--tag" "$tag")
-                  done <<< '${{ steps.docker_meta.outputs.tags }}'
-                  docker buildx imagetools create \
-                    "${tag_args[@]}" \
-                    "${IMAGE}@${amd64_digest}" \
-                    "${IMAGE}@${arm64_digest}"
+      - name: Create multi-arch manifest list
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        run: |
+          set -euo pipefail
+          amd64_digest=$(cat /tmp/digests/amd64)
+          arm64_digest=$(cat /tmp/digests/arm64)
+          echo "amd64 digest: ${amd64_digest}"
+          echo "arm64 digest: ${arm64_digest}"
+          tag_args=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] && tag_args+=("--tag" "$tag")
+          done <<< '${{ steps.docker_meta.outputs.tags }}'
+          docker buildx imagetools create \
+            "${tag_args[@]}" \
+            "${IMAGE}@${amd64_digest}" \
+            "${IMAGE}@${arm64_digest}"
 
-            - name: Inspect published manifest
-              env:
-                  IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-                  VERSION: ${{ needs.prepare.outputs.version }}
-              run: |
-                  set -euo pipefail
-                  docker buildx imagetools inspect "${IMAGE}:${VERSION}"
-                  arches=$(docker buildx imagetools inspect --raw "${IMAGE}:${VERSION}" \
-                    | jq -r '[.manifests[].platform.architecture] | unique | join(",")')
-                  echo "Published architectures: ${arches}"
-                  echo "$arches" | grep -q amd64
-                  echo "$arches" | grep -q arm64
+      - name: Inspect published manifest
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          docker buildx imagetools inspect "${IMAGE}:${VERSION}"
+          arches=$(docker buildx imagetools inspect --raw "${IMAGE}:${VERSION}" \
+            | jq -r '[.manifests[].platform.architecture] | unique | join(",")')
+          echo "Published architectures: ${arches}"
+          echo "$arches" | grep -q amd64
+          echo "$arches" | grep -q arm64
 
-    publish-mcp-registry:
-        name: Publish MCP registry metadata
-        needs:
-            - prepare
-            - publish-docker
-        if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' }}
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            id-token: write
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.checkout_ref }}
-                  fetch-depth: 0
+  publish-mcp-registry:
+    name: Publish MCP registry metadata
+    needs:
+      - prepare
+      - publish-docker
+    if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
 
-            - name: Ensure target commit
-              if: ${{ needs.prepare.outputs.target_sha != '' }}
-              run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
+      - name: Ensure target commit
+        if: ${{ needs.prepare.outputs.target_sha != '' }}
+        run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
-            - name: Install mcp-publisher
-              run: |
-                  curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
 
-            - name: Prepare release server metadata
-              env:
-                  VERSION: ${{ needs.prepare.outputs.version }}
-              run: |
-                  # The MCP registry rejects OCI packages that carry a separate
-                  # `version` field — the version must live only in `identifier`
-                  # (e.g. ghcr.io/owner/image:1.0.0). Set the server version and
-                  # the image identifier, and delete any package-level version.
-                  jq \
-                    --arg version "$VERSION" \
-                    --arg image "ghcr.io/xberg-io/crawlberg:$VERSION" \
-                    '.version = $version | .packages[0].identifier = $image | del(.packages[0].version)' \
-                    server.json > server.release.json
+      - name: Prepare release server metadata
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          # The MCP registry rejects OCI packages that carry a separate
+          # `version` field — the version must live only in `identifier`
+          # (e.g. ghcr.io/owner/image:1.0.0). Set the server version and
+          # the image identifier, and delete any package-level version.
+          jq \
+            --arg version "$VERSION" \
+            --arg image "ghcr.io/xberg-io/crawlberg:$VERSION" \
+            '.version = $version | .packages[0].identifier = $image | del(.packages[0].version)' \
+            server.json > server.release.json
 
-            - name: Authenticate to MCP Registry
-              run: ./mcp-publisher login github-oidc
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
 
-            - name: Publish server to MCP Registry
-              run: ./mcp-publisher publish server.release.json
+      - name: Publish server to MCP Registry
+        run: ./mcp-publisher publish server.release.json

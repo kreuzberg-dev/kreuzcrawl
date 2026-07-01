@@ -262,5 +262,5 @@ def ensure_binary() -> str:
 def run(args: list[str]) -> int:
     """Run the native binary with the given args, returning its exit code."""
     binary_path = ensure_binary()
-    completed = subprocess.run([binary_path, *args], check=False)  # noqa: S603
+    completed = subprocess.run([binary_path, *args], check=False)
     return completed.returncode

@@ -2,6 +2,22 @@ unless System.get_env("CRAWLBERG_ALLOW_PRIVATE_NETWORK") do
   System.put_env("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true")
 end
 
+# Erlang os:putenv does not propagate to the native C runtime that an FFI
+# library reads via getenv. Push each value through the binding's set_env NIF
+# (libc setenv) so the native side observes the same environment.
+try do
+  Crawlberg.Native.set_env("CRAWLBERG_ALLOW_PRIVATE_NETWORK", "true")
+rescue
+  _ -> :ok
+end
+
+# Tests construct absolute paths via test_documents_path, so no chdir needed.
+# Set ALEF_TEST_DOCUMENTS_DIR for any custom code that may reference it.
+unless System.get_env("ALEF_TEST_DOCUMENTS_DIR") do
+  test_documents_dir = Path.expand("../../../test_documents", __DIR__)
+  System.put_env("ALEF_TEST_DOCUMENTS_DIR", test_documents_dir)
+end
+
 # Start a named Finch pool before ExUnit configured to use HTTP/1 only.
 # Tests pass `finch: AlefE2EFinch` on every Req call; the pool's protocol
 # selection (via `pools.default.protocols: [:http1]`) is the canonical place

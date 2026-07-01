@@ -225,7 +225,7 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
         NetworkErrorKind::Other => {
             if e.is_body()
                 || chain.contains("content-length")
-                || chain.contains("truncat")
+                || chain.contains("truncate")
                 || chain.contains("incomplete")
                 || chain.contains("decoding response body")
                 || chain.contains("error decoding")
@@ -256,7 +256,7 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
             CrawlError::Connection(format!("[network:{tag}] {e}"))
         }
         NetworkErrorKind::Other => {
-            if chain.contains("content-length") || chain.contains("truncat") || chain.contains("incomplete") {
+            if chain.contains("content-length") || chain.contains("truncate") || chain.contains("incomplete") {
                 CrawlError::DataLoss(format!("data_loss: {e}"))
             } else {
                 CrawlError::Other(format!("other: {e}"))

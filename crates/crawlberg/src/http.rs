@@ -275,7 +275,7 @@ pub(crate) async fn http_fetch(
             // reqwest wraps in generic errors.
             let chain = error_chain_string(&e);
             let is_body_error = chain.contains("content-length")
-                || chain.contains("truncat")
+                || chain.contains("truncate")
                 || chain.contains("incomplete")
                 || chain.contains("end of file")
                 || chain.contains("body error")

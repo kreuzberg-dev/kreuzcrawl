@@ -6,4 +6,4 @@ packages:
 allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
-  - '@xberg-io/*'
+  - "@xberg-io/*"

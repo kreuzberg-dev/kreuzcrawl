@@ -555,7 +555,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn learning_policy_does_not_panic_on_unparseable_url() {
+    async fn learning_policy_does_not_panic_on_unparsable_url() {
         let state: Arc<dyn DomainStatePort> = Arc::new(EwmaDomainState::new());
         let policy = LearningRetryPolicy::new(state.clone());
 
