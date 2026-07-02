@@ -130,7 +130,7 @@ impl CrawlbergMcp {
             format_as_markdown(&result)
         };
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Crawl a website following links up to a configured depth.
@@ -181,7 +181,7 @@ impl CrawlbergMcp {
             format_crawl_as_markdown(&result)
         };
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Discover all pages on a website via links and sitemaps.
@@ -221,7 +221,7 @@ impl CrawlbergMcp {
         let result = engine.map(&params.url).await.map_err(map_crawl_error)?;
 
         let response = format_map_result(&result);
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Scrape multiple URLs concurrently.
@@ -274,7 +274,7 @@ impl CrawlbergMcp {
             }
         }
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Crawl multiple seed URLs concurrently.
@@ -345,7 +345,7 @@ impl CrawlbergMcp {
             }
         }
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Download a document from a URL.
@@ -394,7 +394,7 @@ impl CrawlbergMcp {
             .to_string()
         };
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Execute browser actions on a page.
@@ -427,7 +427,7 @@ impl CrawlbergMcp {
             rmcp::ErrorData::internal_error(format!("Failed to serialize interaction result: {e}"), None)
         })?;
 
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Convert markdown links into numbered citations.
@@ -451,7 +451,7 @@ impl CrawlbergMcp {
         let result = crate::citations::generate_citations(&params.markdown);
         let response = serde_json::to_string_pretty(&result)
             .map_err(|e| rmcp::ErrorData::internal_error(format!("Failed to serialize citations: {e}"), None))?;
-        Ok(CallToolResult::success(vec![Content::text(response)]))
+        Ok(CallToolResult::success(vec![ContentBlock::text(response)]))
     }
 
     /// Get the current crawlberg version.
@@ -472,7 +472,7 @@ impl CrawlbergMcp {
             "version": env!("CARGO_PKG_VERSION"),
         });
 
-        Ok(CallToolResult::success(vec![Content::text(
+        Ok(CallToolResult::success(vec![ContentBlock::text(
             serde_json::to_string_pretty(&response)
                 .unwrap_or_else(|e| format!("{{\"error\": \"Failed to serialize version: {e}\"}}")),
         )]))
@@ -575,6 +575,9 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
+    /// (name, read_only_hint, destructive_hint, open_world_hint) per tool.
+    type ToolHintExpectation = (&'static str, Option<bool>, Option<bool>, Option<bool>);
+
     /// Every tool must advertise rmcp annotation hints so MCP clients can reason
     /// about safety: `open_world_hint` for web-touching tools, `destructive_hint`
     /// for the one tool that mutates remote state.
@@ -584,7 +587,7 @@ mod tests {
         let by_name: HashMap<&str, &Tool> = tools.iter().map(|t| (t.name.as_ref(), t)).collect();
 
         // Expected (read_only_hint, destructive_hint, open_world_hint) per tool.
-        let expected: &[(&str, Option<bool>, Option<bool>, Option<bool>)] = &[
+        let expected: &[ToolHintExpectation] = &[
             ("scrape", Some(true), None, Some(true)),
             ("crawl", Some(true), None, Some(true)),
             ("map", Some(true), None, Some(true)),

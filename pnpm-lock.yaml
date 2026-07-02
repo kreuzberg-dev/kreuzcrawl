@@ -24,22 +24,47 @@ importers:
   crates/crawlberg-node:
     devDependencies:
       '@napi-rs/cli':
-        specifier: ^3.6.2
+        specifier: ^3.7.2
         version: 3.7.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@26.0.1)
+    optionalDependencies:
+      '@xberg-io/crawlberg-darwin-arm64':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@xberg-io/crawlberg-darwin-x64':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@xberg-io/crawlberg-linux-arm64-gnu':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@xberg-io/crawlberg-linux-arm64-musl':
+        specifier: 0.0.1
+        version: 0.0.1
+      '@xberg-io/crawlberg-linux-x64-gnu':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@xberg-io/crawlberg-linux-x64-musl':
+        specifier: 0.0.1
+        version: 0.0.1
+      '@xberg-io/crawlberg-win32-arm64-msvc':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@xberg-io/crawlberg-win32-x64-msvc':
+        specifier: 1.0.1
+        version: 1.0.1
 
   crates/crawlberg-wasm: {}
 
   e2e/node:
     devDependencies:
       '@types/node':
-        specifier: ^22.10.2
-        version: 22.20.0
+        specifier: ^26.0.1
+        version: 26.0.1
       '@xberg-io/crawlberg':
         specifier: workspace:*
         version: link:../../crates/crawlberg-node
       vitest:
-        specifier: ^4.1.5
-        version: 4.1.9(@types/node@22.20.0)(vite@8.0.10(@types/node@22.20.0))
+        specifier: ^4.1.9
+        version: 4.1.9(@types/node@26.0.1)(vite@8.0.10(@types/node@26.0.1))
 
 packages:
 
@@ -583,8 +608,8 @@ packages:
     resolution: {integrity: sha512-KMQIfq5sOPpkQYajXHwnhjCC0slzCNScLHs9JafXc4RAJI+9f+jNDlBNaIMTvazOPLgb4BnlhGJOTbnN0wIjPw==}
     engines: {node: '>= 20'}
 
-  '@octokit/request@10.0.10':
-    resolution: {integrity: sha512-KxNC2pTqqhszMNrf12ZRd4PonRgyJdsM4F/jySiddQK+DsRcfBtUvqn8t7UsyZhnRJHvX46OohDt5N3VqIWC2w==}
+  '@octokit/request@10.0.11':
+    resolution: {integrity: sha512-+s7HUxjfFqOMS9VlIwDffq0MikjSAK0gSpG73W+meAvVAvX4MBrHYTK5Bj3Uot55qFT4gzUtfzE4mGWY4Br8/Q==}
     engines: {node: '>= 20'}
 
   '@octokit/rest@22.0.1':
@@ -710,9 +735,6 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
-  '@types/node@22.20.0':
-    resolution: {integrity: sha512-QWlFW2wf3nTjC13/DqRnBpR4ZO36VJH/JVBkA/vcnmbTBNQIlnObqyqZE1tUR7+Ni23Lda8R1BxMfbXRpCUx5g==}
-
   '@types/node@26.0.1':
     resolution: {integrity: sha512-fc3KiUoBt6kie0N9bIW3E47vZsuaMf0PM2AaUpLCLT0s/LvX1nxAim6Fc049cNxODPpGm6qRAuUOB86SkRuPQw==}
 
@@ -744,6 +766,50 @@ packages:
 
   '@vitest/utils@4.1.9':
     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
+
+  '@xberg-io/crawlberg-darwin-arm64@1.0.1':
+    resolution: {integrity: sha512-7wv31po+/phdq8pSoTJPCEVutGaLICxiNWfSPeQsx1O4ShVjXiu5fvE0AOGkingdxDsObiQv4M0jkWSnuHtAZg==}
+    engines: {node: '>= 18'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@xberg-io/crawlberg-darwin-x64@1.0.1':
+    resolution: {integrity: sha512-iWpUl4byNw9cil2VtK1VpxhuZpLMwlAzhGW7gJb5g+31479rT6UUx70b6FygCzPjoJtnCsYnT38SL7EGAqEI9w==}
+    engines: {node: '>= 18'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@xberg-io/crawlberg-linux-arm64-gnu@1.0.1':
+    resolution: {integrity: sha512-WoCOlmQ5nODxgnMrBvFpsNTS9J0LFtMPR0qxpORCF/mewZJ2CPvzH5967k2fYn4I1DgupIFMYvryJ494Shpqug==}
+    engines: {node: '>= 18'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@xberg-io/crawlberg-linux-arm64-musl@0.0.1':
+    resolution: {integrity: sha512-c8VcD74ZUc8gChslCagboZqFT3xVD0/tr9rt5PLH/KouDqy7Yki5xMAtkNNzGeEZ7G7QPqZt1Oy1O6rK3BtAEg==}
+
+  '@xberg-io/crawlberg-linux-x64-gnu@1.0.1':
+    resolution: {integrity: sha512-bGcR8NGkoij8S1nHidiIFOU3rNxDeAQCWNxwqFXEQT7ZIYikO0HFyRTKrPTBTaYcYkT6Lc4PpjvoE8dlzQ8mfA==}
+    engines: {node: '>= 18'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@xberg-io/crawlberg-linux-x64-musl@0.0.1':
+    resolution: {integrity: sha512-8FTKEtg9bnXNzgohGp/jqp+Dq1u4XPFRdNqyGOfzPW2Es5hO/ENWODHAGpjvbjy4xUg28MVxMS4EaIGM373mxg==}
+
+  '@xberg-io/crawlberg-win32-arm64-msvc@1.0.1':
+    resolution: {integrity: sha512-SO1NhtpzY9/tYTuuZ+Slrw5fRqO0Gv5Yv2/yhzNYBT+9hb0z7rTTNmr2cvGfeaOA4sptf8Sy3Gvf1aN3HE/giA==}
+    engines: {node: '>= 18'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@xberg-io/crawlberg-win32-x64-msvc@1.0.1':
+    resolution: {integrity: sha512-Rjo/fQIDuhxdk8i4FXYgd7vMvThxoYoMIlJDKmY4wNbMmuL7I+i6N6rHeJl84SxfSxD31mYYPs21QXaGHCZ0mg==}
+    engines: {node: '>= 18'}
+    cpu: [x64]
+    os: [win32]
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
@@ -802,17 +868,17 @@ packages:
       node-addon-api:
         optional: true
 
-  es-module-lexer@2.1.0:
-    resolution: {integrity: sha512-n27zTYMjYu1aj4MjCWzSP7G9r75utsaoc8m61weK+W8JMBGGQybd43GstCXZ3WNmSFtGT9wi59qQTW6mhTR5LQ==}
+  es-module-lexer@2.2.0:
+    resolution: {integrity: sha512-3lGxdTXCLfe1MYfTz1y2ksAAUM4NAOP6rPEjxGJVKO7TZ5+tvHCaQWGpC4Y3IXvW3ece0Cz1cIP4FWBxOnGCTQ==}
 
-  es-toolkit@1.48.1:
-    resolution: {integrity: sha512-wfnXlwd5I75eXRtdD2vuEs50xHHESECDsGD7yiQnfFVNoa5522NwXEbmgo98LfiukSQHs+mBM7/YG3qKJB9/mQ==}
+  es-toolkit@1.49.0:
+    resolution: {integrity: sha512-G5iZ6Pc/FNRY/soKZHC+TxGDD83rHUDXxzaWhGCX44vAv/tMs56WMusnm/KMNK+luUPsgA9U28cGr4RDlSzL2g==}
 
   estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
 
-  expect-type@1.3.0:
-    resolution: {integrity: sha512-knvyeauYhqjOYvQ66MznSMs83wmHrCycNEN6Ao+2AeYEfxUIkuiVxdEa1qlGEPK+We3n0THiDciYSsCcgW/DoA==}
+  expect-type@1.4.0:
+    resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
 
   fast-string-truncated-width@3.0.3:
@@ -842,8 +908,8 @@ packages:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
 
-  js-yaml@4.2.0:
-    resolution: {integrity: sha512-ePWsvanv0DWuDRsW8dnt+R4jQ31SCRCQ7hhNcPXZPsoBZiemuZNYGf7adZdqX2D86j6rvKp3RpCxVTSb8WQlOw==}
+  js-yaml@4.3.0:
+    resolution: {integrity: sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==}
     hasBin: true
 
   json-with-bigint@3.5.8:
@@ -952,8 +1018,8 @@ packages:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
-  postcss@8.5.15:
-    resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
+  postcss@8.5.16:
+    resolution: {integrity: sha512-vuwillviilfKZsg0VGj5R/YwwcHx4SLsIOI/7K6mQkWx+l5cUHTjj5g0AasTBcyXsbfTgrwsUNmVUb5xVwyPwg==}
     engines: {node: ^10 || ^12 || >=14}
 
   rolldown@1.0.0-rc.17:
@@ -1011,9 +1077,6 @@ packages:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
-
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
@@ -1258,8 +1321,8 @@ snapshots:
       clipanion: 4.0.0-rc.4(typanion@3.14.0)
       colorette: 2.0.20
       emnapi: 1.11.1
-      es-toolkit: 1.48.1
-      js-yaml: 4.2.0
+      es-toolkit: 1.49.0
+      js-yaml: 4.3.0
       obug: 2.1.3
       semver: 7.8.5
       typanion: 3.14.0
@@ -1521,7 +1584,7 @@ snapshots:
     dependencies:
       '@octokit/auth-token': 6.0.0
       '@octokit/graphql': 9.0.3
-      '@octokit/request': 10.0.10
+      '@octokit/request': 10.0.11
       '@octokit/request-error': 7.1.0
       '@octokit/types': 16.0.0
       before-after-hook: 4.0.0
@@ -1534,7 +1597,7 @@ snapshots:
 
   '@octokit/graphql@9.0.3':
     dependencies:
-      '@octokit/request': 10.0.10
+      '@octokit/request': 10.0.11
       '@octokit/types': 16.0.0
       universal-user-agent: 7.0.3
 
@@ -1558,7 +1621,7 @@ snapshots:
     dependencies:
       '@octokit/types': 16.0.0
 
-  '@octokit/request@10.0.10':
+  '@octokit/request@10.0.11':
     dependencies:
       '@octokit/endpoint': 11.0.3
       '@octokit/request-error': 7.1.0
@@ -1647,14 +1710,9 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
-  '@types/node@22.20.0':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@26.0.1':
     dependencies:
       undici-types: 8.3.0
-    optional: true
 
   '@vitest/expect@4.1.9':
     dependencies:
@@ -1664,14 +1722,6 @@ snapshots:
       '@vitest/utils': 4.1.9
       chai: 6.2.2
       tinyrainbow: 3.1.0
-
-  '@vitest/mocker@4.1.9(vite@8.0.10(@types/node@22.20.0))':
-    dependencies:
-      '@vitest/spy': 4.1.9
-      estree-walker: 3.0.3
-      magic-string: 0.30.21
-    optionalDependencies:
-      vite: 8.0.10(@types/node@22.20.0)
 
   '@vitest/mocker@4.1.9(vite@8.0.10(@types/node@26.0.1))':
     dependencies:
@@ -1705,6 +1755,30 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
+  '@xberg-io/crawlberg-darwin-arm64@1.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-darwin-x64@1.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-linux-arm64-gnu@1.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-linux-arm64-musl@0.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-linux-x64-gnu@1.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-linux-x64-musl@0.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-win32-arm64-msvc@1.0.1':
+    optional: true
+
+  '@xberg-io/crawlberg-win32-x64-msvc@1.0.1':
+    optional: true
+
   argparse@2.0.1: {}
 
   assertion-error@2.0.1: {}
@@ -1735,15 +1809,15 @@ snapshots:
 
   emnapi@1.11.1: {}
 
-  es-module-lexer@2.1.0: {}
+  es-module-lexer@2.2.0: {}
 
-  es-toolkit@1.48.1: {}
+  es-toolkit@1.49.0: {}
 
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.9
 
-  expect-type@1.3.0: {}
+  expect-type@1.4.0: {}
 
   fast-string-truncated-width@3.0.3: {}
 
@@ -1766,7 +1840,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  js-yaml@4.2.0:
+  js-yaml@4.3.0:
     dependencies:
       argparse: 2.0.1
 
@@ -1839,7 +1913,7 @@ snapshots:
 
   picomatch@4.0.4: {}
 
-  postcss@8.5.15:
+  postcss@8.5.16:
     dependencies:
       nanoid: 3.3.15
       picocolors: 1.1.1
@@ -1898,61 +1972,20 @@ snapshots:
 
   typescript@6.0.3: {}
 
-  undici-types@6.21.0: {}
-
-  undici-types@8.3.0:
-    optional: true
+  undici-types@8.3.0: {}
 
   universal-user-agent@7.0.3: {}
-
-  vite@8.0.10(@types/node@22.20.0):
-    dependencies:
-      lightningcss: 1.32.0
-      picomatch: 4.0.4
-      postcss: 8.5.15
-      rolldown: 1.0.0-rc.17
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 22.20.0
-      fsevents: 2.3.3
 
   vite@8.0.10(@types/node@26.0.1):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
-      postcss: 8.5.15
+      postcss: 8.5.16
       rolldown: 1.0.0-rc.17
       tinyglobby: 0.2.17
     optionalDependencies:
       '@types/node': 26.0.1
       fsevents: 2.3.3
-
-  vitest@4.1.9(@types/node@22.20.0)(vite@8.0.10(@types/node@22.20.0)):
-    dependencies:
-      '@vitest/expect': 4.1.9
-      '@vitest/mocker': 4.1.9(vite@8.0.10(@types/node@22.20.0))
-      '@vitest/pretty-format': 4.1.9
-      '@vitest/runner': 4.1.9
-      '@vitest/snapshot': 4.1.9
-      '@vitest/spy': 4.1.9
-      '@vitest/utils': 4.1.9
-      es-module-lexer: 2.1.0
-      expect-type: 1.3.0
-      magic-string: 0.30.21
-      obug: 2.1.3
-      pathe: 2.0.3
-      picomatch: 4.0.4
-      std-env: 4.1.0
-      tinybench: 2.9.0
-      tinyexec: 1.2.4
-      tinyglobby: 0.2.17
-      tinyrainbow: 3.1.0
-      vite: 8.0.10(@types/node@22.20.0)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/node': 22.20.0
-    transitivePeerDependencies:
-      - msw
 
   vitest@4.1.9(@types/node@26.0.1)(vite@8.0.10(@types/node@26.0.1)):
     dependencies:
@@ -1963,8 +1996,8 @@ snapshots:
       '@vitest/snapshot': 4.1.9
       '@vitest/spy': 4.1.9
       '@vitest/utils': 4.1.9
-      es-module-lexer: 2.1.0
-      expect-type: 1.3.0
+      es-module-lexer: 2.2.0
+      expect-type: 1.4.0
       magic-string: 0.30.21
       obug: 2.1.3
       pathe: 2.0.3
