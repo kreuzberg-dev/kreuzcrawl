@@ -115,9 +115,12 @@ tasks:
   update:
     desc: Update all dependencies within current major versions (no breaking changes)
     cmds:
-      - alef update
-      - cargo update
-      - gau --update .
+      - cmd: alef update
+        ignore_error: true
+      - cmd: cargo update
+        ignore_error: true
+      - cmd: gau --update .
+        ignore_error: true
       - cmd: cd packages/python && uv sync --all-extras --no-install-workspace --no-install-project
         ignore_error: true
       - cmd: pnpm up -r
@@ -126,7 +129,8 @@ tasks:
         ignore_error: true
       - cmd: cd packages/ruby && bundle update --conservative
         ignore_error: true
-      - cmd: cd packages/php && composer update --no-interaction
+      # packages/php/composer.json is generated at build time; skip cleanly if absent.
+      - cmd: '[ -f packages/php/composer.json ] && (cd packages/php && composer update --no-interaction) || echo "skip php: packages/php/composer.json not present (run task php:build first)"'
         ignore_error: true
       - cmd: cd packages/elixir && mix deps.update --all
         ignore_error: true
@@ -152,7 +156,8 @@ tasks:
         ignore_error: true
       - cmd: cd packages/ruby && bundle update
         ignore_error: true
-      - cmd: cd packages/php && composer update --with-all-dependencies --no-interaction
+      # packages/php/composer.json is generated at build time; skip cleanly if absent.
+      - cmd: '[ -f packages/php/composer.json ] && (cd packages/php && composer update --with-all-dependencies --no-interaction) || echo "skip php: packages/php/composer.json not present (run task php:build first)"'
         ignore_error: true
       - cmd: cd packages/elixir && mix deps.update --all
         ignore_error: true
@@ -162,8 +167,10 @@ tasks:
         ignore_error: true
       - cmd: task zig:update
         ignore_error: true
-      - task: java:update
-      - task: csharp:update
+      - cmd: task java:update
+        ignore_error: true
+      - cmd: task csharp:update
+        ignore_error: true
 
   clean:
     desc: Clean all build artifacts (per-language only; see `clean:full` for cargo + e2e)
